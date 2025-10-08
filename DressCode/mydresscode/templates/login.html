@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dresscode - Login</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+
+<body>
+  <!-- Pantalla Login -->
+  <section class="pantalla pantalla-login">
+    <header>
+      <a href="{% url 'home' %}" class="back-btn">❮</a>
+      <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
+    </header>
+
+    <h2>Inicio de sesión</h2>
+    <form class="login-form" method="post">
+      {% csrf_token %}
+      <label>Ingresa tu correo electrónico</label>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+
+      <label>Confirme la contraseña</label>
+      <input type="password" name="password" placeholder="Contraseña" required>
+
+      <button type="submit" class="btn btn-amarillo">Iniciar sesión</button>
+      <a href="#" class="olvide">¿Olvidaste tu contraseña?</a>
+    </form>
+  </section>
+</body>
+
+</html>

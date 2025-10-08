@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dresscode - Inicio</title>
+  <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
+</head>
+
+
+<body>
+
+  <!-- Pantalla de Inicio -->
+  <section class="pantalla pantalla-inicio">
+    <div class="logo">
+      <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
+    </div>
+
+    <div class="botones">
+      <a href="{% url 'login' %}" class="btn btn-naranja">Iniciar sesión</a>
+      <button class="btn btn-rojo">¿Eres nuevo? Crea tu cuenta</button>
+      <a href="#" class="recuperar">Recuperar cuenta</a>
+    </div>
+  </section>
+</body>
+</html>

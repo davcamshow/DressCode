@@ -1,0 +1,65 @@
+/* --- Estilos generales --- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff8ec;
+}
+
+/* Contenedor principal de la pantalla de inicio */
+.pantalla-inicio {
+  max-width: 400px;       
+  margin: 40px auto;      
+  padding: 20px;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo img {  
+  width: 200px;  
+  height: auto;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+
+/* Botones */
+.botones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;       
+  margin-top: 5px;
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.btn-naranja {
+  background-color: #f89d65;
+  color: #fff;
+}
+
+.btn-rojo {
+  background-color: #f56c6c;
+  color: #fff;
+}
+
+.recuperar {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+  text-decoration: underline;
+}
