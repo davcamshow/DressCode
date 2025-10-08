@@ -1,0 +1,89 @@
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff8ec;
+}
+
+/* Contenedor principal de la pantalla */
+.pantalla-login {
+  max-width: 400px;
+  margin: 40px auto; 
+  padding: 20px;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  position: relative;
+  height: 80px;
+  padding: 0 20px;
+  background-color: #fff;
+}
+
+/* Flecha de regreso */
+.back-btn {
+  position: absolute;
+  left: 20px;
+  font-size: 2rem;
+  color: #333;
+  text-decoration: none;
+  z-index: 2;
+}
+
+/* Logo centrado */
+.logo-small {
+  width: 120px;
+  height: auto;
+}
+
+/* Título */
+h2 {
+  margin-top: 10px;        
+  margin-bottom: 20px;    
+}
+
+/* Formulario de login */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form input {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Botón de inicio de sesión */
+.btn-amarillo {
+  background-color: #f4c542;
+  color: #000;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-amarillo:hover {
+  background-color: #e6b800;
+}
+
+/* Link de olvidaste contraseña */
+.olvide {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #888;
+  text-decoration: underline;
+  display: inline-block;
+}
