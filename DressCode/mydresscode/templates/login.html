@@ -13,6 +13,7 @@
 <body>
   <!-- Pantalla Login -->
   <section class="pantalla pantalla-login">
+    
     <header>
       <a href="{% url 'home' %}" class="back-btn">❮</a>
       <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
@@ -28,7 +29,7 @@
       <input type="password" name="password" placeholder="Contraseña" required>
 
       <button type="submit" class="btn btn-amarillo">Iniciar sesión</button>
-      <a href="#" class="olvide">¿Olvidaste tu contraseña?</a>
+      <a href="{% url 'newPassword' %}" class="olvide">¿Olvidaste tu contraseña?</a>
     </form>
   </section>
 </body>

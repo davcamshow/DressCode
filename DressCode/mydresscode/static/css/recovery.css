@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff8ec;
+}
+
+.pantalla-recuperar {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  position: relative;
+  height: 80px;
+  padding: 0 20px;
+  background-color: #fff;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.form-recuperar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input[type="email"] {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.logo-small {
+  width: 120px;
+  height: auto;
+}
+
+.back-btn {
+  position: absolute;
+  left: 20px;
+  font-size: 2rem;
+  color: #333;
+  text-decoration: none;
+  z-index: 2;
+}
+
+.btn-rojo {
+  background-color: #f56c6c;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}

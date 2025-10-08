@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña</title>
+  <link rel="stylesheet" href="{% static 'css/recovery.css' %}">
+</head>
+
+<body>
+  <section class="pantalla-recuperar">
+
+    <header>
+      <a href="{% url 'home' %}" class="back-btn">❮</a>
+      <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
+    </header>
+
+    <h2>Recuperación de contraseña</h2>
+    <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</p>
+    <form class="form-recuperar">
+      <input type="email" placeholder="correoelectronico@dominio.com" required>
+      <button type="submit" class="btn-rojo">Recuperar</button>
+    </form>
+  </section>
+</body>
+</html>
