@@ -3,12 +3,17 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: #fff8ec;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 /* Contenedor principal de la pantalla de inicio */
 .pantalla-inicio {
   max-width: 400px;       
-  margin: 40px auto;      
+  width: 100%;
+  margin: 20px auto;      
   padding: 20px;
   text-align: center;
   background-color: #ffffff;
@@ -20,18 +25,15 @@ body {
 .logo img {  
   width: 200px;  
   height: auto;
-  margin: 0 auto;
-  margin-bottom: 10px;
+  margin: 0 auto 20px auto;
 }
-
 
 /* Botones */
 .botones {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 100%;       
-  margin-top: 5px;
 }
 
 .btn {
@@ -45,6 +47,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.2s ease;
 }
 
 .btn-naranja {
@@ -52,14 +55,44 @@ body {
   color: #fff;
 }
 
+.btn-naranja:hover {
+  background-color: #e07b4a;
+}
+
 .btn-rojo {
   background-color: #f56c6c;
   color: #fff;
 }
 
+.btn-rojo:hover {
+  background-color: #e05252;
+}
+
+/* Link de recuperar cuenta */
 .recuperar {
   margin-top: 10px;
   font-size: 14px;
   color: #333;
   text-decoration: underline;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .pantalla-inicio {
+    padding: 16px;
+    margin: 10px;
+  }
+
+  .logo img {
+    width: 150px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .recuperar {
+    font-size: 13px;
+  }
 }

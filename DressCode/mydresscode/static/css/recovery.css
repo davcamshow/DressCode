@@ -2,11 +2,16 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: #fff8ec;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .pantalla-recuperar {
   max-width: 400px;
-  margin: 40px auto;
+  width: 100%;
+  margin: 20px auto;
   padding: 20px;
   text-align: center;
   background-color: #ffffff;
@@ -24,8 +29,23 @@ header {
   background-color: #fff;
 }
 
+.back-btn {
+  position: absolute;
+  left: 20px;
+  font-size: 2rem;
+  color: #333;
+  text-decoration: none;
+  z-index: 2;
+}
+
+.logo-small {
+  width: 120px;
+  height: auto;
+}
+
 h2 {
   margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 p {
@@ -34,6 +54,7 @@ p {
   margin-bottom: 20px;
 }
 
+/* Formulario */
 .form-recuperar {
   display: flex;
   flex-direction: column;
@@ -47,20 +68,6 @@ input[type="email"] {
   border-radius: 6px;
 }
 
-.logo-small {
-  width: 120px;
-  height: auto;
-}
-
-.back-btn {
-  position: absolute;
-  left: 20px;
-  font-size: 2rem;
-  color: #333;
-  text-decoration: none;
-  z-index: 2;
-}
-
 .btn-rojo {
   background-color: #f56c6c;
   color: #fff;
@@ -69,4 +76,39 @@ input[type="email"] {
   font-size: 1rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-rojo:hover {
+  background-color: #e05252;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .pantalla-recuperar {
+    padding: 16px;
+    margin: 10px;
+  }
+
+  .logo-small {
+    width: 100px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  input[type="email"] {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .btn-rojo {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
 }

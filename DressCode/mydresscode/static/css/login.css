@@ -1,14 +1,26 @@
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #fff8ec;
+/* Botón de registro */
+.btn-rojo {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s ease;
+  text-align: center;
 }
 
-/* Contenedor principal de la pantalla */
+.btn-rojo:hover {
+  background-color: #c0392b;
+}
+
+/* Contenedor principal */
 .pantalla-login {
   max-width: 400px;
-  margin: 40px auto; 
+  margin: 40px auto;
   padding: 20px;
   text-align: center;
   background-color: #ffffff;
@@ -16,74 +28,35 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Header */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: center; 
-  position: relative;
-  height: 80px;
-  padding: 0 20px;
-  background-color: #fff;
-}
-
-/* Flecha de regreso */
-.back-btn {
-  position: absolute;
-  left: 20px;
-  font-size: 2rem;
-  color: #333;
-  text-decoration: none;
-  z-index: 2;
-}
-
-/* Logo centrado */
-.logo-small {
-  width: 120px;
-  height: auto;
-}
-
-/* Título */
-h2 {
-  margin-top: 10px;        
-  margin-bottom: 20px;    
-}
-
-/* Formulario de login */
+/* Formulario y botones */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.login-form input {
-  padding: 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
+/* Responsivo */
+@media (max-width: 480px) {
+  .pantalla-login {
+    margin: 20px;
+    padding: 16px;
+  }
 
-/* Botón de inicio de sesión */
-.btn-amarillo {
-  background-color: #f4c542;
-  color: #000;
-  border: none;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
+  h2 {
+    font-size: 20px;
+  }
 
-.btn-amarillo:hover {
-  background-color: #e6b800;
-}
+  .btn-amarillo, .btn-rojo {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
 
-/* Link de olvidaste contraseña */
-.olvide {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #888;
-  text-decoration: underline;
-  display: inline-block;
+  .logo-small {
+    width: 100px;
+  }
+
+  .login-form input {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
 }

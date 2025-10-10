@@ -17,9 +17,10 @@
       <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
     </header>
 
-    <h2>Recuperación de contraseña</h2>
+    <h2>Recuperación de cuenta</h2>
     <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</p>
-    <form class="form-recuperar">
+    <form class="form-recuperar" method="post">
+      {% csrf_token %}
       <input type="email" placeholder="correoelectronico@dominio.com" required>
       <button type="submit" class="btn-rojo">Recuperar</button>
     </form>

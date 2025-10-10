@@ -11,3 +11,7 @@ def recovery_view(request):
 
 def newPassword_view(request):
     return render(request, 'newPassword.html')    
+
+def register_view(request):
+    return render(request, 'register.html')
+ 
