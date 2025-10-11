@@ -18,11 +18,17 @@
     </header>
 
     <h2>Recuperación de cuenta</h2>
-    <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</p>
+    <p>Ingresa tu correo electrónico del cual deseas recuperar tu contraseña</p>
     <form class="form-recuperar" method="post">
       {% csrf_token %}
-      <input type="email" placeholder="correoelectronico@dominio.com" required>
+      <input type="email" name="email" required placeholder="correoelectronico@dominio.com">
+
+      {% if error %}
+        <p style="color:red;">{{ error }}</p>
+      {% endif %}
+
       <button type="submit" class="btn-rojo">Recuperar</button>
+
     </form>
   </section>
 </body>
