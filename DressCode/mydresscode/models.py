@@ -3,7 +3,7 @@ from django.db import models
 class Usuario(models.Model):
     idUsuario = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True)
-    contrasena = models.CharField(max_length=45)
+    contrasena = models.CharField(max_length=128)
     nombre = models.CharField(max_length=100)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
