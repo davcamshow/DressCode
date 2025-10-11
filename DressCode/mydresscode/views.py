@@ -84,3 +84,43 @@ def logout_view(request):
     logout(request)
    
     return redirect('login') # Redirige a la URL con el nombre 'login'
+
+def recovery_view(request):
+    if request.method == 'POST':
+        correo = request.POST.get('email')
+
+        # Verifica si existe en la base de datos
+        usuario = Usuario.objects.filter(email=correo).first()
+        if usuario:
+            # Guardamos el correo en la sesión
+            request.session['recovery_email'] = correo
+            return redirect('newPassword')
+        else:
+            return render(request, 'recovery.html', {'error': 'Este correo no está registrado.'})
+
+    return render(request, 'recovery.html')
+
+
+def newPassword_view(request):
+    correo = request.session.get('recovery_email')  # Obtenemos correo de la sesión
+    error = None  # Variable para enviar errores al template
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm-password')
+
+        # Validación
+        if password != confirm_password:
+            error = 'Las contraseñas no coinciden.'
+        elif len(password) < 8 or not any(c.isupper() for c in password) or not any(c.isdigit() for c in password) or not any(not c.isalnum() for c in password):
+            error = 'La contraseña no cumple los requisitos.'
+        else:
+            # Actualizar contraseña
+            usuario = Usuario.objects.filter(email=correo).first()
+            if usuario:
+                usuario.contrasena = password
+                usuario.save()
+                del request.session['recovery_email']  # Limpiamos sesión
+                return redirect('home')  # Redirige a welcome
+
+    return render(request, 'newPassword.html', {'error': error})

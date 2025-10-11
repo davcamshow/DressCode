@@ -1,0 +1,19 @@
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Django
+*.sqlite3
+*.log
+*.env
+db.sqlite3
+
+# VS Code
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
