@@ -87,6 +87,19 @@ body {
     background-color: #d4d2d2;
 }
 
+/* Imagen de éxito */
+.success-image {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.exito-img {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     body {
@@ -113,5 +126,14 @@ body {
     .btn-continue {
         padding: 14px 20px;
         font-size: 15px;
+    }
+    
+    .exito-img {
+        max-width: 150px;
+        margin-top: 20px;
+    }
+    
+    .success-image {
+        margin-top: 25px;
     }
 }
