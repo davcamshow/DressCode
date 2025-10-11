@@ -6,204 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dresscode - Inicio</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 420px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 24px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .header-left, .header-right {
-            display: flex;
-            align-items: center;
-        }
-        
-        .header-logo-main {
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .logo-main {
-            height: 40px;
-            width: auto;
-            margin: 0 auto;
-        }
-        
-        .header-icons-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #555;
-            font-size: 1.2em;
-        }
-
-        .header-icons-left span {
-            font-size: 0.9em;
-        }
-
-        .header-icons-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .icon-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-        }
-        
-        .profile-container {
-            position: relative;
-        }
-        
-        .profile-dropdown, .left-dropdown {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            min-width: 150px;
-            z-index: 10;
-        }
-        
-        .profile-dropdown {
-            right: 0;
-            top: 30px;
-        }
-        
-        .left-dropdown {
-            left: 0;
-            top: 30px;
-        }
-        
-        .profile-container:hover .profile-dropdown {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-icons-left:hover .left-dropdown {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .profile-dropdown a, .left-dropdown a {
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #555;
-            white-space: nowrap;
-        }
-        
-        .profile-dropdown a:hover, .left-dropdown a:hover {
-            background-color: #f0f0f0;
-        }
-
-        .main-content {
-            width: 100%;
-            text-align: center;
-        }
-
-        
-        .welcome-message {
-            font-size: 1.8em;
-            color: #5d9e9e;
-            font-weight: bold;
-            margin-top: 10px; 
-            margin-bottom: 20px;
-        }
-
-        .outfit-image-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 150%;
-            overflow: hidden;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .outfit-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top;
-            border-radius: 10px;
-        }
-
-        .button-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .action-button {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9em; 
-            min-width: 100px; 
-            max-width: 130px; 
-            text-decoration: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mi-armario { background-color: #5d9e9e; }
-        .generar { background-color: #e69c67; }
-        .capturar { background-color: #e06e78; }
-        
-        .carousel-container {
-            width: 100%;
-            height: 150px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #888;
-        }
-    </style>
+     <link rel="stylesheet" href="{% static 'css/inicios.css' %}">
 </head>
 <body>
 
@@ -220,13 +23,13 @@
             </div>
             
             <div class="header-logo-main">
-                <img src="{% static 'static/logo.jpg' %}" alt="Logo" class="logo-main">
+              <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
             </div>
 
             <div class="header-icons-right">
                 <div class="profile-container">
                     <button class="icon-button">
-                        <img src="{% static 'static/exito.png' %}" alt="burbuja perfil">
+                          <img src="{% static 'img/exito.jpg' %}" alt="perfil" class="logo-small">
                     </button>
                     <div class="profile-dropdown">
                         <a href="#">Ver perfil</a>
@@ -239,7 +42,7 @@
         <main class="main-content">
             <h1 class="welcome-message">¡Hola, Fashionista!</h1>
             <div class="outfit-image-container">
-                <img src="{% static 'static/ootd.png' %}" alt="muestra ootd" class="outfit-image">
+                <img src="{% static 'img/ootd.png' %}" alt="muestra ootd" class="outfit-image">
             </div>
             <div class="button-row">
                 <a href="#" class="action-button mi-armario">Mi Armario</a>
