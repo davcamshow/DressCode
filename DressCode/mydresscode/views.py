@@ -41,11 +41,11 @@ def login_view(request):
 
         # 1. Autentica al usuario de forma segura con el sistema de Django.
         #    Django se encarga de verificar el email (username) y la contraseña cifrada.
-        user = authenticate(request, username=email, password=password)
+        usuario = Usuario.objects.filter(email=email, contrasena=password).first()
 
-        if user is not None:
+        if usuario is not None:
             # 2. Inicia la sesión para el usuario autenticado.
-            login(request, user)
+            login(request, usuario)
             # 3. Redirige al usuario a la página de inicio (o a donde desees).
             return redirect('inicio')
         else:
