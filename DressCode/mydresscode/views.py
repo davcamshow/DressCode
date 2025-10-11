@@ -43,10 +43,11 @@ def login_view(request):
         #    Django se encarga de verificar el email (username) y la contraseña cifrada.
         usuario = Usuario.objects.filter(email=email, contrasena=password).first()
 
-        if usuario is not None:
+        if usuario:
             # 2. Inicia la sesión para el usuario autenticado.
-            login(request, usuario)
+            #login(request, usuario)
             # 3. Redirige al usuario a la página de inicio (o a donde desees).
+            error="Usuario encontrado.Bienvenido/a"
             return redirect('inicio')
         else:
             # Si la autenticación falla, establece un mensaje de error.
