@@ -20,6 +20,10 @@ def newPassword_view(request):
 def register_view(request):
     return render(request, 'register.html')
 
+def register_password_view(request):
+    return render(request, 'Password.html')  # ← sin 'register/' si está en templates/
+
+
 
 def login_view(request):
     error = None
@@ -37,3 +41,4 @@ def login_view(request):
             error = "❌ El correo o la contraseña no coinciden."
 
     return render(request, 'login.html', {'error': error})
+
