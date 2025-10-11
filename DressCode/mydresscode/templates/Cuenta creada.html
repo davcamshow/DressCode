@@ -21,7 +21,14 @@
         <button class="btn-continue">
             <strong>Continuar</strong>
         </button>
+
+        <div class="success-image">
+            <img src="{% static 'img/exito.png' %}" alt="Cuenta creada con éxito" class="exito-img">
+        </div>
     </div>
+
+        
+  
 
     <script>document.querySelector('.btn-continue').addEventListener('click', function() {
     window.location.href = "{% url 'login' %}";
