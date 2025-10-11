@@ -1,62 +1,127 @@
-/* Botón de registro */
-.btn-rojo {
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.2s ease;
-  text-align: center;
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.btn-rojo:hover {
-  background-color: #c0392b;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
+
 
 /* Contenedor principal */
 .pantalla-login {
+  width: 100%;
   max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  text-align: center;
-  background-color: #ffffff;
+  padding: 2rem;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Formulario y botones */
-.login-form {
+/* Header */
+header {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+}
+
+.back-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem;
+}
+
+.logo-small {
+  height: 50px;
+  object-fit: contain;
+}
+
+
+/* Título */
+h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: #222;
+}
+
+/* Formulario */
+.login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.btn-amarillo {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f4c542;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-amarillo:hover {
+  background-color: #e0b030;
+}
+
+/* Link de recuperación */
+.olvide {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #888;
+  text-decoration: none;
+}
+
+.olvide:hover {
+  text-decoration: underline;
+  color: #555
 }
 
 /* Responsivo */
 @media (max-width: 480px) {
   .pantalla-login {
-    margin: 20px;
-    padding: 16px;
+    padding: 1.5rem;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   h2 {
-    font-size: 20px;
+    font-size: 1.4rem;
   }
 
-  .btn-amarillo, .btn-rojo {
+  .btn-amarillo {
     font-size: 0.95rem;
-    padding: 10px;
-  }
-
-  .logo-small {
-    width: 100px;
-  }
-
-  .login-form input {
-    font-size: 0.95rem;
-    padding: 10px;
   }
 }
