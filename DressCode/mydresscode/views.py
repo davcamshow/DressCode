@@ -5,7 +5,7 @@ from .models import Usuario
 from django.contrib.auth import logout #para hacer que el usuario se redirija al login despues de cerrar sesion
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
-
+from django.contrib import messages 
 
 def home(request):
     """Renderiza la página de inicio."""
@@ -80,5 +80,7 @@ def logout_view(request):
     """
     Cierra la sesión del usuario y lo redirige a la página de login.
     """
+    
     logout(request)
+   
     return redirect('login') # Redirige a la URL con el nombre 'login'
