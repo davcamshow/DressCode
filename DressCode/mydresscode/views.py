@@ -1,44 +1,55 @@
 from django.shortcuts import render, redirect
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from .models import Usuario
-
+from .models import Usuario # Asegúrate de que este es tu modelo de usuario personalizado
 
 def home(request):
-    return render(request, 'welcome.html')  
-
+    """Renderiza la página de inicio."""
+    return render(request, 'welcome.html')
 
 def recovery_view(request):
+    """Renderiza la página de recuperación de contraseña."""
     return render(request, 'recovery.html')
 
-
 def newPassword_view(request):
-    return render(request, 'newPassword.html')    
-
+    """Renderiza la página para establecer una nueva contraseña."""
+    return render(request, 'newPassword.html')
 
 def register_view(request):
+    """Renderiza la página de registro."""
     return render(request, 'register.html')
 
 def register_password_view(request):
-    return render(request, 'Password.html')  # ← sin 'register/' si está en templates/
+    """Renderiza la página para ingresar la contraseña de registro."""
+    return render(request, 'Password.html')
 
+# añado para ver el inicio
 
+def inicio(request):
+    return render(request, 'inicio.html')
 
 def login_view(request):
+    """
+    Maneja el inicio de sesión de usuarios de forma segura.
+    """
     error = None
 
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Verificar si existe un usuario con ese correo y contraseña
-        usuario = Usuario.objects.filter(email=email, contrasena=password).first()
+        # 1. Autentica al usuario de forma segura con el sistema de Django.
+        #    Django se encarga de verificar el email (username) y la contraseña cifrada.
+        user = authenticate(request, username=email, password=password)
 
-        if usuario:
-            error = "✅ Usuario encontrado. Bienvenido/a."
+        if user is not None:
+            # 2. Inicia la sesión para el usuario autenticado.
+            login(request, user)
+            # 3. Redirige al usuario a la página de inicio (o a donde desees).
+            return redirect('inicio')
         else:
-            error = "❌ El correo o la contraseña no coinciden."
+            # Si la autenticación falla, establece un mensaje de error.
+            error = "El correo o la contraseña no coinciden."
 
+    # Renderiza el formulario de login con cualquier mensaje de error.
     return render(request, 'login.html', {'error': error})
-
