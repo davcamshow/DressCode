@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login
-from .models import Usuario # Asegúrate de que este es tu modelo de usuario personalizado
+from .models import Usuario 
+from django.contrib.auth import logout #para hacer que el usuario se redirija al login despues de cerrar sesion
 
 def home(request):
     """Renderiza la página de inicio."""
@@ -53,3 +54,10 @@ def login_view(request):
 
     # Renderiza el formulario de login con cualquier mensaje de error.
     return render(request, 'login.html', {'error': error})
+
+def logout_view(request):
+    """
+    Cierra la sesión del usuario y lo redirige a la página de login.
+    """
+    logout(request)
+    return redirect('login') # Redirige a la URL con el nombre 'login'
