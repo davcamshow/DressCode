@@ -82,7 +82,7 @@ def logout_view(request):
     """
     
     logout(request)
-   
+    messages.success(request, 'Has cerrado tu sesión exitosamente.') #agregado par el mensaje que redirige a nuestrologin
     return redirect('login') # Redirige a la URL con el nombre 'login'
 
 def recovery_view(request):
