@@ -1,174 +1,197 @@
 
- body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
+ * {
             margin: 0;
             padding: 0;
-            color: #333;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
 
-        .main-header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 15px 40px;
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        .header-container {
+        .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 420px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 24px;
         }
 
-        .header-logo {
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-logo-main {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .logo-main {
             height: 40px;
+            width: auto;
+            margin: 0 auto;
+        }
+        
+        .header-icons-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+            font-size: 1.2em;
         }
 
-        .header-icons {
+        .header-icons-left span {
+            font-size: 0.9em;
+        }
+
+        .header-icons-right {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .icon-button, .profile-button {
+        .icon-button {
             background: none;
             border: none;
             cursor: pointer;
             padding: 0;
         }
-
-        .icon-button img, .profile-button img {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-        }
-
+        
         .profile-container {
             position: relative;
         }
-
-        .profile-dropdown {
+        
+        .profile-dropdown, .left-dropdown {
             display: none;
             position: absolute;
-            right: 0;
-            top: 30px;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 5px;
             min-width: 150px;
             z-index: 10;
         }
-
+        
+        .profile-dropdown {
+            right: 0;
+            top: 30px;
+        }
+        
+        .left-dropdown {
+            left: 0;
+            top: 30px;
+        }
+        
         .profile-container:hover .profile-dropdown {
             display: flex;
             flex-direction: column;
         }
 
-        .profile-dropdown a {
+        .header-icons-left:hover .left-dropdown {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .profile-dropdown a, .left-dropdown a {
             padding: 10px 15px;
             text-decoration: none;
             color: #555;
             white-space: nowrap;
         }
-
-        .profile-dropdown a:hover {
+        
+        .profile-dropdown a:hover, .left-dropdown a:hover {
             background-color: #f0f0f0;
-        }
-
-        .content-container {
-            display: flex;
-            justify-content: center;
-            padding: 40px;
         }
 
         .main-content {
             width: 100%;
-            max-width: 800px;
             text-align: center;
         }
 
+        
         .welcome-message {
-            font-size: 2.5em;
+            font-size: 1.8em;
             color: #5d9e9e;
             font-weight: bold;
+            margin-top: 10px; 
             margin-bottom: 20px;
         }
 
-        .image-placeholder {
+        .outfit-image-container {
+            position: relative;
             width: 100%;
-            height: 600px;
-            background-color: #e0e0e0;
+            padding-bottom: 150%;
+            overflow: hidden;
             border-radius: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+        }
+
+        .outfit-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 10px;
         }
 
         .button-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .action-button {
-            padding: 15px 30px;
+            flex-grow: 1;
+            padding: 8px 12px;
             border: none;
             border-radius: 25px;
             color: white;
             font-weight: bold;
             cursor: pointer;
-            font-size: 1.1em;
-            min-width: 150px;
+            font-size: 0.9em; 
+            min-width: 100px; 
+            max-width: 130px; 
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .mi-armario { background-color: #5d9e9e; }
         .generar { background-color: #e69c67; }
         .capturar { background-color: #e06e78; }
-
-        .bottom-gallery {
+        
+        .carousel-container {
             width: 100%;
-            max-width: 1200px;
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        .gallery-title {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #444;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .gallery-item {
-            width: 100%;
-            padding-bottom: 100%;
-            background-color: #ddd;
+            height: 150px;
+            background-color: #f0f0f0;
             border-radius: 10px;
-        }
-
-        .gallery-nav {
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            padding: 10px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            text-align: center;
+            color: #888;
         }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #ccc;
-        }
-
-        .dot.active {
-            background-color: #e06e78;
-        }
- 
