@@ -50,7 +50,7 @@
         }
 
         .logo-small {
-            height: 50px; /* Altura de la imagen de perfil */
+            height: 40px; /* Altura de la imagen de perfil */
             width: auto; /* Mantiene la proporción */
             border-radius: 50%; /* Opcional: para que se vea circular */
             object-fit: contain;
@@ -66,14 +66,18 @@
         }
 
         .left-menu-container:hover .left-dropdown {
-         display: flex;
-         flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
         .left-menu-container {
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-icon {
+            font-size: 1.5em; 
+            padding: 10px; 
         }
 
         .header-icons-left span {
