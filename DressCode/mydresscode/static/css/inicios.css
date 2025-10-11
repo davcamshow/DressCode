@@ -23,7 +23,7 @@
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 24px;
+            padding: 32px;
         }
 
         .header {
@@ -44,10 +44,18 @@
         }
 
         .logo-main {
-            height: 40px;
+            height: 50px;
             width: auto;
             margin: 0 auto;
         }
+
+        .logo-small {
+            height: 50px; /* Altura de la imagen de perfil */
+            width: auto; /* Mantiene la proporción */
+            border-radius: 50%; /* Opcional: para que se vea circular */
+            object-fit: contain;
+        }
+      
         
         .header-icons-left {
             display: flex;
@@ -55,6 +63,17 @@
             gap: 10px;
             color: #555;
             font-size: 1.2em;
+        }
+
+        .left-menu-container:hover .left-dropdown {
+         display: flex;
+         flex-direction: column;
+        }
+        .left-menu-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
 
         .header-icons-left span {
@@ -94,9 +113,18 @@
         }
         
         .left-dropdown {
-            left: 0;
-            top: 30px;
+            display: none;
+            position: absolute;
+            top: 30px; /* Ajusta la distancia desde la parte superior del botón */
+            left: 0;   /* Se alinea a la izquierda del contenedor */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 150px;
+            z-index: 10;
+            
         }
+   
         
         .profile-container:hover .profile-dropdown {
             display: flex;
