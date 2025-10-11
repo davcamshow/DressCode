@@ -41,10 +41,11 @@ def register_password_view(request):
                 contrasena=make_password(contrasena)
             )
             usuario.save()
-            return redirect('login')  # o 'inicio' si prefieres
+            return redirect('Cuenta creada')  # o 'inicio' si prefieres
     return render(request, 'Password.html')
 
-
+def exit_view(request):
+    return render(request, 'Cuenta creada.html')
 # añado para ver el inicio
 
 def inicio(request):
@@ -82,7 +83,6 @@ def logout_view(request):
     """
     
     logout(request)
-    messages.success(request, 'Has cerrado tu sesión exitosamente.') #agregado par el mensaje que redirige a nuestrologin
     return redirect('login') # Redirige a la URL con el nombre 'login'
 
 def recovery_view(request):
