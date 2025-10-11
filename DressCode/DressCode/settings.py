@@ -1,7 +1,6 @@
-
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(_file_).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-782wde$qls(t$5_0&epbv@53qhvqjffnoy(z+y#e_ap*j9#xab'
 
@@ -52,12 +51,8 @@ WSGI_APPLICATION = 'DressCode.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'dresscode',
-        'USER':'postgres',
-        'PASSWORD':'Ghbase21',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
