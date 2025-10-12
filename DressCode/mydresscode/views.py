@@ -81,7 +81,7 @@ def logout_view(request):
     """
     Cierra la sesión del usuario y lo redirige a la página de login.
     """
-    
+    messages.success(request, "Has cerrado sesión exitosamente.")
     logout(request)
     return redirect('login') # Redirige a la URL con el nombre 'login'
 
