@@ -1,4 +1,8 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv #añadido par supabase
+
+load_dotenv() #cargar variables de entorno 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,12 +56,14 @@ WSGI_APPLICATION = 'DressCode.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'dresscode',
+        'NAME':'postgres',
         'USER':'postgres',
-        'PASSWORD':'postgres123',
-        'PASSWORD':'Ghbase21',
-        'HOST':'localhost',
+        'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
+        'HOST':os.getenv('SUPABASE_DB_HOST'),
         'PORT':'5432',
+        'OPTIONS':{
+            'sslmode': 'require',
+            },
     }
 }
 
@@ -92,3 +98,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "mydresscode" / "static"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+print("=== VERIFICANDO CONFIGURACIÓN ===")
+print("Database HOST:", os.getenv('SUPABASE_DB_HOST'))
+print("Database config:", DATABASES['default']['HOST'])
