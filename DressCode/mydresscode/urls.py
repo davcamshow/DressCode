@@ -13,4 +13,5 @@ urlpatterns = [
     path('inicio/', views.inicio, name='inicio'),
     path('camera/', views.capturar_view, name='camera'), 
     path('logout/', views.logout_view, name='logout'),
+    path('closet/', views.my_closet, name='my_closet'),
 ]
