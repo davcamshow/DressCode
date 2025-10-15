@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv #añadido par supabase
+from dotenv import load_dotenv
 
 load_dotenv() #cargar variables de entorno 
 

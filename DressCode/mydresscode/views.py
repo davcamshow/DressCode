@@ -128,3 +128,6 @@ def newPassword_view(request):
                 return redirect('home')  # Redirige a welcome
 
     return render(request, 'newPassword.html', {'error': error})
+
+def my_closet(request):
+    return render(request, 'myCloset.html')

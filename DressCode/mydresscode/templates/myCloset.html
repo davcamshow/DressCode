@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi armario</title>
+  <link rel="stylesheet" href="{% static 'css/myCloset.css' %}">
+</head>
+<body>
+
+  <!-- Encabezado superior -->
+  <header class="top-bar">
+    <div class="header-left">Mi Armario</div>
+    <div class="header-right">
+      <a href="{% url 'inicio' %}" class="header-icon">
+        <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
+      </a>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <section class="filter-section">
+    <nav class="filters">
+      <button class="active">Todo</button>
+      <button>Ropa</button>
+      <button>Accesorios</button>
+      <button>Calzado</button>
+    </nav>
+    <p id="contador"># elementos</p>
+  </section>
+
+  <!-- Navegación inferior -->
+  <footer class="bottom-nav">
+    <a href="{% url 'inicio' %}" class="nav-btn">
+      <img src="{% static 'img/iconoInicio.png'%}" alt="Inicio" />
+      <span>Inicio</span>
+    </a>
+    <div class="nav-dot"></div>
+    <button class="nav-btn">
+      <img src="{% static 'img/iconoAñadir.jpg' %}" alt="Añadir" />
+      <span>Añadir</span>
+    </button>
+  </footer>
+
+  <script src="{% static 'js/myCloset.js' %}"></script>
+</body>
+</html>
