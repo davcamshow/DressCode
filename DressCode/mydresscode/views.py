@@ -44,6 +44,10 @@ def register_password_view(request):
             return redirect('Cuenta creada')  # o 'inicio' si prefieres
     return render(request, 'Password.html')
 
+def capturar_view(request):
+    """Renderiza la página para capturar fotos con la cámara."""
+    return render(request, 'camera.html')
+
 def exit_view(request):
     return render(request, 'Cuenta creada.html')
 # añado para ver el inicio

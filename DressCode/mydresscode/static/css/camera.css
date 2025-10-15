@@ -1,0 +1,190 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo-main {
+    text-align: center;
+    flex-grow: 1;
+}
+
+.logo-main {
+    height: 50px;
+    width: auto;
+    margin: 0 auto;
+}
+
+.logo-small {
+    height: 40px;
+    width: auto;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.header-icons-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    font-size: 1.2em;
+}
+
+.back-button {
+    text-decoration: none;
+    color: #555;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.header-icons-left span {
+    font-size: 0.9em;
+}
+
+.header-icons-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    min-width: 150px;
+    z-index: 10;
+    right: 0;
+    top: 30px;
+}
+
+.profile-container:hover .profile-dropdown {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-dropdown a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #555;
+    white-space: nowrap;
+}
+
+.profile-dropdown a:hover {
+    background-color: #f0f0f0;
+}
+
+.main-content {
+    width: 100%;
+    text-align: center;
+}
+
+.title {
+    font-size: 1.8em;
+    color: #5d9e9e;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.camera-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#video, #canvas, .photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.capture-button, .retake-button, .save-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1em;
+    min-width: 120px;
+}
+
+.capture-button {
+    background-color: #e06e78;
+}
+
+.retake-button {
+    background-color: #5d9e9e;
+}
+
+.save-button {
+    background-color: #e69c67;
+}
+
+.instructions {
+    color: #888;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
