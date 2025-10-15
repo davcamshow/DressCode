@@ -13,7 +13,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django.contrib.admin',  
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,7 +58,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME':'postgres',
         'USER':'postgres',
+        #'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
         'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
+        #'HOST':os.getenv('SUPABASE_DB_HOST'),
         'HOST':os.getenv('SUPABASE_DB_HOST'),
         'PORT':'5432',
         'OPTIONS':{
