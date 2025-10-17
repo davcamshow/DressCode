@@ -1,4 +1,5 @@
 {% load static %}
+<!--
 <!DOCTYPE html>
 <html lang="es">
 
@@ -11,7 +12,6 @@
 
 <body>
 
-  <!-- Pantalla de Inicio -->
   <section class="pantalla pantalla-inicio">
     <div class="logo">
       <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
@@ -24,3 +24,46 @@
   </section>
 </body>
 </html>
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DressCode - Inicio</title>
+  <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="welcome-container">
+
+    <!-- Header con logo y menú -->
+    <header>
+      <div class="logo">
+        <img src="{% static 'img/logo.jpg' %}" alt="Logo DressCode">
+      </div>
+      <nav class="menu">
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+        <a href="{% url 'register' %}">Registrarse</a>
+      </nav>
+    </header>
+
+
+    <div class="welcome-text">
+      <h1>Bienvenido a DressCode</h1>
+      <p>Gestiona tu guardarropa y crea outfits perfectos con inteligencia artificial</p>
+    </div>
+    <div class="extra-spot"></div>
+  </div>
+</body>
+
+</html>
+
+
+
+
+
+
