@@ -13,8 +13,7 @@ class Usuario(models.Model):
     class Meta:
         db_table = 'usuario'
 
-
-class Prenda(models.Model):
+class Armario(models.Model):
     idPrenda = models.AutoField(primary_key=True)
 
     idUsuario = models.ForeignKey(
@@ -29,11 +28,12 @@ class Prenda(models.Model):
     imagen = models.CharField(max_length=255)     # ruta o URL en Supabase Storage
     temporada = models.CharField(max_length=40, blank=True)
     estilo = models.CharField(max_length=60, blank=True)
+    clasificacion = models.CharField(max_length=60, blank=True)
     esFavorito = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'prenda'
+        db_table = 'armario'
         ordering = ['-fecha']  # más recientes primero
 
     def __str__(self):
