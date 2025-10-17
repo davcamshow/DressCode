@@ -9,7 +9,6 @@
 </head>
 <body>
 
-  <!-- Encabezado superior -->
   <header class="top-bar">
     <div class="header-left">Mi Armario</div>
     <div class="header-right">
@@ -31,7 +30,10 @@
     <p id="contador"># elementos</p>
   </section>
 
-  <!-- Navegación inferior -->
+  <section class="photo-grid" id="photoGrid">
+  </section>
+
+
   <footer class="bottom-nav">
     <a href="{% url 'inicio' %}" class="nav-btn">
       <img src="{% static 'img/iconoInicio.png'%}" alt="Inicio" />
