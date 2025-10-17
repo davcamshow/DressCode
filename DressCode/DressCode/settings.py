@@ -105,3 +105,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 print("=== VERIFICANDO CONFIGURACIÓN ===")
 print("Database HOST:", os.getenv('SUPABASE_DB_HOST'))
 print("Database config:", DATABASES['default']['HOST'])
+
+
+# Guardar las credenciales como variables de configuración de Django
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+
+# Opcional: Define el nombre del bucket
+SUPABASE_STORAGE_BUCKET = 'armario-digital'
