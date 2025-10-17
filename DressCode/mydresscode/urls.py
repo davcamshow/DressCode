@@ -14,4 +14,5 @@ urlpatterns = [
     path('camera/', views.capturar_view, name='camera'), 
     path('logout/', views.logout_view, name='logout'),
     path('closet/', views.my_closet, name='my_closet'),
+    path('subir-prenda/', views.subir_prenda, name='subir_prenda'),
 ]
