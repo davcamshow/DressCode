@@ -8,54 +8,60 @@
     <link rel="stylesheet" href="{% static 'css/camera.css' %}">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-icons-left">
-                <a href="{% url 'inicio' %}" class="back-button">←</a>
-                <span>37°C</span>
-            </div>
-            
-            <div class="header-logo-main">
-                <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-main">
-            </div>
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+    
+    <header class="header">
+        <div class="header-icons-left">
+            <a href="{% url 'inicio' %}" class="back-button">← Volver</a>
+            <div class="temperature-display">37°C</div>
+        </div>
+        
+        <div class="header-logo-main">
+            <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-main">
+        </div>
 
-            <div class="header-icons-right">
-                <div class="profile-container">
-                    <button class="icon-button">
-                        <img src="{% static 'img/foto-de-perfil.png' %}" alt="perfil" class="logo-small">
-                    </button>
-                    <div class="profile-dropdown">
-                        <a href="#">Ver perfil</a>
-                        <a href="{% url 'logout' %}">Cerrar sesión</a>
-                    </div>
+        <div class="header-icons-right">
+            <div class="profile-container">
+                <button class="icon-button">
+                    <img src="{% static 'img/foto-de-perfil.png' %}" alt="perfil" class="logo-small">
+                </button>
+                <div class="profile-dropdown">
+                    <a href="#">Ver perfil</a>
+                    <a href="{% url 'logout' %}">Cerrar sesión</a>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <main class="main-content">
-            <h1 class="title">Capturar Prenda</h1>
-            <div class="camera-container">
-                <video id="video" autoplay playsinline></video>
-                <canvas id="canvas" style="display:none;"></canvas>
-                <div id="photo-preview" class="photo-preview" style="display:none;"></div>
-            </div>
-            
-            <div class="controls">
-                <button id="capture-btn" class="capture-button">Tomar Foto</button>
-                <button id="retake-btn" class="retake-button" style="display:none;">Volver a Tomar</button>
-                <button id="save-btn" class="save-button" style="display:none;">Guardar</button>
-            </div>
-            
-            <div class="instructions">
-                <p>Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada.</p>
-            </div>
-        </main>
-    </div>
-        <script>
+    <main class="main-content">
+        <h1 class="title">Capturar Prenda</h1>
+        
+        <div class="camera-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <div id="photo-preview" class="photo-preview" style="display:none;"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="capture-btn" class="capture-button">Tomar Foto</button>
+            <button id="retake-btn" class="retake-button" style="display:none;">Volver a Tomar</button>
+            <button id="save-btn" class="save-button" style="display:none;">Guardar</button>
+        </div>
+        
+        <div class="instructions">
+            <p>Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada para obtener los mejores resultados.</p>
+            <p>Mantén la cámara estable al tomar la foto.</p>
+        </div>
+    </main>
+    <script>
         const INICIO_URL = "{% url 'inicio' %}";
         </script>
 
-        <script src="{% static 'js/camera.js' %}"></script>
-    
+    <script src="{% static 'js/camera.js' %}"></script>
 </body>
 </html>
