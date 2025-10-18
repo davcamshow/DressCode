@@ -1,8 +1,13 @@
+"""
+Django settings for DressCode project.
+"""
+
 from pathlib import Path
 import os
+import json
 from dotenv import load_dotenv
 
-load_dotenv() #cargar variables de entorno 
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,14 +18,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    'django.contrib.admin',  
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mydresscode',
-
 ]
 
 MIDDLEWARE = [
@@ -52,23 +56,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DressCode.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'postgres',
-        'USER':'postgres',
-        #'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
+        'NAME': 'postgres',
+        'USER': 'postgres',
         'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
-        #'HOST':os.getenv('SUPABASE_DB_HOST'),
-        'HOST':os.getenv('SUPABASE_DB_HOST'),
-        'PORT':'5432',
-        'OPTIONS':{
+        'HOST': os.getenv('SUPABASE_DB_HOST'),
+        'PORT': '5432',
+        'OPTIONS': {
             'sslmode': 'require',
-            },
+        },
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -85,31 +85,42 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
-
 USE_TZ = True
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [BASE_DIR / "mydresscode" / "static"]
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-print("=== VERIFICANDO CONFIGURACIÓN ===")
-print("Database HOST:", os.getenv('SUPABASE_DB_HOST'))
-print("Database config:", DATABASES['default']['HOST'])
-
-
-# Guardar las credenciales como variables de configuración de Django
+# Configuración Supabase
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-
-# Opcional: Define el nombre del bucket
 SUPABASE_STORAGE_BUCKET = 'armario-digital'
+
+# Configuración Google Cloud Vision
+GOOGLE_CLOUD_CREDENTIALS = {
+    "type": "service_account",
+    "project_id": "micro-agency-475308-b4",
+    "private_key_id": "bb4dfa9f5d115ee39fe9a971742566d081a20580",
+    "private_key": os.getenv('GOOGLE_CLOUD_PRIVATE_KEY', '').replace('\\n', '\n'),
+    "client_email": "dresscode-vision-packaging-ana@micro-agency-475308-b4.iam.gserviceaccount.com",
+    "client_id": "100507476148578825873",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dresscode-vision-packaging-ana%40micro-agency-475308-b4.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+
+# Guardar credenciales de Google Cloud
+GOOGLE_APPLICATION_CREDENTIALS = BASE_DIR / 'google_credentials.json'
+with open(GOOGLE_APPLICATION_CREDENTIALS, 'w') as f:
+    json.dump(GOOGLE_CLOUD_CREDENTIALS, f)
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(GOOGLE_APPLICATION_CREDENTIALS)
+
+print("=== CONFIGURACIÓN COMPLETADA ===")
+print("Supabase Host:", os.getenv('SUPABASE_DB_HOST'))
+print("Google Cloud configurado:", GOOGLE_APPLICATION_CREDENTIALS.exists())
