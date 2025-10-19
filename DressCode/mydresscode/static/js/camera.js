@@ -5,7 +5,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trim();
-            // Verifica si la cadena de la cookie comienza con el nombre que buscamos
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -18,7 +17,9 @@ function getCookie(name) {
 // Función para mostrar mensajes al usuario
 function showMessage(message, type = 'success') {
     const messageDiv = document.createElement('div');
-    const backgroundColor = type === 'success' ? '#5d9e9e' : '#e06e78';
+    const backgroundColor = type === 'success' ? '#5d9e9e' : 
+                           type === 'error' ? '#e06e78' : 
+                           type === 'info' ? '#e69c67' : '#5d9e9e';
     
     messageDiv.style.cssText = `
         position: fixed;
@@ -34,13 +35,87 @@ function showMessage(message, type = 'success') {
         font-weight: bold;
         text-align: center;
         max-width: 80%;
+        white-space: pre-line;
     `;
     messageDiv.textContent = message;
     document.body.appendChild(messageDiv);
     
     setTimeout(() => {
         messageDiv.remove();
-    }, type === 'success' ? 3000 : 5000);
+    }, type === 'success' ? 5000 : type === 'error' ? 5000 : 4000);
+}
+
+// Función para mostrar resultados detallados
+function showDetailedResults(analisis) {
+    const resultsDiv = document.createElement('div');
+    resultsDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        z-index: 1001;
+        max-width: 90%;
+        max-height: 80%;
+        overflow-y: auto;
+        text-align: left;
+    `;
+    
+    resultsDiv.innerHTML = `
+        <h2 style="color: #5d9e9e; margin-bottom: 20px; text-align: center;">🎯 Análisis Completado</h2>
+        <div style="margin-bottom: 15px;">
+            <strong>Tipo de prenda:</strong> ${analisis.tipo}
+        </div>
+        <div style="margin-bottom: 15px;">
+            <strong>Color principal:</strong> ${analisis.color}
+        </div>
+        <div style="margin-bottom: 15px;">
+            <strong>Estilo:</strong> ${analisis.estilo}
+        </div>
+        <div style="margin-bottom: 15px;">
+            <strong>Temporada:</strong> ${analisis.temporada}
+        </div>
+        <div style="margin-bottom: 15px;">
+            <strong>Confianza del análisis:</strong> ${(analisis.confianza * 100).toFixed(1)}%
+        </div>
+        ${analisis.colores_dominantes && analisis.colores_dominantes.length > 0 ? `
+            <div style="margin-bottom: 15px;">
+                <strong>Colores detectados:</strong> ${analisis.colores_dominantes.join(', ')}
+            </div>
+        ` : ''}
+        ${analisis.detalles && analisis.detalles.length > 0 ? `
+            <div style="margin-bottom: 20px;">
+                <strong>Detalles:</strong>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    ${analisis.detalles.map(detalle => `<li>${detalle}</li>`).join('')}
+                </ul>
+            </div>
+        ` : ''}
+        <div style="text-align: center; margin-top: 25px;">
+            <button id="closeResults" style="
+                background: #5d9e9e;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: bold;
+            ">Continuar</button>
+        </div>
+    `;
+    
+    document.body.appendChild(resultsDiv);
+    
+    document.getElementById('closeResults').addEventListener('click', function() {
+        resultsDiv.remove();
+        // Redirigir al inicio después de cerrar
+        setTimeout(() => {
+            window.location.href = INICIO_URL || "/inicio/";
+        }, 500);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -57,47 +132,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para enviar el Blob al servidor de Django
     async function sendImageToDjango(blob) {
-        // Mostrar mensaje de carga
-        showMessage('Procesando imagen...', 'info');
+        showMessage('🔍 Analizando prenda con IA...\nEsto puede tomar unos segundos', 'info');
         
-        // 1. Preparar el envío con FormData
         const formData = new FormData();
-        // 'imagen_prenda' DEBE coincidir con la clave que Django espera en request.FILES
         formData.append('imagen_prenda', blob, 'prenda_capturada.png');
 
-        // 2. Configurar la petición
         try {
-            const response = await fetch('/subir-prenda/', { 
+            const response = await fetch('/subir-prenda/', {
                 method: 'POST',
                 body: formData,
-                // MUY IMPORTANTE: Incluir el token CSRF
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken') 
+                    'X-CSRFToken': getCookie('csrftoken')
                 }
             });
 
-            const data = await response.json(); // Intentamos parsear la respuesta JSON
+            const data = await response.json();
 
-            if (response.ok) {
-                // Éxito: Django respondió 200 (OK)
-                showMessage('✅ Foto procesada, etiquetada y guardada en Supabase.', 'success');
-                
-                // Redirigir de vuelta a la página principal después de guardar
-                setTimeout(() => {
-                    window.location.href = INICIO_URL || "{% url 'inicio' %}";
-                }, 1500);
+            if (response.ok && data.success) {
+                // Mostrar resultados detallados
+                showDetailedResults(data.analisis);
             } else {
-                // Falla: Django respondió un código de error (400, 401, 500)
                 console.error('Error del servidor:', data.error || response.statusText);
-                showMessage(`❌ Error al guardar: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
-                // Revertir los botones para que el usuario pueda volver a intentarlo
-                retakeBtn.click(); 
+                showMessage(`❌ Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
+                retakeBtn.click();
             }
         } catch (error) {
             console.error('Error de red/conexión:', error);
             showMessage('❌ Error de conexión. Inténtalo de nuevo.', 'error');
-            // Revertir los botones
-            retakeBtn.click(); 
+            retakeBtn.click();
         }
     }
     
@@ -106,20 +168,18 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { 
-                    facingMode: 'environment', // Preferir cámara trasera si está disponible
+                    facingMode: 'environment',
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 } 
             });
             video.srcObject = stream;
             
-            // Esperar a que el video cargue para obtener sus dimensiones reales
             video.addEventListener('loadedmetadata', function() {
                 videoWidth = video.videoWidth;
                 videoHeight = video.videoHeight;
                 console.log('Dimensiones del video:', videoWidth, 'x', videoHeight);
                 
-                // Configurar el canvas con las mismas dimensiones del video
                 canvas.width = videoWidth;
                 canvas.height = videoHeight;
                 
@@ -132,28 +192,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Capturar foto - VERSIÓN MEJORADA
+    // Capturar foto
     captureBtn.addEventListener('click', function() {
-        // Efecto visual al capturar
         captureBtn.style.transform = 'scale(0.95)';
         setTimeout(() => {
             captureBtn.style.transform = '';
         }, 150);
         
-        // Obtener las dimensiones reales del video
         const actualVideoWidth = video.videoWidth;
         const actualVideoHeight = video.videoHeight;
         
-        // Configurar el canvas con las dimensiones exactas del video
         canvas.width = actualVideoWidth;
         canvas.height = actualVideoHeight;
         
         const context = canvas.getContext('2d');
-        
-        // Dibujar la imagen completa del video en el canvas
         context.drawImage(video, 0, 0, actualVideoWidth, actualVideoHeight);
         
-        // Mostrar vista previa con efecto
         const dataURL = canvas.toDataURL('image/png');
         photoPreview.innerHTML = `<img src="${dataURL}" alt="Foto capturada" style="width: 100%; height: 100%; object-fit: contain;">`;
         photoPreview.style.display = 'block';
@@ -164,13 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
             video.style.display = 'none';
         }, 10);
         
-        // Cambiar visibilidad de botones con transición
         setTimeout(() => {
             captureBtn.style.display = 'none';
             retakeBtn.style.display = 'inline-block';
             saveBtn.style.display = 'inline-block';
             
-            // Efecto de aparición para los nuevos botones
             setTimeout(() => {
                 retakeBtn.style.opacity = '1';
                 saveBtn.style.opacity = '1';
@@ -180,7 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Volver a tomar foto
     retakeBtn.addEventListener('click', function() {
-        // Efecto visual
         retakeBtn.style.transform = 'scale(0.95)';
         setTimeout(() => {
             retakeBtn.style.transform = '';
@@ -196,42 +247,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 video.style.opacity = '1';
             }, 50);
             
-            // Cambiar visibilidad de botones
             captureBtn.style.display = 'inline-block';
             retakeBtn.style.display = 'none';
             saveBtn.style.display = 'none';
         }, 300);
     });
     
-    // Guardar foto - VERSIÓN MEJORADA
+    // Guardar foto
     saveBtn.addEventListener('click', function() {
-        // Efecto visual
         saveBtn.style.transform = 'scale(0.95)';
         setTimeout(() => {
             saveBtn.style.transform = '';
         }, 150);
         
-        // 1. Obtener la imagen como un objeto Blob (archivo)
+        // Deshabilitar botones durante el procesamiento
+        saveBtn.disabled = true;
+        retakeBtn.disabled = true;
+        saveBtn.textContent = 'Procesando...';
+        
         canvas.toBlob(async function(blob) {
             if (!blob) {
                 showMessage('Error: No se pudo generar el archivo de imagen.', 'error');
+                saveBtn.disabled = false;
+                retakeBtn.disabled = false;
+                saveBtn.textContent = 'Guardar';
                 return;
             }
 
-            // 2. Pasar al siguiente paso: envío con fetch
             await sendImageToDjango(blob);
 
-        }, 'image/png'); // Formato de la imagen: PNG
+        }, 'image/png');
     });
     
-    // Efectos adicionales para mejorar la experiencia
+    // Efectos adicionales
     document.querySelectorAll('button').forEach(button => {
         button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-2px)';
+            }
         });
         
         button.addEventListener('mouseleave', function() {
-            this.style.transform = '';
+            if (!this.disabled) {
+                this.style.transform = '';
+            }
         });
     });
     
