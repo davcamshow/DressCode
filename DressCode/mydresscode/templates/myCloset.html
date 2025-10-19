@@ -27,10 +27,34 @@
       <button>Accesorios</button>
       <button>Calzado</button>
     </nav>
-    <p id="contador"># elementos</p>
+    <!--p id="contador"># elementos</p-->
+    <p id="contador">{{ prendas_del_armario|length}} elementos</p>
   </section>
 
   <section class="photo-grid" id="photoGrid">
+    {% if prendas_del_armario %}
+            {% for prenda in prendas_del_armario %}
+                <div class="photo-item" data-tipo="{{ prenda.tipo }}"> 
+                    
+                    <img 
+                        src="{{ prenda.imagen }}" 
+                        alt="{{ prenda.tipo }}" 
+                        loading="lazy"
+                        title="Tipo: {{ prenda.tipo }} | Color: {{ prenda.color }}"
+                    >
+                    
+                    <div 
+                        class="heart {% if prenda.esFavorito %}active{% endif %}"
+                        data-prenda-id="{{ prenda.idPrenda }}"
+                    ></div>
+                    
+                    </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; grid-column: 1 / -1; margin-top: 20px;">
+                ¡Tu armario está vacío! 
+            </p>
+        {% endif %}
   </section>
 
 
