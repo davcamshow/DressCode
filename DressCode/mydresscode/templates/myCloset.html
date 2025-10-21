@@ -34,7 +34,7 @@
   <section class="photo-grid" id="photoGrid">
     {% if prendas_del_armario %}
             {% for prenda in prendas_del_armario %}
-                <div class="photo-item" data-tipo="{{ prenda.tipo }}"> 
+                <div class="photo-item" data-id="{{ prenda.idPrenda }}" data-tipo="{{ prenda.tipo }}">
                     
                     <img 
                         src="{{ prenda.imagen }}" 
@@ -69,6 +69,22 @@
       <span>Añadir</span>
     </button>
   </footer>
+
+    <div id="selectionActions" class="selection-actions hidden">
+      <button id="cancelSelection" class="action-btn cancel">Cancelar</button>
+      <span id="selectionCount">0 seleccionadas</span>
+
+      <button id="deleteSelection" class="action-btn delete">
+        <img src="{% static 'img/iconoDelete.png' %}" alt="Eliminar" />
+      </button>
+      
+    </div>
+    <div id="mensajeExito" class="mensaje-exito hidden">
+      Eliminación exitosa
+    </div>
+    <div id="mensajeError" class="mensaje-flotante hidden">
+      No se pudo eliminar
+    </div>
 
   <script src="{% static 'js/myCloset.js' %}"></script>
 </body>

@@ -243,3 +243,4 @@ def resultados_analisis(request, prenda_id):
     except Armario.DoesNotExist:
         messages.error(request, "La prenda no fue encontrada.")
         return redirect('my_closet')
+    

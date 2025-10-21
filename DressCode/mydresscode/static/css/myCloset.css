@@ -126,7 +126,7 @@ body {
   background-color: #fff;
 }
 
-/* Imagen */
+
 .photo-item img {
   width: 100%;
   height: 180px;
@@ -135,9 +135,116 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Zoom suave */
+
 .photo-item:hover img {
   transform: scale(1.05);
+}
+/* Aqui empiezan las acciones de selección y eliminar */
+.selection-actions {
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+  transition: opacity 0.3s ease;
+}
+
+.selection-actions.hidden {
+  display: none;
+}
+
+.action-btn {
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.action-btn.cancel {
+  color: #555;
+}
+
+.action-btn.delete {
+  color: #ff4d6d;
+}
+
+.photo-item.selected {
+  outline: 3px solid #ff4d6d;
+  opacity: 0.85;
+}
+#selectionCount {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.action-btn img {
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+}
+
+.mensaje-exito {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4d6d;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.mensaje-exito.show {
+  opacity: 1;
+}
+
+.mensaje-exito.hidden {
+  display: none;
+}
+
+.mensaje-flotante {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4d6d;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.mensaje-flotante.show {
+  opacity: 1;
+}
+
+.mensaje-flotante.hidden {
+  display: none;
+}
+
+#mensajeError {
+  background-color: #333;
 }
 
 /* Responsivo para móviles */
