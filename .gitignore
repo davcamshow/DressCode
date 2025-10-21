@@ -17,3 +17,5 @@ db.sqlite3
 # Sistema
 .DS_Store
 Thumbs.db
+
+google_credentials.json
