@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para enviar el Blob al servidor de Django
     async function sendImageToDjango(blob) {
-        showMessage('🔍 Analizando prenda con IA...\nEsto puede tomar unos segundos', 'info');
+        showMessage(' Analizando prenda con IA...\nEsto puede tomar unos segundos', 'info');
         
         const formData = new FormData();
         formData.append('imagen_prenda', blob, 'prenda_capturada.png');
@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 showDetailedResults(data.analisis);
             } else {
                 console.error('Error del servidor:', data.error || response.statusText);
-                showMessage(`❌ Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
+                showMessage(` Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
                 retakeBtn.click();
             }
         } catch (error) {
             console.error('Error de red/conexión:', error);
-            showMessage('❌ Error de conexión. Inténtalo de nuevo.', 'error');
+            showMessage(' Error de conexión. Inténtalo de nuevo.', 'error');
             retakeBtn.click();
         }
     }
