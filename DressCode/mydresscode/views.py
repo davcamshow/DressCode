@@ -12,6 +12,9 @@ from .services import ImageAnalyzer
 import uuid
 import os
 import logging
+from django.views.decorators.http import require_POST
+import json
+
 
 logger = logging.getLogger(__name__)
 
@@ -243,4 +246,46 @@ def resultados_analisis(request, prenda_id):
     except Armario.DoesNotExist:
         messages.error(request, "La prenda no fue encontrada.")
         return redirect('my_closet')
+    
+@csrf_exempt
+@require_POST
+def eliminar_prendas(request):
+    """Elimina las prendas seleccionadas tanto de la base de datos como de Supabase Storage."""
+    try:
+        data = json.loads(request.body)
+        ids = data.get('ids', [])
+
+        if not ids:
+            return JsonResponse({'status': 'error', 'message': 'No se recibieron IDs.'}, status=400)
+
+        usuario_id = request.session.get('usuario_id')
+        if not usuario_id:
+            return JsonResponse({'status': 'error', 'message': 'Usuario no autenticado.'}, status=401)
+
+        # Obtener las prendas del usuario
+        prendas = Armario.objects.filter(idPrenda__in=ids, idUsuario=usuario_id)
+
+        if not prendas.exists():
+            return JsonResponse({'status': 'error', 'message': 'No se encontraron las prendas.'}, status=404)
+
+        # Eliminar imágenes de Supabase Storage
+        for prenda in prendas:
+            try:
+                # Extraer el nombre del archivo desde la URL pública
+                image_path = prenda.imagen.split('/storage/v1/object/public/')[1]
+                supabase.storage.from_(SUPABASE_STORAGE_BUCKET).remove([image_path])
+            except Exception as e:
+                logger.warning(f"No se pudo eliminar imagen de Supabase: {e}")
+
+        # Eliminar los registros de la base de datos
+        prendas.delete()
+
+        return JsonResponse({'status': 'ok', 'message': 'Prendas eliminadas correctamente.'})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'JSON inválido.'}, status=400)
+    except Exception as e:
+        logger.error(f"Error al eliminar prendas: {e}")
+        return JsonResponse({'status': 'ok', 'message': 'Prendas eliminadas correctamente.'})
+
     

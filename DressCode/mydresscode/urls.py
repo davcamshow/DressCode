@@ -15,4 +15,5 @@ urlpatterns = [
     path('closet/', views.my_closet, name='my_closet'),
     path('subir-prenda/', views.subir_prenda, name='subir_prenda'),
     path('resultados/<int:prenda_id>/', views.resultados_analisis, name='resultados_analisis'),
+    path('eliminar-prendas/', views.eliminar_prendas, name='eliminar_prendas'),
 ]
