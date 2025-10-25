@@ -43,6 +43,11 @@
 </head>
 <body>
     <script>
+        const WEATHER_API_KEY = '8a33fa8635d6adf10672a0fa18b68316';
+        const WEATHER_CITY = 'Morelia'; 
+        const WEATHER_UNITS = 'metric';
+    
+
         document.addEventListener('DOMContentLoaded', () => {
             const menuToggle = document.getElementById('menu-toggle');
             const sidebar = document.getElementById('sidebar');
@@ -52,8 +57,107 @@
                     sidebar.classList.toggle('is-open');
                 });
             }
+             loadWeather();
             renderSvgIcons();   
         });
+
+        async function loadWeather() {
+            const weatherElement = document.getElementById('weather-display');
+            const weatherIcon = document.getElementById('weather-icon');
+            const weatherTemp = document.getElementById('weather-temp');
+            
+            if (!weatherElement) return;
+
+            try {
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+                        <span>Cargando clima...</span>
+                    </div>
+                `;
+
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${WEATHER_CITY}&units=${WEATHER_UNITS}&appid=${WEATHER_API_KEY}&lang=es`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener datos del clima');
+                }
+
+                const data = await response.json();
+                
+                const temperature = Math.round(data.main.temp);
+                const description = data.weather[0].description;
+                const iconCode = data.weather[0].icon;
+                
+                // Mapear iconos de OpenWeatherMap a Font Awesome
+                const iconMap = {
+                    '01d': 'fa-sun',           
+                    '01n': 'fa-moon',          
+                    '02d': 'fa-cloud-sun',    
+                    '02n': 'fa-cloud-moon',    
+                    '03d': 'fa-cloud',         
+                    '03n': 'fa-cloud',
+                    '04d': 'fa-cloud',         
+                    '04n': 'fa-cloud',
+                    '09d': 'fa-cloud-rain',    
+                    '09n': 'fa-cloud-rain',
+                    '10d': 'fa-cloud-sun-rain',
+                    '10n': 'fa-cloud-moon-rain',
+                    '11d': 'fa-bolt',          
+                    '11n': 'fa-bolt',
+                    '13d': 'fa-snowflake',     
+                    '13n': 'fa-snowflake',
+                    '50d': 'fa-smog',          
+                    '50n': 'fa-smog'
+                };
+
+                const weatherIconClass = iconMap[iconCode] || 'fa-cloud-sun';
+                const iconColor = getIconColor(iconCode);
+
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold p-2 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors" title="${description}">
+                        <i class="fas ${weatherIconClass} ${iconColor}"></i>
+                        <span>${temperature}°C</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                // por si falla la API mostrar eso
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold p-2 bg-gray-100 rounded-lg">
+                        <i class="fas fa-cloud-sun text-yellow-500"></i>
+                        <span>22°C</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Función para determinar el color del icono según el clima
+        function getIconColor(iconCode) {
+            const colorMap = {
+                '01d': 'text-yellow-500',    
+                '01n': 'text-blue-300',      
+                '02d': 'text-orange-400',      
+                '02n': 'text-blue-400',        
+                '03d': 'text-gray-400',     
+                '03n': 'text-gray-400',
+                '04d': 'text-gray-500',       
+                '04n': 'text-gray-500',
+                '09d': 'text-blue-500',       
+                '09n': 'text-blue-500',
+                '10d': 'text-blue-600',       
+                '10n': 'text-blue-600',
+                '11d': 'text-purple-500',   
+                '11n': 'text-purple-500',
+                '13d': 'text-blue-200',      
+                '13n': 'text-blue-200',
+                '50d': 'text-gray-300',       
+                '50n': 'text-gray-300'
+            };
+            return colorMap[iconCode] || 'text-yellow-500';
+        }
 
         const IconUser = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
         const IconHeart = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3.51.76-4.5 2.22-1-.46-2.75-1.22-4.5-1.22A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"></path></svg>`;
@@ -95,19 +199,22 @@
                         <button id="menu-toggle" class="lg:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Abrir Menú">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <div class="flex items-center gap-2 text-gray-700 font-semibold p-2 bg-gray-100 rounded-lg">
-                            <i class="fas fa-cloud-sun text-yellow-500"></i>
-                            <span>22°C</span>
+                        <div id="weather-display">
+                            <!-- se carga el clima dinamicamnete -->
+                            <div class="flex items-center gap-2 text-gray-700 font-semibold p-2 bg-gray-100 rounded-lg">
+                                <i class="fas fa-cloud-sun text-yellow-500"></i>
+                                <span>22°C</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 text-primary-dark font-bold text-xl sm:text-2xl">
-                        <h1>Dresscode</h1>
+                   <div class="flex items-center gap-2 text-primary-dark font-bold text-xl sm:text-2xl">
+                         <img src="{% static 'img/logotipodresscode.jpeg' %}" alt="Logo Dresscode" class="max-h-12 w-auto sm:max-h-14 object-contain">
                     </div>
 
                     <div class="flex items-center justify-end gap-2">
                         <a href="{% url 'my_closet' %}" class="btn-secondary-custom p-2 sm:p-3 rounded-full hidden sm:block" title="Mi Armario">
-                            <span data-icon="Shirt" class="text-gray-700"></span>
+                            <img src="{% static 'img/gancho-de-ropa.png' %}" alt="Armario" class="w-6 h-6 object-contain">
                         </a>
                         <a href="#" class="btn-secondary-custom p-2 sm:p-3 rounded-full" title="Favoritos">
                             <span data-icon="Heart" class="text-primary-accent"></span>
@@ -117,7 +224,7 @@
                             <a href="#" class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-pink-500 bg-white hover:bg-pink-50" title="Perfil">
                                 <i data-lucide="user" class="w-5 h-5 text-pink-500"></i>
                             </a>
-                            <div class="absolute right-0 mt-3 w-40 bg-white border border-gray-200 rounded-lg shadow-xl hidden group-hover:block z-50">
+                            <div class="absolute right-0 mt-3 w-40 bg-white border border-gray-200 rounded-lg shadow-xl hidden group-hover:block z-50 ">
                                 <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">Ver perfil</a>
                                 <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-b-lg">Cerrar sesión</a>
                             </div>
@@ -136,13 +243,13 @@
                     <div class="w-full bg-purple-50 bg-opacity-70 border border-purple-200 rounded-xl p-5 mb-8 shadow-sm mt-6">
                         <h2 class="flex items-center text-lg font-bold text-primary-dark mb-2">
                             <i class="fas fa-bolt text-purple-600 mr-3"></i> 
-                            Recomendación de Estilo
+                            ¡Tu Ropa y Estilo, al Máximo!
                         </h2>
                         <div id="recommendation-loader" class="text-gray-500 text-sm flex items-center hidden">
                             <i class="fas fa-spinner fa-spin mr-2"></i> Cargando recomendación...
                         </div>
                         <p id="recommendation-text" class="text-gray-700">
-                            Hoy es un día perfecto para lucir un outfit casual y cómodo. El clima es ideal para capas ligeras y colores neutros. Sugerimos pantalones chinos y una camisa de lino con una cazadora vaquera.
+                            Captura, combina y guarda tus looks para cada ocasión, aprovechando al máximo cada prenda.
                         </p>
                         <div id="recommendation-sources" class="text-xs text-muted-text mt-2 hidden"></div>
                     </div>
@@ -155,76 +262,77 @@
                             <img src="{% static 'img/bg_outfit_pattern.jpg' %}" alt="Fondo de patrón" class="absolute inset-0 w-full h-full object-cover opacity-10">
                             <img src="{% static 'img/outfit.jpg' %}" alt="Outfit Actual en perchas" class="w-full h-auto object-cover rounded-xl relative z-10" style="max-height: 500px;">
                         </div>
+                        
 
                         <div class="flex flex-wrap justify-center gap-4 mt-6">
-                            <button class="px-6 py-3 rounded-lg font-semibold text-white bg-btn-generate hover:bg-[#f8975b] transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-btn-generate focus:ring-offset-2 flex items-center gap-2">
-                                <span data-icon="Zap"></span>
-                                Generar Outfit
-                            </button>
+                           <a href="#" class="px-6 py-3 rounded-lg font-semibold text-white bg-btn-generate hover:bg-[#f8975b] transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-btn-generate focus:ring-offset-2 flex items-center gap-2">
+                            <span data-icon="Zap"></span>
+                            Generar Outfit
+                            </a>
 
                             <a href="{% url 'camera' %}" class="px-6 py-3 rounded-lg font-semibold text-white bg-btn-capture hover:bg-[#e65a62] transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-btn-capture focus:ring-offset-2 flex items-center gap-2">
-                                <span data-icon="Camera"></span>
-                                Capturar Prenda
+                            <span data-icon="Camera"></span>
+                            Capturar Prenda
                             </a>
                         </div>
                     </div>
                     
                     <!-- MENÚ CELULAR -->
-<div class="lg:hidden w-full mt-8">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800">Menú</h2>
-    
-    <div class="space-y-4">
-        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
-            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                <img src="{% static 'img/icons/corporalidad.png' %}" alt="Reconocimiento corporal" class="w-6 h-6">
-            </div>
-            <div>
-                <p class="font-medium text-gray-800">Reconocimiento de corporalidad</p>
-                <span class="text-xs text-muted-text">aquí falta algo</span>
-            </div>
-        </a>
+                <div class="lg:hidden w-full mt-8">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Menú</h2>
+                    
+                    <div class="space-y-4">
+                        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                                <img src="{% static 'img/icons/corporalidad.png' %}" alt="Reconocimiento corporal" class="w-6 h-6">
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">Reconocimiento de corporalidad</p>
+                                <span class="text-xs text-muted-text">Capturate</span>
+                            </div>
+                        </a>
 
-        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
-            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                <img src="{% static 'img/icons/outfits.png' %}" alt="Mis outfits" class="w-6 h-6">
-            </div>
-            <div>
-                <p class="font-medium text-gray-800">Mis outfits</p>
-                <span class="text-xs text-muted-text">Sigue recordando</span>
-            </div>
-        </a>
+                        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                                <img src="{% static 'img/icons/outfits.png' %}" alt="Mis outfits" class="w-6 h-6">
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">Mis outfits</p>
+                                <span class="text-xs text-muted-text">Sigue recordando</span>
+                            </div>
+                        </a>
 
-        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
-            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                <img src="{% static 'img/icons/maquillaje.png' %}" alt="Maquillaje" class="w-6 h-6">
-            </div>
-            <div>
-                <p class="font-medium text-gray-800">Maquillaje</p>
-                <span class="text-xs text-muted-text">Combina con belleza</span>
-            </div>
-        </a>
+                        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                                <img src="{% static 'img/icons/maquillaje.png' %}" alt="Maquillaje" class="w-6 h-6">
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">Maquillaje</p>
+                                <span class="text-xs text-muted-text">Combina con belleza</span>
+                            </div>
+                        </a>
 
-        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
-            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                <img src="{% static 'img/icons/configuracion.png' %}" alt="Configuración" class="w-6 h-6">
-            </div>
-            <div>
-                <p class="font-medium text-gray-800">Configuración</p>
-                <span class="text-xs text-muted-text">Ajustes de la app</span>
-            </div>
-        </a>
+                        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                                <img src="{% static 'img/icons/configuracion.png' %}" alt="Configuración" class="w-6 h-6">
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">Configuración</p>
+                                <span class="text-xs text-muted-text">Ajustes de la app</span>
+                            </div>
+                        </a>
 
-        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
-            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                <img src="{% static 'signo-de-pregunta-en-circulos.png' %}" alt="Ayuda" class="w-6 h-6">
-            </div>
-            <div>
-                <p class="font-medium text-gray-800">Ayuda</p>
-                <span class="text-xs text-muted-text">Soporte</span>
-            </div>
-        </a>
-    </div>
-</div>
+                        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                                <img src="{% static 'signo-de-pregunta-en-circulos.png' %}" alt="Ayuda" class="w-6 h-6">
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800">Ayuda</p>
+                                <span class="text-xs text-muted-text">Soporte</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
                 </div>
 
                 <!-- COLUMNA DERECHA - MENÚ LATERAL -->
