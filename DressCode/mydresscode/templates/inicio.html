@@ -14,7 +14,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary-dark': '#030213',
+                        'primary-dark': '#5B9B9D',
                         'primary-accent': '#e91e63',
                         'secondary-btn': '#ff9800',
                         'bg-light': '#f0f2f5',
@@ -170,15 +170,61 @@
                     </div>
                     
                     <!-- MENÚ CELULAR -->
-                    <div class="lg:hidden w-full mt-8">
-                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Menú Rápido</h2>
-                        <ul class="flex flex-wrap justify-center gap-4">
-                            <li><a href="{% url 'my_closet' %}" class="flex flex-col items-center p-3 bg-white rounded-xl shadow-md"><span data-icon="Shirt" class="text-primary-dark"></span><span class="text-xs mt-1">Armario</span></a></li>
-                            <li><a href="#" class="flex flex-col items-center p-3 bg-white rounded-xl shadow-md"><span data-icon="Calendar" class="text-primary-dark"></span><span class="text-xs mt-1">Planear</span></a></li>
-                            <li><a href="#" class="flex flex-col items-center p-3 bg-white rounded-xl shadow-md"><span data-icon="TrendingUp" class="text-primary-dark"></span><span class="text-xs mt-1">Tendencias</span></a></li>
-                            <li><a href="#" class="flex flex-col items-center p-3 bg-white rounded-xl shadow-md"><span data-icon="Settings" class="text-primary-dark"></span><span class="text-xs mt-1">Ajustes</span></a></li>
-                        </ul>
-                    </div>
+<div class="lg:hidden w-full mt-8">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Menú</h2>
+    
+    <div class="space-y-4">
+        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                <img src="{% static 'img/icons/corporalidad.png' %}" alt="Reconocimiento corporal" class="w-6 h-6">
+            </div>
+            <div>
+                <p class="font-medium text-gray-800">Reconocimiento de corporalidad</p>
+                <span class="text-xs text-muted-text">aquí falta algo</span>
+            </div>
+        </a>
+
+        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                <img src="{% static 'img/icons/outfits.png' %}" alt="Mis outfits" class="w-6 h-6">
+            </div>
+            <div>
+                <p class="font-medium text-gray-800">Mis outfits</p>
+                <span class="text-xs text-muted-text">Sigue recordando</span>
+            </div>
+        </a>
+
+        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                <img src="{% static 'img/icons/maquillaje.png' %}" alt="Maquillaje" class="w-6 h-6">
+            </div>
+            <div>
+                <p class="font-medium text-gray-800">Maquillaje</p>
+                <span class="text-xs text-muted-text">Combina con belleza</span>
+            </div>
+        </a>
+
+        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                <img src="{% static 'img/icons/configuracion.png' %}" alt="Configuración" class="w-6 h-6">
+            </div>
+            <div>
+                <p class="font-medium text-gray-800">Configuración</p>
+                <span class="text-xs text-muted-text">Ajustes de la app</span>
+            </div>
+        </a>
+
+        <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
+                <img src="{% static 'signo-de-pregunta-en-circulos.png' %}" alt="Ayuda" class="w-6 h-6">
+            </div>
+            <div>
+                <p class="font-medium text-gray-800">Ayuda</p>
+                <span class="text-xs text-muted-text">Soporte</span>
+            </div>
+        </a>
+    </div>
+</div>
                 </div>
 
                 <!-- COLUMNA DERECHA - MENÚ LATERAL -->
@@ -187,7 +233,7 @@
                     <div class="space-y-4">
                         <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                             <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                                <img src="{% static 'img/icons/corporalidad.png' %}" alt="Reconocimiento corporal" class="w-6 h-6">
+                                <img src="{% static 'img/movimienot.png' %}" alt="Reconocimiento corporal" class="w-6 h-6">
                             </div>
                             <div>
                                 <p class="font-medium text-gray-800">Reconocimiento de corporalidad</p>
@@ -197,7 +243,7 @@
         
                         <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                             <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                                <img src="{% static 'img/icons/outfits.png' %}" alt="Mis outfits" class="w-6 h-6">
+                                <img src="{% static 'img/clothing.png' %}" alt="Mis outfits" class="w-6 h-6">
                             </div>
                             <div>
                                 <p class="font-medium text-gray-800">Mis outfits</p>
@@ -207,7 +253,7 @@
         
                         <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                             <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                                <img src="{% static 'img/icons/maquillaje.png' %}" alt="Maquillaje" class="w-6 h-6">
+                                <img src="{% static 'img/polvo.png' %}" alt="Maquillaje" class="w-6 h-6">
                             </div>
                             <div>
                                 <p class="font-medium text-gray-800">Maquillaje</p>
@@ -217,7 +263,7 @@
         
                         <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                             <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                                <img src="{% static 'img/icons/configuracion.png' %}" alt="Configuración" class="w-6 h-6">
+                                <img src="{% static 'img/engranaje.png' %}" alt="Configuración" class="w-6 h-6">
                             </div>
                             <div>
                                 <p class="font-medium text-gray-800">Configuración</p>
@@ -227,7 +273,7 @@
         
                         <a href="#" class="flex items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                             <div class="bg-primary-dark p-2 rounded-lg text-white mr-4 w-10 h-10 flex items-center justify-center">
-                                <img src="{% static 'signo-de-pregunta-en-circulos.png' %}" alt="Ayuda" class="w-6 h-6">
+                                <img src="{% static 'img/signo-de-pregunta-en-circulos.png' %}" alt="Ayuda" class="w-6 h-6">
                             </div>
                             <div>
                                 <p class="font-medium text-gray-800">Ayuda</p>
