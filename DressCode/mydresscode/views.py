@@ -288,4 +288,6 @@ def eliminar_prendas(request):
         logger.error(f"Error al eliminar prendas: {e}")
         return JsonResponse({'status': 'ok', 'message': 'Prendas eliminadas correctamente.'})
 
-    
+def añadir_prenda(request):
+    return render(request, 'add.html')
+  

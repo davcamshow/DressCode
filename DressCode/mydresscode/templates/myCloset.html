@@ -11,6 +11,9 @@
 
   <header class="top-bar">
     <div class="header-left">Mi Armario</div>
+    <div class="header-center">
+      <img src="{% static 'img/logo.jpg' %}" alt="Logo Mi Armario" />
+    </div> 
     <div class="header-right">
       <a href="{% url 'inicio' %}" class="header-icon">
         <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
@@ -64,7 +67,7 @@
       <span>Inicio</span>
     </a>
     <div class="nav-dot"></div>
-    <button class="nav-btn">
+    <a href="{% url 'añadir_prenda' %}" class="nav-btn">
       <img src="{% static 'img/iconoAñadir.jpg' %}" alt="Añadir" />
       <span>Añadir</span>
     </button>

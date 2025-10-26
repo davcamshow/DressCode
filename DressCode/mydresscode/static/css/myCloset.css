@@ -5,7 +5,39 @@
   box-sizing: border-box;
   font-family: 'Arial', sans-serif;
 }
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.header-center img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-left {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.header-right .header-icon img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
 /* Fondo y estructura general */
 body {
   background-color: #f8f9fa;
@@ -107,6 +139,7 @@ body {
   background-color: #333;
   border-radius: 50%;
 }
+
 
 /* Cuadrícula de galería */
 .photo-grid {
