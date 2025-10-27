@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from supabase import create_client, Client
-from .services import ImageAnalyzer
 import uuid
 import os
 import logging
@@ -171,15 +170,7 @@ def subir_prenda(request):
         uploaded_file = request.FILES['imagen_prenda']
         
         try:
-            # 1. EJECUTAR ANÁLISIS CON GOOGLE VISION API
-            analyzer = ImageAnalyzer()
-            image_content = uploaded_file.read()
-            analisis = analyzer.analyze_clothing(image_content)
-            
-            # Rebobinar el archivo para subirlo a Supabase
-            uploaded_file.seek(0)
-            
-            # 2. SUBIR A SUPABASE STORAGE
+            # SUBIR A SUPABASE STORAGE
             file_ext = os.path.splitext(uploaded_file.name)[1]
             unique_filename = f'{request.session["usuario_id"]}_{uuid.uuid4()}{file_ext}'
             path_on_storage = f'prendas/{unique_filename}'
@@ -190,7 +181,7 @@ def subir_prenda(request):
                 file_options={"content-type": uploaded_file.content_type}
             )
 
-            # 3. OBTENER URL PÚBLICA
+            # OBTENER URL PÚBLICA
             public_url_response = supabase.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(path_on_storage)
             image_url = public_url_response
 
@@ -198,26 +189,25 @@ def subir_prenda(request):
             logger.error(f"Error al subir a Supabase: {e}")
             return JsonResponse({'error': f'Error al procesar la imagen: {str(e)}'}, status=500)
         
-        # 4. GUARDAR EN LA TABLA 'Armario' DE DJANGO
+        # GUARDAR EN LA TABLA 'Armario' DE DJANGO
         try:
             usuario_id = request.session['usuario_id']
             usuario = Usuario.objects.get(idUsuario=usuario_id)
 
             nueva_prenda = Armario.objects.create(
-                tipo=analisis['tipo'],
+                tipo='Prenda de vestir',
                 imagen=image_url,
                 idUsuario=usuario,
-                color=analisis['color'],
-                temporada=analisis['temporada'],
-                estilo=analisis['estilo'],
-                clasificacion=f"IA - Confianza: {analisis['confianza']:.2f}",
+                color='Por definir',
+                temporada='Todo el año',
+                estilo='Casual',
+                clasificacion="Complete los detalles manualmente",
             )
             
             return JsonResponse({
                 'success': True,
-                'message': 'Prenda analizada y guardada exitosamente.',
+                'message': 'Prenda guardada exitosamente.',
                 'url': image_url,
-                'analisis': analisis,
                 'prenda_id': nueva_prenda.idPrenda
             }, status=200)
 
@@ -230,17 +220,11 @@ def subir_prenda(request):
     return JsonResponse({'error': 'Petición inválida. Falta el archivo.'}, status=400)
 
 def resultados_analisis(request, prenda_id):
-    """Vista para mostrar resultados detallados del análisis"""
+    """Vista para mostrar detalles de la prenda"""
     try:
         prenda = Armario.objects.get(idPrenda=prenda_id)
         context = {
-            'prenda': prenda,
-            'analisis': {
-                'tipo': prenda.tipo,
-                'color': prenda.color,
-                'estilo': prenda.estilo,
-                'temporada': prenda.temporada,
-            }
+            'prenda': prenda
         }
         return render(request, 'resultados_analisis.html', context)
     except Armario.DoesNotExist:
@@ -290,4 +274,3 @@ def eliminar_prendas(request):
 
 def añadir_prenda(request):
     return render(request, 'add.html')
-  

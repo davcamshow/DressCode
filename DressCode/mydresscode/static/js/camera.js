@@ -45,8 +45,8 @@ function showMessage(message, type = 'success') {
     }, type === 'success' ? 5000 : type === 'error' ? 5000 : 4000);
 }
 
-// Función para mostrar resultados detallados
-function showDetailedResults(analisis) {
+// Función para mostrar confirmación de guardado
+function showSuccessMessage() {
     const resultsDiv = document.createElement('div');
     resultsDiv.style.cssText = `
         position: fixed;
@@ -61,39 +61,15 @@ function showDetailedResults(analisis) {
         max-width: 90%;
         max-height: 80%;
         overflow-y: auto;
-        text-align: left;
+        text-align: center;
     `;
     
     resultsDiv.innerHTML = `
-        <h2 style="color: #5d9e9e; margin-bottom: 20px; text-align: center;">🎯 Análisis Completado</h2>
-        <div style="margin-bottom: 15px;">
-            <strong>Tipo de prenda:</strong> ${analisis.tipo}
+        <h2 style="color: #5d9e9e; margin-bottom: 20px;">✅ Prenda Guardada</h2>
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <p>La prenda se ha guardado exitosamente en tu armario.</p>
+            <p><strong>Complete los detalles manualmente en su armario.</strong></p>
         </div>
-        <div style="margin-bottom: 15px;">
-            <strong>Color principal:</strong> ${analisis.color}
-        </div>
-        <div style="margin-bottom: 15px;">
-            <strong>Estilo:</strong> ${analisis.estilo}
-        </div>
-        <div style="margin-bottom: 15px;">
-            <strong>Temporada:</strong> ${analisis.temporada}
-        </div>
-        <div style="margin-bottom: 15px;">
-            <strong>Confianza del análisis:</strong> ${(analisis.confianza * 100).toFixed(1)}%
-        </div>
-        ${analisis.colores_dominantes && analisis.colores_dominantes.length > 0 ? `
-            <div style="margin-bottom: 15px;">
-                <strong>Colores detectados:</strong> ${analisis.colores_dominantes.join(', ')}
-            </div>
-        ` : ''}
-        ${analisis.detalles && analisis.detalles.length > 0 ? `
-            <div style="margin-bottom: 20px;">
-                <strong>Detalles:</strong>
-                <ul style="margin: 10px 0; padding-left: 20px;">
-                    ${analisis.detalles.map(detalle => `<li>${detalle}</li>`).join('')}
-                </ul>
-            </div>
-        ` : ''}
         <div style="text-align: center; margin-top: 25px;">
             <button id="closeResults" style="
                 background: #5d9e9e;
@@ -132,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para enviar el Blob al servidor de Django
     async function sendImageToDjango(blob) {
-        showMessage(' Analizando prenda con IA...\nEsto puede tomar unos segundos', 'info');
+        showMessage(' Guardando prenda...', 'info');
         
         const formData = new FormData();
         formData.append('imagen_prenda', blob, 'prenda_capturada.png');
@@ -149,8 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                // Mostrar resultados detallados
-                showDetailedResults(data.analisis);
+                showSuccessMessage();
             } else {
                 console.error('Error del servidor:', data.error || response.statusText);
                 showMessage(` Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
@@ -263,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Deshabilitar botones durante el procesamiento
         saveBtn.disabled = true;
         retakeBtn.disabled = true;
-        saveBtn.textContent = 'Procesando...';
+        saveBtn.textContent = 'Guardando...';
         
         canvas.toBlob(async function(blob) {
             if (!blob) {
