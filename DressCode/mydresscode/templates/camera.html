@@ -39,28 +39,51 @@
     </header>
 
     <main class="main-content">
-        <h1 class="title">Capturar Prenda</h1>
+        <h1 class="title">Agregar Prenda</h1>
         
-        <div class="camera-container">
+        <div class="upload-options">
+            <button id="camera-option" class="option-button active">
+                <span class="option-icon">📷</span>
+                <span>Usar Cámara</span>
+            </button>
+            <button id="upload-option" class="option-button">
+                <span class="option-icon">📁</span>
+                <span>Subir Archivo</span>
+            </button>
+        </div>
+        
+        <div class="camera-container" id="camera-container">
             <video id="video" autoplay playsinline></video>
             <canvas id="canvas" style="display:none;"></canvas>
             <div id="photo-preview" class="photo-preview" style="display:none;"></div>
         </div>
         
+        <div class="upload-container" id="upload-container" style="display:none;">
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📁</div>
+                <h3>Arrastra tu imagen aquí</h3>
+                <p>o haz clic para seleccionar</p>
+                <input type="file" id="file-input" accept="image/*" style="display:none;">
+            </div>
+            <div id="file-preview" class="file-preview" style="display:none;"></div>
+        </div>
+        
         <div class="controls">
             <button id="capture-btn" class="capture-button">Tomar Foto</button>
+            <button id="upload-btn" class="upload-button" style="display:none;">Seleccionar Imagen</button>
             <button id="retake-btn" class="retake-button" style="display:none;">Volver a Tomar</button>
-            <button id="save-btn" class="save-button" style="display:none;">Guardar</button>
+            <button id="change-file-btn" class="change-file-button" style="display:none;">Cambiar Archivo</button>
+            <button id="save-btn" class="save-button" style="display:none;">Guardar Prenda</button>
         </div>
         
         <div class="instructions">
-            <p>Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada para obtener los mejores resultados.</p>
-            <p>Mantén la cámara estable al tomar la foto.</p>
+            <p id="camera-instructions">Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada para obtener los mejores resultados.</p>
+            <p id="upload-instructions" style="display:none;">Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 10MB</p>
         </div>
     </main>
     <script>
         const INICIO_URL = "{% url 'inicio' %}";
-        </script>
+    </script>
 
     <script src="{% static 'js/camera.js' %}"></script>
 </body>

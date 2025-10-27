@@ -94,50 +94,156 @@ function showSuccessMessage() {
     });
 }
 
+// Función para enviar imagen al servidor
+async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
+    showMessage(' Guardando prenda...', 'info');
+    
+    const formData = new FormData();
+    formData.append('imagen_prenda', blob, filename);
+
+    try {
+        const response = await fetch('/subir-prenda/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showSuccessMessage();
+            return true;
+        } else {
+            console.error('Error del servidor:', data.error || response.statusText);
+            showMessage(` Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error de red/conexión:', error);
+        showMessage(' Error de conexión. Inténtalo de nuevo.', 'error');
+        return false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Elementos de la cámara
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const photoPreview = document.getElementById('photo-preview');
+    
+    // Elementos de subida de archivos
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const filePreview = document.getElementById('file-preview');
+    
+    // Contenedores
+    const cameraContainer = document.getElementById('camera-container');
+    const uploadContainer = document.getElementById('upload-container');
+    
+    // Botones de opción
+    const cameraOption = document.getElementById('camera-option');
+    const uploadOption = document.getElementById('upload-option');
+    
+    // Botones de control
     const captureBtn = document.getElementById('capture-btn');
+    const uploadBtn = document.getElementById('upload-btn');
     const retakeBtn = document.getElementById('retake-btn');
+    const changeFileBtn = document.getElementById('change-file-btn');
     const saveBtn = document.getElementById('save-btn');
+    
+    // Instrucciones
+    const cameraInstructions = document.getElementById('camera-instructions');
+    const uploadInstructions = document.getElementById('upload-instructions');
     
     let stream = null;
     let videoWidth = 0;
     let videoHeight = 0;
+    let currentMode = 'camera'; // 'camera' o 'upload'
+    let selectedFile = null;
 
-    // Función para enviar el Blob al servidor de Django
-    async function sendImageToDjango(blob) {
-        showMessage(' Guardando prenda...', 'info');
+    // Cambiar entre modos
+    cameraOption.addEventListener('click', function() {
+        switchMode('camera');
+    });
+
+    uploadOption.addEventListener('click', function() {
+        switchMode('upload');
+    });
+
+    function switchMode(mode) {
+        currentMode = mode;
         
-        const formData = new FormData();
-        formData.append('imagen_prenda', blob, 'prenda_capturada.png');
-
-        try {
-            const response = await fetch('/subir-prenda/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                showSuccessMessage();
-            } else {
-                console.error('Error del servidor:', data.error || response.statusText);
-                showMessage(` Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
-                retakeBtn.click();
-            }
-        } catch (error) {
-            console.error('Error de red/conexión:', error);
-            showMessage(' Error de conexión. Inténtalo de nuevo.', 'error');
-            retakeBtn.click();
+        // Actualizar botones activos
+        cameraOption.classList.toggle('active', mode === 'camera');
+        uploadOption.classList.toggle('active', mode === 'upload');
+        
+        // Mostrar/ocultar contenedores
+        cameraContainer.style.display = mode === 'camera' ? 'flex' : 'none';
+        uploadContainer.style.display = mode === 'upload' ? 'flex' : 'none';
+        
+        // Mostrar/ocultar instrucciones
+        cameraInstructions.style.display = mode === 'camera' ? 'block' : 'none';
+        uploadInstructions.style.display = mode === 'upload' ? 'block' : 'none';
+        
+        // Resetear estados
+        resetCameraState();
+        resetUploadState();
+        
+        // Actualizar botones de control
+        updateControlButtons();
+        
+        // Inicializar cámara si es necesario
+        if (mode === 'camera' && !stream) {
+            initCamera();
         }
     }
-    
+
+    function resetCameraState() {
+        photoPreview.style.display = 'none';
+        video.style.display = 'block';
+        if (stream) {
+            video.style.opacity = '1';
+        }
+    }
+
+    function resetUploadState() {
+        filePreview.style.display = 'none';
+        uploadArea.style.display = 'flex';
+        selectedFile = null;
+    }
+
+    function updateControlButtons() {
+        if (currentMode === 'camera') {
+            captureBtn.style.display = 'inline-block';
+            uploadBtn.style.display = 'none';
+            
+            if (photoPreview.style.display === 'block') {
+                retakeBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'inline-block';
+                captureBtn.style.display = 'none';
+            } else {
+                retakeBtn.style.display = 'none';
+                saveBtn.style.display = 'none';
+            }
+            changeFileBtn.style.display = 'none';
+        } else {
+            captureBtn.style.display = 'none';
+            uploadBtn.style.display = 'inline-block';
+            
+            if (selectedFile) {
+                changeFileBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'inline-block';
+                uploadBtn.style.display = 'none';
+            } else {
+                changeFileBtn.style.display = 'none';
+                saveBtn.style.display = 'none';
+            }
+            retakeBtn.style.display = 'none';
+        }
+    }
+
     // Inicializar la cámara
     async function initCamera() {
         try {
@@ -194,14 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 10);
         
         setTimeout(() => {
-            captureBtn.style.display = 'none';
-            retakeBtn.style.display = 'inline-block';
-            saveBtn.style.display = 'inline-block';
-            
-            setTimeout(() => {
-                retakeBtn.style.opacity = '1';
-                saveBtn.style.opacity = '1';
-            }, 50);
+            updateControlButtons();
         }, 300);
     });
     
@@ -222,14 +321,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 video.style.opacity = '1';
             }, 50);
             
-            captureBtn.style.display = 'inline-block';
-            retakeBtn.style.display = 'none';
-            saveBtn.style.display = 'none';
+            updateControlButtons();
         }, 300);
     });
     
-    // Guardar foto
-    saveBtn.addEventListener('click', function() {
+    // Subir archivo
+    uploadBtn.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    // Cambiar archivo
+    changeFileBtn.addEventListener('click', function() {
+        resetUploadState();
+        updateControlButtons();
+    });
+    
+    // Manejar selección de archivo
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+    
+    // Drag and drop
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function() {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length > 0) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    });
+    
+    function handleFileSelect(file) {
+        // Validar tipo de archivo
+        if (!file.type.match('image.*')) {
+            showMessage('Por favor, selecciona un archivo de imagen válido.', 'error');
+            return;
+        }
+        
+        // Validar tamaño (10MB máximo)
+        if (file.size > 10 * 1024 * 1024) {
+            showMessage('El archivo es demasiado grande. Máximo 10MB.', 'error');
+            return;
+        }
+        
+        selectedFile = file;
+        
+        // Mostrar previsualización
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            filePreview.innerHTML = `<img src="${e.target.result}" alt="Previsualización" style="width: 100%; height: 100%; object-fit: contain;">`;
+            filePreview.style.display = 'flex';
+            uploadArea.style.display = 'none';
+            updateControlButtons();
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Guardar prenda
+    saveBtn.addEventListener('click', async function() {
         saveBtn.style.transform = 'scale(0.95)';
         setTimeout(() => {
             saveBtn.style.transform = '';
@@ -237,22 +401,47 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Deshabilitar botones durante el procesamiento
         saveBtn.disabled = true;
-        retakeBtn.disabled = true;
-        saveBtn.textContent = 'Guardando...';
+        if (currentMode === 'camera') {
+            retakeBtn.disabled = true;
+            saveBtn.textContent = 'Guardando...';
+        } else {
+            changeFileBtn.disabled = true;
+            saveBtn.textContent = 'Subiendo...';
+        }
         
-        canvas.toBlob(async function(blob) {
-            if (!blob) {
-                showMessage('Error: No se pudo generar el archivo de imagen.', 'error');
-                saveBtn.disabled = false;
-                retakeBtn.disabled = false;
-                saveBtn.textContent = 'Guardar';
-                return;
+        let success = false;
+        
+        if (currentMode === 'camera') {
+            // Guardar desde cámara
+            canvas.toBlob(async function(blob) {
+                if (!blob) {
+                    showMessage('Error: No se pudo generar el archivo de imagen.', 'error');
+                    resetSaveButton();
+                    return;
+                }
+                success = await sendImageToDjango(blob);
+                if (!success) {
+                    resetSaveButton();
+                }
+            }, 'image/png');
+        } else {
+            // Guardar desde archivo
+            success = await sendImageToDjango(selectedFile, selectedFile.name);
+            if (!success) {
+                resetSaveButton();
             }
-
-            await sendImageToDjango(blob);
-
-        }, 'image/png');
+        }
     });
+    
+    function resetSaveButton() {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar Prenda';
+        if (currentMode === 'camera') {
+            retakeBtn.disabled = false;
+        } else {
+            changeFileBtn.disabled = false;
+        }
+    }
     
     // Efectos adicionales
     document.querySelectorAll('button').forEach(button => {
