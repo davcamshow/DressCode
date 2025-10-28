@@ -387,25 +387,38 @@
     }
 
     // --- INICIALIZACIÓN CORREGIDA ---
-    function initializeApp() {
-      // Obtener todos los elementos de foto
-      allPhotoItems = Array.from(document.querySelectorAll('.photo-item'));
-      console.log('Total de elementos encontrados:', allPhotoItems.length);
-      
-      // Normalizar y asignar categorías basadas en la clasificación
-      allPhotoItems.forEach(item => {
+   // --- INICIALIZACIÓN CORREGIDA ---
+function initializeApp() {
+    // Obtener todos los elementos de foto
+    allPhotoItems = Array.from(document.querySelectorAll('.photo-item'));
+    
+    // Normalizar y asignar categorías basadas en la clasificación
+    allPhotoItems.forEach(item => {
         const clasificacionActual = item.dataset.categoria;
-        console.log('Item:', item.dataset.id, 'Clasificación original:', clasificacionActual);
-        
         const categoriaNormalizada = normalizarClasificacion(clasificacionActual);
         item.dataset.categoria = categoriaNormalizada;
-        
-        console.log('Item:', item.dataset.id, 'Categoría normalizada:', categoriaNormalizada);
-      });
+    });
 
-      // Inicializar filtro
-      renderWardrobe('Todo');
+    // Verificar si hay un filtro guardado en sessionStorage
+    const savedFilter = sessionStorage.getItem('defaultFilter');
+    
+    if (savedFilter) {
+        // Aplicar el filtro guardado
+        filterButtons.forEach(btn => {
+            if (btn.dataset.filter === savedFilter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        renderWardrobe(savedFilter);
+        // Limpiar el storage después de usar
+        sessionStorage.removeItem('defaultFilter');
+    } else {
+        // Filtro por defecto normal
+        renderWardrobe('Todo');
     }
+}
 
     // --- EVENT LISTENERS ---
     

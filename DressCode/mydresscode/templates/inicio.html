@@ -214,10 +214,10 @@
                            
                             <img src="{% static 'img/gancho-de-ropa.png' %}" alt="Armario" class="w-9 h-9 object-contain">
                         </a>
-                        <a href="#" class="btn-secondary-custom p-2 sm:p-3 rounded-full" title="Favoritos">
+                      <a href="{% url 'my_closet' %}?filter=Favoritos" class="btn-secondary-custom p-2 sm:p-3 rounded-full" title="Favoritos">
                             <span data-icon="Heart" class="text-primary-accent"></span>
                         </a>
-                        
+                                                
                         <div class="relative group">
                             <a href="#" class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-pink-500 bg-white hover:bg-pink-50" title="Perfil">
                                 <i data-lucide="user" class="w-5 h-5 text-pink-500"></i>
@@ -399,5 +399,11 @@
     <script>
         lucide.createIcons();
     </script>
+    <script>
+function setFavoritesFilter() {
+    // Guardar en sessionStorage que queremos ir a Favoritos
+    sessionStorage.setItem('defaultFilter', 'Favoritos');
+}
+</script>
 </body>
 </html>
