@@ -17,5 +17,5 @@ urlpatterns = [
     path('resultados/<int:prenda_id>/', views.resultados_analisis, name='resultados_analisis'),
     path('eliminar-prendas/', views.eliminar_prendas, name='eliminar_prendas'),
     path('añadir/', views.añadir_prenda, name='añadir_prenda'),
-
+    path('seleccionar-categoria/', views.seleccionar_categoria, name='seleccionar_categoria'),
 ]

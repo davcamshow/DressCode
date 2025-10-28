@@ -1,3 +1,4 @@
+// [file name]: camera.js
 // Función auxiliar para obtener el token CSRF de las cookies
 function getCookie(name) {
     let cookieValue = null;
@@ -13,6 +14,9 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Recuperar datos del formulario de categoría
+const prendaData = JSON.parse(sessionStorage.getItem('prendaData') || '{}');
 
 // Función para mostrar mensajes al usuario
 function showMessage(message, type = 'success') {
@@ -64,11 +68,24 @@ function showSuccessMessage() {
         text-align: center;
     `;
     
+    // Mostrar detalles de la prenda guardada
+    const detallesPrenda = prendaData.tipo ? `
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: left;">
+            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Detalles de la prenda guardada:</h3>
+            <p><strong>Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
+            <p><strong>Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
+            <p><strong>Color:</strong> ${prendaData.color || 'No especificado'}</p>
+            <p><strong>Temporada:</strong> ${prendaData.temporada || 'Todo el año'}</p>
+            <p><strong>Estilo:</strong> ${prendaData.estilo || 'Casual'}</p>
+            <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+        </div>
+    ` : '';
+    
     resultsDiv.innerHTML = `
         <h2 style="color: #5d9e9e; margin-bottom: 20px;">✅ Prenda Guardada</h2>
+        ${detallesPrenda}
         <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
             <p>La prenda se ha guardado exitosamente en tu armario.</p>
-            <p><strong>Complete los detalles manualmente en su armario.</strong></p>
         </div>
         <div style="text-align: center; margin-top: 25px;">
             <button id="closeResults" style="
@@ -87,6 +104,8 @@ function showSuccessMessage() {
     
     document.getElementById('closeResults').addEventListener('click', function() {
         resultsDiv.remove();
+        // Limpiar datos de sessionStorage después del envío exitoso
+        sessionStorage.removeItem('prendaData');
         // Redirigir al inicio después de cerrar
         setTimeout(() => {
             window.location.href = INICIO_URL || "/inicio/";
@@ -100,6 +119,26 @@ async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
     
     const formData = new FormData();
     formData.append('imagen_prenda', blob, filename);
+    
+    // Agregar datos del formulario si existen
+    if (prendaData.categoria) {
+        formData.append('categoria', prendaData.categoria);
+    }
+    if (prendaData.tipo) {
+        formData.append('tipo', prendaData.tipo);
+    }
+    if (prendaData.color) {
+        formData.append('color', prendaData.color);
+    }
+    if (prendaData.temporada) {
+        formData.append('temporada', prendaData.temporada);
+    }
+    if (prendaData.estilo) {
+        formData.append('estilo', prendaData.estilo);
+    }
+    if (prendaData.esFavorito !== undefined) {
+        formData.append('esFavorito', prendaData.esFavorito);
+    }
 
     try {
         const response = await fetch('/subir-prenda/', {
@@ -162,6 +201,33 @@ document.addEventListener('DOMContentLoaded', function() {
     let videoHeight = 0;
     let currentMode = 'camera'; // 'camera' o 'upload'
     let selectedFile = null;
+
+    // Mostrar información de la prenda si existe
+    if (prendaData.tipo) {
+        const infoDiv = document.createElement('div');
+        infoDiv.style.cssText = `
+            background: #f8fdff;
+            border: 1px solid #5d9e9e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        `;
+        infoDiv.innerHTML = `
+            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Información de la prenda:</h3>
+            <p><strong>Categoría:</strong> ${prendaData.categoria}</p>
+            <p><strong>Tipo:</strong> ${prendaData.tipo}</p>
+            <p><strong>Color:</strong> ${prendaData.color}</p>
+            <p><strong>Temporada:</strong> ${prendaData.temporada}</p>
+            <p><strong>Estilo:</strong> ${prendaData.estilo}</p>
+            <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+        `;
+        
+        // Insertar antes del título principal
+        const mainContent = document.querySelector('.main-content');
+        const title = document.querySelector('.title');
+        mainContent.insertBefore(infoDiv, title);
+    }
 
     // Cambiar entre modos
     cameraOption.addEventListener('click', function() {

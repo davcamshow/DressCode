@@ -1,0 +1,142 @@
+<!-- [file name]: categoria.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dresscode - Seleccionar Categoría</title>
+    <link rel="stylesheet" href="{% static 'css/category.css' %}">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+    
+    <header class="header">
+        <div class="header-icons-left">
+            <a href="{% url 'inicio' %}" class="back-button">← Volver</a>
+        </div>
+        
+        <div class="header-logo-main">
+            <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-main">
+        </div>
+
+        <div class="header-icons-right">
+            <div class="profile-container">
+                <button class="icon-button">
+                    <img src="{% static 'img/foto-de-perfil.png' %}" alt="perfil" class="logo-small">
+                </button>
+                <div class="profile-dropdown">
+                    <a href="#">Ver perfil</a>
+                    <a href="{% url 'logout' %}">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="title">Agregar Nueva Prenda</h1>
+        <p class="subtitle">Primero, selecciona la categoría de tu prenda</p>
+        
+        <div class="category-selection">
+            <div class="category-option" data-category="calzado">
+                <div class="category-icon">👟</div>
+                <h3>Calzado</h3>
+                <p>Zapatos, tenis, sandalias, etc.</p>
+            </div>
+            
+            <div class="category-option" data-category="prenda">
+                <div class="category-icon">👕</div>
+                <h3>Prenda de Vestir</h3>
+                <p>Camisas, pantalones, vestidos, etc.</p>
+            </div>
+            
+            <div class="category-option" data-category="accesorio">
+                <div class="category-icon">👜</div>
+                <h3>Accesorio</h3>
+                <p>Bolsos, joyería, gafas, etc.</p>
+            </div>
+        </div>
+        
+        <div class="form-container" id="form-container" style="display: none;">
+            <h2 id="form-title">Completa los detalles</h2>
+            <form id="prenda-form" class="prenda-form">
+                <input type="hidden" id="categoria" name="categoria">
+                
+                <div class="form-group">
+                    <label for="tipo">Tipo *</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Selecciona un tipo</option>
+                        <!-- Las opciones se llenarán dinámicamente según la categoría -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Color *</label>
+                    <input type="text" id="color" name="color" placeholder="Ej: Azul, Negro, Rojo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="temporada">Temporada</label>
+                    <select id="temporada" name="temporada">
+                        <option value="Todo el año">Todo el año</option>
+                        <option value="Primavera">Primavera</option>
+                        <option value="Verano">Verano</option>
+                        <option value="Otoño">Otoño</option>
+                        <option value="Invierno">Invierno</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estilo">Estilo</label>
+                    <select id="estilo" name="estilo">
+                        <option value="Casual">Casual</option>
+                        <option value="Formal">Formal</option>
+                        <option value="Deportivo">Deportivo</option>
+                        <option value="Elegante">Elegante</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Bohemio">Bohemio</option>
+                    </select>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label class="switch">
+                        <input type="checkbox" id="esFavorito" name="esFavorito">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="checkbox-label">Agregar a favoritos</span>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" id="cancel-form" class="btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn-primary">Continuar a la Cámara</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+
+    <script>
+        const CAMERA_URL = "{% url 'camera' %}";
+        const CATEGORIA_DATA = {
+            'calzado': {
+                'title': 'Calzado',
+                'tipos': ['Zapatos formales', 'Tenis deportivos', 'Sandalias', 'Botas', 'Mocasines', 'Zapatillas']
+            },
+            'prenda': {
+                'title': 'Prenda de Vestir',
+                'tipos': ['Camisa', 'Pantalón', 'Vestido', 'Falda', 'Blusa', 'Suéter', 'Chaqueta', 'Abrigo', 'Shorts', 'Traje']
+            },
+            'accesorio': {
+                'title': 'Accesorio',
+                'tipos': ['Bolso', 'Collar', 'Pulsera', 'Reloj', 'Gafas de sol', 'Sombrero', 'Bufanda', 'Cinturón', 'Cartera']
+            }
+        };
+    </script>
+    <script src="{% static 'js/category.js' %}"></script>
+</body>
+</html>

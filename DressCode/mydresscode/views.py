@@ -1,3 +1,4 @@
+# [file name]: views.py
 from django.shortcuts import render, redirect
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login, logout
@@ -169,6 +170,14 @@ def subir_prenda(request):
         
         uploaded_file = request.FILES['imagen_prenda']
         
+        # Obtener datos del formulario
+        categoria = request.POST.get('categoria', 'Prenda de vestir')
+        tipo = request.POST.get('tipo', 'Prenda de vestir')
+        color = request.POST.get('color', 'Por definir')
+        temporada = request.POST.get('temporada', 'Todo el año')
+        estilo = request.POST.get('estilo', 'Casual')
+        esFavorito = request.POST.get('esFavorito', 'false') == 'true'
+        
         try:
             # SUBIR A SUPABASE STORAGE
             file_ext = os.path.splitext(uploaded_file.name)[1]
@@ -195,13 +204,14 @@ def subir_prenda(request):
             usuario = Usuario.objects.get(idUsuario=usuario_id)
 
             nueva_prenda = Armario.objects.create(
-                tipo='Prenda de vestir',
+                tipo=tipo,
                 imagen=image_url,
                 idUsuario=usuario,
-                color='Por definir',
-                temporada='Todo el año',
-                estilo='Casual',
-                clasificacion="Complete los detalles manualmente",
+                color=color,
+                temporada=temporada,
+                estilo=estilo,
+                clasificacion=categoria,
+                esFavorito=esFavorito
             )
             
             return JsonResponse({
@@ -274,3 +284,11 @@ def eliminar_prendas(request):
 
 def añadir_prenda(request):
     return render(request, 'add.html')
+
+def seleccionar_categoria(request):
+    """Vista para seleccionar categoría antes de capturar la prenda"""
+    if 'usuario_id' not in request.session:
+        messages.error(request, "Debes iniciar sesión para agregar prendas.")
+        return redirect('login')
+    
+    return render(request, 'category.html')
