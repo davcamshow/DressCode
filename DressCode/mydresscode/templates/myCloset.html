@@ -6,6 +6,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi armario</title>
   <link rel="stylesheet" href="{% static 'css/myCloset.css' %}">
+  <!-- Agregar Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Carga la librería de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    /* Estilos específicos para esta página */
+    .heart {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        cursor: pointer;
+        font-size: 1.2em;
+        z-index: 10;
+        color: #ccc;
+        transition: color 0.3s ease;
+        background: none;
+        border: none;
+    }
+
+    .heart.active {
+        color: #e06e78;
+    }
+
+    .photo-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 120px;
+        padding: 5px;
+    }
+
+    .photo-item img {
+        width: auto;
+        max-width: 95%;
+        height: auto;
+        max-height: 110px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+        max-width: 100%;
+    }
+
+    .no-items-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+        font-style: italic;
+        font-size: 14px;
+    }
+
+    .photo-item.selected {
+        border: 2px solid #5d9e9e;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+        .photo-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .photo-item {
+            height: 130px;
+        }
+        
+        .photo-item img {
+            max-height: 120px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .photo-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 12px;
+        }
+        
+        .photo-item {
+            height: 140px;
+        }
+        
+        .photo-item img {
+            max-height: 130px;
+        }
+    }
+  </style>
 </head>
 <body>
 
@@ -24,42 +124,41 @@
   <!-- Filtros -->
   <section class="filter-section">
     <nav class="filters">
-      <button class="active">Todo</button>
-      <button>Favoritos</button>
-      <button>Ropa</button>
-      <button>Accesorios</button>
-      <button>Calzado</button>
+      <button class="active" data-filter="Todo">Todo</button>
+      <button data-filter="Favoritos">Favoritos</button>
+      <button data-filter="prenda">Ropa</button>
+      <button data-filter="accesorio">Accesorios</button>
+      <button data-filter="calzado">Calzado</button>
     </nav>
-    <!--p id="contador"># elementos</p-->
-    <p id="contador">{{ prendas_del_armario|length}} elementos</p>
+    <p id="contador">{{ prendas_del_armario|length }} elementos</p>
   </section>
 
   <section class="photo-grid" id="photoGrid">
     {% if prendas_del_armario %}
-            {% for prenda in prendas_del_armario %}
-                <div class="photo-item" data-id="{{ prenda.idPrenda }}" data-tipo="{{ prenda.tipo }}">
-                    
-                    <img 
-                        src="{{ prenda.imagen }}" 
-                        alt="{{ prenda.tipo }}" 
-                        loading="lazy"
-                        title="Tipo: {{ prenda.tipo }} | Color: {{ prenda.color }}"
-                    >
-                    
-                    <div 
-                        class="heart {% if prenda.esFavorito %}active{% endif %}"
-                        data-prenda-id="{{ prenda.idPrenda }}"
-                    ></div>
-                    
-                    </div>
-            {% endfor %}
-        {% else %}
-            <p style="text-align: center; grid-column: 1 / -1; margin-top: 20px;">
-                ¡Tu armario está vacío! 
-            </p>
-        {% endif %}
+      {% for prenda in prendas_del_armario %}
+        <div class="photo-item" 
+             data-id="{{ prenda.idPrenda }}" 
+             data-tipo="{{ prenda.tipo }}"
+             data-categoria="{{ prenda.clasificacion|default:'prenda'|lower }}"
+             data-favorito="{{ prenda.esFavorito|yesno:'true,false' }}">
+          
+          <img 
+            src="{{ prenda.imagen }}" 
+            alt="{{ prenda.tipo }}" 
+            loading="lazy"
+            title="Tipo: {{ prenda.tipo }} | Color: {{ prenda.color }} | Clasificación: {{ prenda.clasificacion }}"
+          >
+          
+          <i class="heart fa-heart {% if prenda.esFavorito %}fas active{% else %}far{% endif %}"
+             data-prenda-id="{{ prenda.idPrenda }}"></i>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="no-items-message">
+        ¡Tu armario está vacío! 
+      </p>
+    {% endif %}
   </section>
-
 
   <footer class="bottom-nav">
     <a href="{% url 'inicio' %}" class="nav-btn">
@@ -70,25 +169,295 @@
     <a href="{% url 'añadir_prenda' %}" class="nav-btn">
       <img src="{% static 'img/iconoAñadir.jpg' %}" alt="Añadir" />
       <span>Añadir</span>
-    </button>
+    </a>
   </footer>
 
-    <div id="selectionActions" class="selection-actions hidden">
-      <button id="cancelSelection" class="action-btn cancel">Cancelar</button>
-      <span id="selectionCount">0 seleccionadas</span>
+  <div id="selectionActions" class="selection-actions hidden">
+    <button id="cancelSelection" class="action-btn cancel">Cancelar</button>
+    <span id="selectionCount">0 seleccionadas</span>
+    <button id="deleteSelection" class="action-btn delete">
+      <img src="{% static 'img/iconoDelete.png' %}" alt="Eliminar" />
+    </button>
+  </div>
+  
+  <div id="mensajeExito" class="mensaje-exito hidden">
+    Eliminación exitosa
+  </div>
+  <div id="mensajeError" class="mensaje-flotante hidden">
+    No se pudo eliminar
+  </div>
 
-      <button id="deleteSelection" class="action-btn delete">
-        <img src="{% static 'img/iconoDelete.png' %}" alt="Eliminar" />
-      </button>
+  <script>
+    // === CONFIGURACIÓN DE SUPABASE ===
+    const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc';
+    const TABLE_NAME = 'armario'; 
+
+    // Inicializar Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // --- VARIABLES DEL DOM ---
+    const filterButtons = document.querySelectorAll('.filters button');
+    const photoGrid = document.getElementById('photoGrid');
+    const selectionActions = document.getElementById('selectionActions');
+    const cancelSelection = document.getElementById('cancelSelection');
+    const deleteSelection = document.getElementById('deleteSelection');
+    const selectionCount = document.getElementById('selectionCount');
+    const contadorElement = document.getElementById('contador');
+
+    let selectedItems = []; 
+    let currentFilter = 'Todo';
+    let allPhotoItems = [];
+
+    // --- FUNCIONES DE FEEDBACK ---
+    function mostrarMensaje(elementId, isSuccess) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.classList.remove('hidden');
+        element.classList.add('show');
+        setTimeout(() => { 
+          element.classList.remove('show'); 
+          element.classList.add('hidden'); 
+        }, 2500);
+      }
+    }
+
+    // --- FUNCIÓN DE FILTRADO CORREGIDA ---
+    function renderWardrobe(filter = 'Todo') {
+      console.log('Filtrando por:', filter);
+      currentFilter = filter;
+      let visibleCount = 0;
       
-    </div>
-    <div id="mensajeExito" class="mensaje-exito hidden">
-      Eliminación exitosa
-    </div>
-    <div id="mensajeError" class="mensaje-flotante hidden">
-      No se pudo eliminar
-    </div>
+      // Mostrar u ocultar elementos según el filtro
+      allPhotoItems.forEach(item => {
+        const itemCategoria = item.dataset.categoria ? item.dataset.categoria.toLowerCase() : 'prenda';
+        const isFavorite = item.dataset.favorito === 'true';
+        
+        let show = false;
 
-  <script src="{% static 'js/myCloset.js' %}"></script>
+        switch(filter) {
+          case 'Todo':
+            show = true;
+            break;
+          case 'Favoritos':
+            show = isFavorite;
+            break;
+          case 'prenda':
+            // Para prenda, incluir también los valores por defecto
+            show = itemCategoria.includes('prenda') || 
+                   itemCategoria === 'n/a' || 
+                   itemCategoria.includes('confianza') ||
+                   itemCategoria.includes('complete') ||
+                   itemCategoria === '' ||
+                   !['accesorio', 'calzado'].includes(itemCategoria);
+            break;
+          case 'accesorio':
+            show = itemCategoria.includes('accesorio');
+            break;
+          case 'calzado':
+            show = itemCategoria.includes('calzado');
+            break;
+          default:
+            show = true;
+        }
+
+        if (show) {
+          item.style.display = 'flex';
+          visibleCount++;
+          console.log('Mostrando item:', item.dataset.id, 'categoria:', itemCategoria);
+        } else {
+          item.style.display = 'none';
+          console.log('Ocultando item:', item.dataset.id, 'categoria:', itemCategoria);
+        }
+      });
+
+      // Manejar mensaje cuando no hay elementos
+      const existingMessage = photoGrid.querySelector('.no-items-message');
+      if (visibleCount === 0) {
+        if (!existingMessage) {
+          const message = document.createElement('p');
+          message.className = 'no-items-message';
+          message.textContent = 'No hay elementos que coincidan con el filtro';
+          photoGrid.appendChild(message);
+        }
+      } else {
+        if (existingMessage) {
+          existingMessage.remove();
+        }
+      }
+      
+      // Actualizar contador
+      contadorElement.textContent = `${visibleCount} elementos`;
+      console.log('Elementos visibles:', visibleCount);
+    }
+
+    // --- FUNCIÓN PARA NORMALIZAR CLASIFICACIONES ---
+    function normalizarClasificacion(clasificacion) {
+      if (!clasificacion || clasificacion === 'undefined') return 'prenda';
+      
+      const clasifLower = clasificacion.toLowerCase();
+      console.log('Normalizando:', clasificacion, '->', clasifLower);
+      
+      if (clasifLower.includes('accesorio')) return 'accesorio';
+      if (clasifLower.includes('calzado')) return 'calzado';
+      if (clasifLower.includes('prenda')) return 'prenda';
+      if (clasifLower === 'n/a' || clasifLower.includes('confianza') || clasifLower.includes('complete')) return 'prenda';
+      
+      return 'prenda';
+    }
+
+    // --- TOGGLE FAVORITO ---
+    async function toggleFavorito(prendaId, heartIcon) {
+      const isCurrentlyFavorite = heartIcon.classList.contains('active');
+      const newState = !isCurrentlyFavorite;
+      const photoItem = heartIcon.closest('.photo-item');
+
+      try {
+        const { error } = await supabase
+          .from(TABLE_NAME)
+          .update({ esfavorito: newState })
+          .eq('id', prendaId);
+
+        if (error) throw error;
+        
+        // Actualizar el DOM
+        if (newState) {
+          heartIcon.classList.remove('far');
+          heartIcon.classList.add('fas', 'active');
+          photoItem.dataset.favorito = 'true';
+        } else {
+          heartIcon.classList.remove('fas', 'active');
+          heartIcon.classList.add('far');
+          photoItem.dataset.favorito = 'false';
+        }
+
+        // Si estamos en filtro de favoritos, actualizar la vista
+        if (currentFilter === 'Favoritos') {
+          renderWardrobe(currentFilter);
+        }
+        
+      } catch (error) {
+        console.error("Error updating favorite status:", error);
+        mostrarMensaje('mensajeError', false);
+      }
+    }
+
+    // --- ELIMINACIÓN ---
+    async function deleteSelectedPrendas() {
+      const idsToDelete = selectedItems.map(item => parseInt(item.dataset.id));
+      
+      try {
+        const { error } = await supabase
+          .from(TABLE_NAME)
+          .delete()
+          .in('id', idsToDelete);
+
+        if (error) throw error;
+
+        // Remover del DOM y del array
+        selectedItems.forEach(item => {
+          const index = allPhotoItems.indexOf(item);
+          if (index > -1) {
+            allPhotoItems.splice(index, 1);
+          }
+          item.remove();
+        });
+        
+        selectedItems = [];
+        updateSelectionUI();
+        renderWardrobe(currentFilter);
+        mostrarMensaje('mensajeExito', true);
+        
+      } catch (error) {
+        console.error("Error deleting data from Supabase:", error);
+        mostrarMensaje('mensajeError', false);
+      }
+    }
+
+    // --- SELECCIÓN MÚLTIPLE ---
+    function updateSelectionUI() {
+      selectedItems = selectedItems.filter(item => document.body.contains(item));
+      
+      if (selectedItems.length > 0) {
+        selectionActions.classList.remove('hidden');
+        selectionCount.textContent = `${selectedItems.length} seleccionadas`;
+      } else {
+        selectionActions.classList.add('hidden');
+      }
+    }
+
+    // --- INICIALIZACIÓN CORREGIDA ---
+    function initializeApp() {
+      // Obtener todos los elementos de foto
+      allPhotoItems = Array.from(document.querySelectorAll('.photo-item'));
+      console.log('Total de elementos encontrados:', allPhotoItems.length);
+      
+      // Normalizar y asignar categorías basadas en la clasificación
+      allPhotoItems.forEach(item => {
+        const clasificacionActual = item.dataset.categoria;
+        console.log('Item:', item.dataset.id, 'Clasificación original:', clasificacionActual);
+        
+        const categoriaNormalizada = normalizarClasificacion(clasificacionActual);
+        item.dataset.categoria = categoriaNormalizada;
+        
+        console.log('Item:', item.dataset.id, 'Categoría normalizada:', categoriaNormalizada);
+      });
+
+      // Inicializar filtro
+      renderWardrobe('Todo');
+    }
+
+    // --- EVENT LISTENERS ---
+    
+    // Filtros
+    filterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filterValue = btn.dataset.filter;
+        console.log('Botón clickeado:', filterValue);
+        renderWardrobe(filterValue);
+      });
+    });
+
+    // Clic en el Grid
+    photoGrid.addEventListener('click', (e) => {
+      // Favoritos - Solo detectar clic en el icono corazón
+      const heartIcon = e.target.closest('.heart');
+      if (heartIcon) {
+        const prendaId = parseInt(heartIcon.dataset.prendaId);
+        toggleFavorito(prendaId, heartIcon);
+        return;
+      }
+      
+      // Selección múltiple
+      const photoItem = e.target.closest('.photo-item');
+      if (!photoItem) return;
+
+      photoItem.classList.toggle('selected');
+      const index = selectedItems.indexOf(photoItem);
+      
+      if (photoItem.classList.contains('selected')) {
+        if (index === -1) selectedItems.push(photoItem);
+      } else {
+        if (index !== -1) selectedItems.splice(index, 1);
+      }
+
+      updateSelectionUI();
+    });
+
+    // Acciones de selección
+    cancelSelection.addEventListener('click', () => {
+      selectedItems.forEach(item => item.classList.remove('selected'));
+      selectedItems = [];
+      updateSelectionUI();
+    });
+
+    deleteSelection.addEventListener('click', deleteSelectedPrendas);
+
+    // Inicializar la aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', initializeApp);
+
+  </script>
 </body>
 </html>
