@@ -14,6 +14,11 @@ import os
 import logging
 from django.views.decorators.http import require_POST
 import json
+from rembg import remove
+from PIL import Image
+import io
+import requests
+from PIL import UnidentifiedImageError
 
 
 logger = logging.getLogger(__name__)
@@ -293,20 +298,21 @@ def seleccionar_categoria(request):
     
     return render(request, 'category.html')
 
-views
-from rembg import remove
-from PIL import Image
-import io
-import requests
+
+
 
 def segmentar_y_subir(imagen_url, nombre_segmentado):
-    # Descargar imagen original
     response = requests.get(imagen_url)
     if response.status_code != 200:
+        print("Error al descargar:", response.status_code)
         return None
 
-    # Quitar fondo
-    input_image = Image.open(io.BytesIO(response.content))
+    try:
+        input_image = Image.open(io.BytesIO(response.content))
+    except UnidentifiedImageError:
+        print("No se pudo identificar la imagen:", imagen_url)
+        return None
+
     output_image = remove(input_image)
     buffer = io.BytesIO()
     output_image.save(buffer, format="PNG")
@@ -330,14 +336,3 @@ def segmentar_todas_las_prendas(request):
             prenda.imagen_segmentada = url_segmentada
             prenda.save()
     return JsonResponse({'status': 'ok', 'message': 'Segmentación completada'})
-
-
-
-
-def seleccionar_categoria(request):
-    """Vista para seleccionar categoría antes de capturar la prenda"""
-    if 'usuario_id' not in request.session:
-        messages.error(request, "Debes iniciar sesión para agregar prendas.")
-        return redirect('login')
-    
-    return render(request, 'category.html')
