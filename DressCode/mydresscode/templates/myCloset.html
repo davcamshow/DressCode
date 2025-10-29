@@ -187,6 +187,29 @@
     No se pudo eliminar
   </div>
 
+      </div>
+    <div id="mensajeExito" class="mensaje-exito hidden">
+      Eliminación exitosa
+    </div>
+    <div id="mensajeError" class="mensaje-flotante hidden">
+      No se pudo eliminar
+    </div>
+    
+    <div style="text-align: center; margin: 20px;">
+      <form action="{% url 'segmentar_prendas' %}" method="get">
+        <button type="submit" style="
+          background: #5d9e9e;
+          color: white;
+          padding: 12px 25px;
+          border: none;
+          border-radius: 25px;
+          font-weight: bold;
+          cursor: pointer;
+        ">
+        </button>
+      </form>
+   </div>
+
   <script>
     // === CONFIGURACIÓN DE SUPABASE ===
     const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co'; 

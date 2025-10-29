@@ -292,3 +292,52 @@ def seleccionar_categoria(request):
         return redirect('login')
     
     return render(request, 'category.html')
+
+views
+from rembg import remove
+from PIL import Image
+import io
+import requests
+
+def segmentar_y_subir(imagen_url, nombre_segmentado):
+    # Descargar imagen original
+    response = requests.get(imagen_url)
+    if response.status_code != 200:
+        return None
+
+    # Quitar fondo
+    input_image = Image.open(io.BytesIO(response.content))
+    output_image = remove(input_image)
+    buffer = io.BytesIO()
+    output_image.save(buffer, format="PNG")
+    imagen_segmentada = buffer.getvalue()
+
+    # Subir a Supabase
+    path = f"segmentadas/{nombre_segmentado}"
+    supabase.storage.from_(SUPABASE_STORAGE_BUCKET).upload(
+        file=imagen_segmentada,
+        path=path,
+        file_options={"content-type": "image/png"}
+    )
+    return supabase.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(path)
+
+def segmentar_todas_las_prendas(request):
+    prendas = Armario.objects.filter(imagen_segmentada__isnull=True)
+    for prenda in prendas:
+        nombre_segmentado = f"segmentada_{prenda.idPrenda}.png"
+        url_segmentada = segmentar_y_subir(prenda.imagen, nombre_segmentado)
+        if url_segmentada:
+            prenda.imagen_segmentada = url_segmentada
+            prenda.save()
+    return JsonResponse({'status': 'ok', 'message': 'Segmentación completada'})
+
+
+
+
+def seleccionar_categoria(request):
+    """Vista para seleccionar categoría antes de capturar la prenda"""
+    if 'usuario_id' not in request.session:
+        messages.error(request, "Debes iniciar sesión para agregar prendas.")
+        return redirect('login')
+    
+    return render(request, 'category.html')

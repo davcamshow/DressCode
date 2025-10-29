@@ -18,4 +18,6 @@ urlpatterns = [
     path('eliminar-prendas/', views.eliminar_prendas, name='eliminar_prendas'),
     path('añadir/', views.añadir_prenda, name='añadir_prenda'),
     path('seleccionar-categoria/', views.seleccionar_categoria, name='seleccionar_categoria'),
+    path('segmentar-prendas/', views.segmentar_todas_las_prendas, name='segmentar_prendas'),
+    path('seleccionar-categoria/', views.seleccionar_categoria, name='seleccionar_categoria'),
 ]
