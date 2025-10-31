@@ -21,6 +21,7 @@ import requests
 from PIL import UnidentifiedImageError
 
 
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -34,15 +35,12 @@ except AttributeError:
     print("ADVERTENCIA: Las variables de Supabase no están configuradas en settings.py")
 
 def home(request):
-    """Renderiza la página de inicio."""
     return render(request, 'welcome.html')
 
 def recovery_view(request):
-    """Renderiza la página de recuperación de contraseña."""
     return render(request, 'recovery.html')
 
 def newPassword_view(request):
-    """Renderiza la página para establecer una nueva contraseña."""
     return render(request, 'newPassword.html')
 
 def register_view(request):
@@ -336,3 +334,10 @@ def segmentar_todas_las_prendas(request):
             prenda.imagen_segmentada = url_segmentada
             prenda.save()
     return JsonResponse({'status': 'ok', 'message': 'Segmentación completada'})
+
+def outfit(request):
+    return render(request, 'outfit.html')
+
+
+
+

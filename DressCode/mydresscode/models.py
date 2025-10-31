@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Usuario(models.Model):
     idUsuario = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True)
@@ -33,3 +34,5 @@ class Armario(models.Model):
 
     def __str__(self):
         return f"{self.tipo} ({self.color})"
+
+

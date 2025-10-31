@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Armar Outfit</title>
+  <link rel="stylesheet" href="{% static 'css/outfit.css' %}" />
+</head>
+<body>
+    <header class="top-bar">
+        <div class="header-left">
+            <span class="titulo">Recomendacion de Outfit</span>
+        </div>
+
+        <div class="header-center">
+            <img src="{% static 'img/logo.jpg' %}" alt="Logo Mi Armario" />
+        </div> 
+        <div class="header-right">
+            <a href="{% url 'inicio' %}" class="header-icon">
+                <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
+            </a>
+        </div>
+    </header>
+
+    <main class="canvas-area">
+        <div class="outfit-grid">
+        </div>
+      </main>
+
+
+
+  <footer class="footer-actions">
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="save-btn">Guardar Outfit</button>
+    </form>
+    <button class="discard-btn" onclick="descartarOutfit()">Descartar</button>
+  </footer>
+
+  <script src="{% static 'js/armarOutfit.js' %}"></script>
+</body>
+</html>
