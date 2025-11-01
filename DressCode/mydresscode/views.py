@@ -338,6 +338,9 @@ def segmentar_todas_las_prendas(request):
 def outfit(request):
     return render(request, 'outfit.html')
 
+def vision_computer(request):
+    return render(request, 'visioncomputer.html')
+
 
 
 

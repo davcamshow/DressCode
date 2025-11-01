@@ -21,4 +21,5 @@ urlpatterns = [
     path('segmentar-prendas/', views.segmentar_todas_las_prendas, name='segmentar_prendas'),
     path('seleccionar-categoria/', views.seleccionar_categoria, name='seleccionar_categoria'),
     path('outfit/', views.outfit, name='outfit'),
+    path('vision/', views.vision_computer, name='visioncomputer'),
 ]

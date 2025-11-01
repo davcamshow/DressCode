@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocer-Prenda</title>
+   <link rel="stylesheet" href="{% static 'css/vision.css' %}">
+</head>
+<body>
+
+    <button id="abrirModal">Agregar</button>
+
+    <div id="modal-prenda" class="modal-fondo">
+        <div class="modal-contenido">
+            <div class="modal-encabezado">
+                <h2> Agregar Nueva Prenda</h2>
+                <button class="cerrar-modal" id="cerrarModal">&times;</button>
+            </div>
+
+            <form class="formulario-prenda">
+                <div class="campo-imagen">
+                    <img src="URL_DE_TU_IMAGEN.jpg" alt="Prenda a agregar" class="imagen-prenda">
+                    <button type="button" class="btn-camara">📸</button>
+                </div>
+
+                <div class="campo-form">
+                    <label for="tipo-prenda">Tipo de Prenda <span class="obligatorio">*</span></label>
+                    <select id="tipo-prenda" required>
+                        <option value="">Selecciona el tipo</option>
+                        <option value="pantalon">Pantalón</option>
+                    </select>
+                </div>
+
+                <div class="campo-form">
+                    <label for="color-prenda">Color <span class="obligatorio">*</span></label>
+                    <select id="color-prenda" required>
+                        <option value="">Selecciona el color</option>
+                        <option value="verde">Verde</option>
+                    </select>
+                </div>
+
+                <div class="campo-form">
+                    <label for="estilo-prenda">Estilo <span class="obligatorio">*</span></label>
+                    <select id="estilo-prenda" required>
+                        <option value="">Selecciona el estilo</option>
+                        <option value="casual">Casual</option>
+                    </select>
+                </div>
+                
+                <div class="campo-form">
+                    <label for="temporada-prenda">Temporada <span class="obligatorio">*</span></label>
+                    <select id="temporada-prenda" required>
+                        <option value="">Selecciona la temporada</option>
+                        <option value="verano">Verano</option>
+                    </select>
+                </div>
+
+                <div class="campo-favoritos">
+                    <div class="switch-contenedor">
+                        <span class="corazon">🤍</span>
+                        <p>Agregar a Favoritos</p>
+                        <p class="nota">Marca esta prenda como favorita</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="modal-acciones">
+                    <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
