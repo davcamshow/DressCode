@@ -15,11 +15,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* CAMBIO CLAVE AQUÍ: Usamos rgba para la transparencia */
-    background-color: rgba(0, 0, 0, 0.5); /* Negro con 50% de opacidad */
-    /* Puedes ajustar el último valor (0.5) para cambiar el nivel de transparencia:
-       0.1 para muy transparente, 0.8 para menos transparente. */
-
+    background-color: rgba(0, 0, 0, 0.5); 
     display: flex;
     justify-content: center;
     align-items: center;
