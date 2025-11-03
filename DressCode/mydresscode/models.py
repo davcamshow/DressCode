@@ -34,5 +34,35 @@ class Armario(models.Model):
 
     def __str__(self):
         return f"{self.tipo} ({self.color})"
+    
+class Outfit(models.Model):
+    idOutfit = models.AutoField(primary_key=True)
+    idUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='idUsuario')  # FK a Usuario
+    estilo = models.CharField(max_length=45)
+    clima_recomendado = models.CharField(max_length=45)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    esFavorito = models.BooleanField(default=False)  # TINYINT → Boolean
+
+    class Meta:
+        db_table = 'outfit'
+    
+    def __str__(self):
+        return self.estilo
+    
+class Recomendacion(models.Model):
+    idRecomendacion = models.AutoField(primary_key=True)
+    idUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='idUsuario')  # FK a Usuario
+    idOutfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, db_column='idOutfit')    # FK a Outfit
+    fecha_generacion = models.DateTimeField(auto_now_add=True)
+    clima_del_dia = models.CharField(max_length=45)
+    valoracion = models.CharField(max_length=45) # Puedes ajustar si es categoría o FK
+
+    class Meta:
+        db_table = 'recomendacion'
+
+    def __str__(self):
+        return self.fecha_generacion
+
+
 
 
