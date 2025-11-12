@@ -1,8 +1,7 @@
-# [file name]: views.py
 from django.shortcuts import render, redirect
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login, logout
-from .models import Usuario, Armario 
+from .models import Usuario, Armario, Outfit, VerPrenda
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages 
 from django.http import JsonResponse
@@ -19,7 +18,8 @@ from PIL import Image
 import io
 import requests
 from PIL import UnidentifiedImageError
-
+from datetime import datetime
+import random   
 
 
 logger = logging.getLogger(__name__)
@@ -165,6 +165,9 @@ def my_closet(request):
         messages.error(request, "Hubo un error al cargar tu armario digital.")
         return render(request, 'myCloset.html', {})
 
+def categoria(request):
+    return render(request, 'category.html')
+
 @csrf_exempt
 def subir_prenda(request):
     if request.method == 'POST' and 'imagen_prenda' in request.FILES:
@@ -285,9 +288,6 @@ def eliminar_prendas(request):
         logger.error(f"Error al eliminar prendas: {e}")
         return JsonResponse({'status': 'ok', 'message': 'Prendas eliminadas correctamente.'})
 
-def añadir_prenda(request):
-    return render(request, 'add.html')
-
 def seleccionar_categoria(request):
     """Vista para seleccionar categoría antes de capturar la prenda"""
     if 'usuario_id' not in request.session:
@@ -295,8 +295,6 @@ def seleccionar_categoria(request):
         return redirect('login')
     
     return render(request, 'category.html')
-
-
 
 
 def segmentar_y_subir(imagen_url, nombre_segmentado):
@@ -335,6 +333,8 @@ def segmentar_todas_las_prendas(request):
             prenda.save()
     return JsonResponse({'status': 'ok', 'message': 'Segmentación completada'})
 
+def vision_computer(request):
+    return render(request, 'visioncomputer.html')
 def outfit(request):
     return render(request, 'outfit.html')
 
@@ -342,5 +342,106 @@ def vision_computer(request):
     return render(request, 'visioncomputer.html')
 
 
+def recomendar_outfit(request):
+    import random
 
+    estilo = request.GET.get('estilo')
+    temporada = request.GET.get('temporada')
+    usuario_id = request.session.get('usuario_id')
+
+    def obtener_prenda_por_tipo(tipos):
+        query = supabase.table("armario").select("*")
+
+        if usuario_id:
+            query = query.eq("idUsuario", usuario_id)
+        if estilo:
+            query = query.ilike("estilo", f"%{estilo}%")
+        if temporada:
+            query = query.ilike("temporada", f"%{temporada}%")
+
+        prendas = query.execute().data
+
+        return [
+            p for p in prendas
+            if 'tipo' in p and any(t.lower() in p['tipo'].lower() for t in tipos)
+        ]
+
+    # Obtener todas las opciones posibles
+    vestidos = obtener_prenda_por_tipo(['Vestido'])
+    partes_superiores = obtener_prenda_por_tipo(['Camisa', 'Blusa'])
+    capas_externas = obtener_prenda_por_tipo(['Suéter', 'Chaqueta', 'Abrigo'])
+    partes_inferiores = obtener_prenda_por_tipo(['Pantalón', 'Falda', 'Shorts', 'Traje'])
+    calzados = obtener_prenda_por_tipo(['Zapatos formales', 'Tenis deportivos', 'Sandalias', 'Botas', 'Mocasines', 'Zapatillas'])
+    accesorios = obtener_prenda_por_tipo(['Bolso', 'Collar', 'Pulsera', 'Reloj', 'Gafas de sol', 'Sombrero', 'Bufanda', 'Cinturón', 'Cartera'])
+
+    #  Elegir aleatoriamente si usar vestido o conjunto
+    usar_vestido = vestidos and random.choice([True, False])
+
+    if usar_vestido:
+        outfit = {
+            'vestido': random.choice(vestidos),
+            'calzado': random.choice(calzados) if calzados else None,
+            'accesorio': random.choice(accesorios) if accesorios else None
+        }
+    else:
+        outfit = {
+            'parte_superior_base': random.choice(partes_superiores) if partes_superiores else None,
+            'parte_superior_externo': random.choice(capas_externas) if capas_externas else None,
+            'parte_inferior': random.choice(partes_inferiores) if partes_inferiores else None,
+            'calzado': random.choice(calzados) if calzados else None,
+            'accesorio': random.choice(accesorios) if accesorios else None
+        }
+        
+
+    imagenes = []
+    tipos = []
+
+    for key, prenda in outfit.items():
+        if prenda and 'imagen' in prenda:
+            imagenes.append(prenda['imagen'])
+            tipos.append(key)
+
+    return render(request, 'outfit.html', {'outfit': outfit})
+
+@csrf_exempt
+def guardar_outfit(request):
+    if request.method == 'POST':
+        if 'usuario_id' not in request.session:
+            return JsonResponse({'error': 'Usuario no autenticado.'}, status=401)
+
+        try:
+            usuario = Usuario.objects.get(idUsuario=request.session['usuario_id'])
+
+            estilo = request.POST.get('estilo') or 'Sin estilo'
+            clima = request.POST.get('clima_recomendado') or 'Desconocido'
+            es_favorito = request.POST.get('esFavorito', 'false') == 'true'
+
+            nuevo_outfit = Outfit.objects.create(
+                idUsuario=usuario,
+                estilo=estilo,
+                clima_recomendado=clima,
+                fecha_creacion=datetime.now(),
+                esFavorito=es_favorito
+            )
+
+            imagenes = request.POST.getlist('imagenes')
+            tipos = request.POST.getlist('tipos')
+
+            for url, tipo in zip(imagenes, tipos):
+                VerPrenda.objects.create(
+                    outfit=nuevo_outfit,
+                    imagen_url=url,
+                    tipo_prenda=tipo
+                )
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Outfit guardado exitosamente.',
+                'outfit_id': nuevo_outfit.idOutfit
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Petición inválida.'}, status=400)
 

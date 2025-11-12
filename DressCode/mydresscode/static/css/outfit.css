@@ -40,26 +40,6 @@ body {
   height: 24px;
   cursor: pointer;
 }
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header-left {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.header-right .header-icon img {
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-}
 
 .back-btn {
   font-size: 1.5rem;
@@ -78,19 +58,55 @@ body {
 
 .outfit-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  max-width: 400px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  width: 100%;
   background: white;
-  padding: 1rem;
-  border-radius: 12px;
+  padding: 2rem;
+  border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.outfit-grid img {
+.outfit-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 1rem;
+  transition: transform 0.2s ease;
+  text-align: center;
+}
+
+.outfit-card:hover {
+  transform: translateY(-5px);
+}
+
+.outfit-img {
   width: 100%;
-  object-fit: contain;
+  height: auto;
   border-radius: 8px;
+  object-fit: cover;
+  max-height: 250px;
+}
+
+.outfit-info {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.outfit-info h3 {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.empty {
+  background-color: #ffe0e0;
+  color: #a33;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
 }
 
 .footer-actions {
@@ -101,7 +117,11 @@ body {
   box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
 }
 
-.save-btn, .discard-btn {
+.footer-actions a {
+  text-decoration: none;
+}
+
+.save-btn, .discard-btn, .generate-btn {
   padding: 0.8rem 1.2rem;
   font-size: 1rem;
   border: none;
@@ -115,7 +135,86 @@ body {
   color: white;
 }
 
+.save-btn:hover {
+  background-color: #2b6969;
+}
+
 .discard-btn {
   background-color: #e06e78;
   color: white;
+}
+
+.discard-btn:hover {
+  background-color: #c6434e;
+}
+
+.generate-btn {
+  background-color: #e69c67;
+  color: white;
+}
+
+.generate-btn:hover {
+  background-color: #d57a38;
+}
+
+.outfit-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 20px;
+  padding: 20px;
+}
+
+.outfit-slide {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 200px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+}
+
+.outfit-slide img {
+  width: 100%;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.outfit-slide:hover img {
+  transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+
+  .top-bar {
+    padding: 0.8rem;
+  }
+
+  .header-center img {
+    height: 40px;
+  }
+
+  .outfit-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .outfit-img {
+    max-height: 180px;
+  }
+
+  .outfit-slide {
+    width: 150px;
+  }
+
+  .footer-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .save-btn, .discard-btn, .generate-btn {
+    width: 100%;
+  }
 }

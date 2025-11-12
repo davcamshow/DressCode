@@ -8,36 +8,82 @@
   <link rel="stylesheet" href="{% static 'css/outfit.css' %}" />
 </head>
 <body>
-    <header class="top-bar">
-        <div class="header-left">
-            <span class="titulo">Recomendacion de Outfit</span>
+  <header class="top-bar">
+    <div class="header-left">
+      <span class="titulo">Recomendación de Outfit</span>
+    </div>
+
+    <div class="header-center">
+      <img src="{% static 'img/logo.jpg' %}" alt="Logo Mi Armario" />
+    </div> 
+
+    <div class="header-right">
+      <a href="{% url 'inicio' %}" class="header-icon">
+        <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
+      </a>
+    </div>
+  </header>
+
+  <main class="canvas-area">
+    <div class="outfit-carousel">
+      {% if outfit.vestido %}
+        <div class="outfit-slide">
+          <img src="{{ outfit.vestido.imagen }}" alt="{{ outfit.vestido.tipo }}">
+          <p>{{ outfit.vestido.tipo }}</p>
         </div>
+      {% else %}
+        {% if outfit.parte_superior_base %}
+          <div class="outfit-slide">
+            <img src="{{ outfit.parte_superior_base.imagen }}" alt="{{ outfit.parte_superior_base.tipo }}">
+            <p>{{ outfit.parte_superior_base.tipo }}</p>
+          </div>
+        {% endif %}
+        {% if outfit.parte_superior_externo %}
+          <div class="outfit-slide">
+            <img src="{{ outfit.parte_superior_externo.imagen }}" alt="{{ outfit.parte_superior_externo.tipo }}">
+            <p>{{ outfit.parte_superior_externo.tipo }}</p>
+          </div>
+        {% endif %}
+        {% if outfit.parte_inferior %}
+          <div class="outfit-slide">
+            <img src="{{ outfit.parte_inferior.imagen }}" alt="{{ outfit.parte_inferior.tipo }}">
+            <p>{{ outfit.parte_inferior.tipo }}</p>
+          </div>
+        {% endif %}
+      {% endif %}
 
-        <div class="header-center">
-            <img src="{% static 'img/logo.jpg' %}" alt="Logo Mi Armario" />
-        </div> 
-        <div class="header-right">
-            <a href="{% url 'inicio' %}" class="header-icon">
-                <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
-            </a>
+      {% if outfit.calzado %}
+        <div class="outfit-slide">
+          <img src="{{ outfit.calzado.imagen }}" alt="{{ outfit.calzado.tipo }}">
+          <p>{{ outfit.calzado.tipo }}</p>
         </div>
-    </header>
+      {% endif %}
 
-    <main class="canvas-area">
-        <div class="outfit-grid">
+      {% if outfit.accesorio %}
+        <div class="outfit-slide">
+          <img src="{{ outfit.accesorio.imagen }}" alt="{{ outfit.accesorio.tipo }}">
+          <p>{{ outfit.accesorio.tipo }}</p>
         </div>
-      </main>
-
-
+      {% endif %}
+    </div>
+  </main>
 
   <footer class="footer-actions">
-    <form method="POST">
+    <form id="guardarOutfitForm" method="POST" action="{% url 'guardar_outfit' %}">
       {% csrf_token %}
+      {% for img in imagenes %}
+        <input type="hidden" name="imagenes" value="{{ img }}">
+      {% endfor %}
+      {% for tipo in tipos %}
+        <input type="hidden" name="tipos" value="{{ tipo }}">
+      {% endfor %}
       <button type="submit" class="save-btn">Guardar Outfit</button>
     </form>
-    <button class="discard-btn" onclick="descartarOutfit()">Descartar</button>
+
+    <a href="{% url 'recomendar_outfit' %}?estilo={{ request.GET.estilo }}&temporada={{ request.GET.temporada }}" class="generate-btn">Generar nuevo outfit</a>
+    <a href="{% url 'inicio' %}" class="discard-btn">Salir</a>
   </footer>
 
-  <script src="{% static 'js/armarOutfit.js' %}"></script>
+  <script src="{% static 'js/outfit.js' %}"></script>
 </body>
 </html>
