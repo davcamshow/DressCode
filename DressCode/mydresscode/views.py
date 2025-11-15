@@ -20,7 +20,7 @@ import requests
 from PIL import UnidentifiedImageError
 from datetime import datetime
 import random   
-
+from django.contrib.auth.decorators import login_required
 
 logger = logging.getLogger(__name__)
 
@@ -444,4 +444,11 @@ def guardar_outfit(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Petición inválida.'}, status=400)
+
+def configuracion_inicial_view(request):
+    # Lógica para verificar el estado de Supabase...
+    # Si la configuración está COMPLETA, redirigir: return redirect('home_url') 
+
+    # Si la configuración está INCOMPLETA, renderizar el template:
+    return render(request, 'configuracionInicial.html')
 

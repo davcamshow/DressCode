@@ -93,6 +93,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "mydresscode" / "static"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Envía al usuario a la URL de configuración (onboarding_url)
+LOGIN_REDIRECT_URL = '/configuracion-inicial/'
+
 # Configuración Supabase
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')

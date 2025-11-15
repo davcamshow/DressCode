@@ -1,0 +1,172 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Inicial</title>
+    <link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+</head>
+<body>
+
+    <div id="onboardingModal" class="modal-overlay">
+        <div class="onboarding-container">
+            
+            <header class="onboarding-header">
+                <div class="progress-bar-wrapper">
+                    <span id="stepIndicator">Paso 1 de 4</span>
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </header>
+            
+            <div id="onboardingSteps" class="steps-content">
+                
+                <div class="step active" data-step="1">
+                    <div class="step-title-box">
+                        <div class="icon-box"><i class="fas fa-tshirt"></i></div>
+                        <h3>¿Cuál es tu estilo?</h3>
+                        <p>Selecciona todos los que te representan.</p>
+                    </div>
+                    
+                    <div class="options-grid">
+                        <div class="style-card" data-style="casual">Casual</div>
+                        <div class="style-card" data-style="formal">Formal</div>
+                        <div class="style-card" data-style="deportivo">Deportivo</div>
+                        <div class="style-card" data-style="elegante">Elegante</div>
+                        <div class="style-card" data-style="bohemio">Bohemio</div>
+                        <div class="style-card" data-style="streetwear">Streetwear</div>
+                        <div class="style-card" data-style="minimalista">Minimalista</div>
+                        <div class="style-card" data-style="vintage">Vintage</div>
+                    </div>
+                    
+                    <div class="current-selection">
+                        <i class="fas fa-star"></i> Tu selección actual: <span id="selected-styles">Ninguno</span>
+                    </div>
+                </div>
+                
+                <div class="step" data-step="2">
+                    <div class="step-title-box">
+                        <div class="icon-box"><i class="fas fa-palette"></i></div>
+                        <h3>¿Qué colores te encantan?</h3>
+                        <p>Elige tus favoritos para crear paletas perfectas (Máximo 3).</p>
+                    </div>
+                    <div class="color-grid">
+                        <div class="color-option" data-color="#000000"><div class="color-square" style="background-color: #000000;"></div><span>Negro</span></div>
+                        <div class="color-option" data-color="#ffffff"><div class="color-square white-square" style="background-color: #ffffff;"></div><span>Blanco</span></div>
+                        <div class="color-option" data-color="#9ea4a9"><div class="color-square" style="background-color: #9ea4a9;"></div><span>Gris</span></div>
+                        <div class="color-option" data-color="#d3c7b3"><div class="color-square" style="background-color: #d3c7b3;"></div><span>Beige</span></div>
+                        <div class="color-option" data-color="#4178ff"><div class="color-square" style="background-color: #4178ff;"></div><span>Azul</span></div>
+                        <div class="color-option" data-color="#49c656"><div class="color-square" style="background-color: #49c656;"></div><span>Verde</span></div>
+                        <div class="color-option" data-color="#e83648"><div class="color-square" style="background-color: #e83648;"></div><span>Rojo</span></div>
+                        <div class="color-option" data-color="#e245a1"><div class="color-square" style="background-color: #e245a1;"></div><span>Rosa</span></div>
+                        <div class="color-option" data-color="#934ffb"><div class="color-square" style="background-color: #934ffb;"></div><span>Morado</span></div>
+                        <div class="color-option" data-color="#fdd12a"><div class="color-square" style="background-color: #fdd12a;"></div><span>Amarillo</span></div>
+                        <div class="color-option" data-color="#ff7b2b"><div class="color-square" style="background-color: #ff7b2b;"></div><span>Naranja</span></div>
+                        <div class="color-option" data-color="#8c471c"><div class="color-square" style="background-color: #8c471c;"></div><span>Marrón</span></div>
+                    </div>
+                    
+                    <div class="current-selection">
+                        <i class="fas fa-star"></i> Colores seleccionados: <span id="selected-colors">Ninguno</span>
+                    </div>
+                </div>
+                
+                <div class="step" data-step="3">
+                    <div class="step-title-box">
+                        <div class="icon-box"><i class="fas fa-sun"></i></div>
+                        <h3>¿Cuáles son tus temporadas favoritas?</h3>
+                        <p>Para recomendarte prendas según el clima (Puedes elegir varias).</p>
+                    </div>
+                    <div class="options-grid season-grid">
+                        <div class="season-card" data-season="primavera">Primavera</div>
+                        <div class="season-card" data-season="verano">Verano</div>
+                        <div class="season-card" data-season="otono">Otoño</div>
+                        <div class="season-card" data-season="invierno">Invierno</div>
+                    </div>
+                    
+                    <div class="current-selection">
+                        <i class="fas fa-star"></i> Temporadas seleccionadas: <span id="selected-seasons">Ninguna</span>
+                    </div>
+                </div>
+                
+                <div class="step" data-step="4">
+                    <div class="step-title-box">
+                        <div class="icon-box"><i class="fas fa-ruler-combined"></i></div>
+                        <h3>Tallas, Ubicación y Clima</h3>
+                        <p>Necesitamos estos datos para las recomendaciones personalizadas.</p>
+                    </div>
+
+                    <h4>🛍️ Tu Talla de Prenda General</h4>
+                    <div class="form-control-group">
+                        <div class="form-control">
+                            <label for="talla-superior">Talla Superior (Camisas, etc.)</label>
+                            <input type="text" id="talla-superior" placeholder="Ej: S, M, L, 38, 10">
+                        </div>
+                        <div class="form-control">
+                            <label for="talla-inferior">Talla Inferior (Pantalones, etc.)</label>
+                            <input type="text" id="talla-inferior" placeholder="Ej: 30, 40, XS, M">
+                        </div>
+                    </div>
+                    
+                    <div class="form-control">
+                        <label for="talla-calzado">Talla de Calzado (EUR/MX)</label>
+                        <select id="talla-calzado">
+                            <option value="">Selecciona tu talla</option>
+                            <option value="35">35</option>
+                            <option value="36">36</option>
+                            <option value="37">37 (4.5 MX)</option>
+                            <option value="38">38 (5 MX)</option>
+                            <option value="39">39 (6 MX)</option>
+                            <option value="40">40 (7 MX)</option>
+                            <option value="41">41 (7.5 MX)</option>
+                            <option value="42">42 (8 MX)</option>
+                            <option value="43">43 (9 MX)</option>
+                            <option value="44">44 (9.5 MX)</option>
+                        </select>
+                    </div>
+                    
+                    <h4>🌍 Ubicación y Clima</h4>
+                    <div class="form-control">
+                        <label for="city">Ciudad/Región</label>
+                        <input type="text" id="city" placeholder="Ej: Morelia, Madrid">
+                    </div>
+                    <div class="form-control">
+                        <label for="climate">Clima general</label>
+                        <select id="climate">
+                            <option value="">Selecciona una opción</option>
+                            <option value="calido">Cálido / Húmedo</option>
+                            <option value="frio">Frío / Seco</option>
+                            <option value="templado">Templado / Estaciones marcadas</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            
+            <footer class="navigation-buttons">
+                <button id="prevBtn" class="btn btn-secondary" style="visibility: hidden;">
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </button>
+                
+                <div class="spacer"></div>
+                
+                <button id="nextBtn" class="btn btn-primary btn-lg">
+                    Continuar <i class="fas fa-chevron-right"></i>
+                </button>
+                <button id="finishBtn" class="btn btn-primary btn-lg" style="display: none;">
+                    Finalizar Configuración <i class="fas fa-check"></i>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit-id.js" crossorigin="anonymous"></script> 
+    <script>
+        // TOKEN CSRF CLAVE PARA DJANGO
+        const CSRF_TOKEN = '{{ csrf_token }}'; 
+    </script>
+    <script src="{% static 'js/onboarding.js' %}"></script>
+</body>
+</html>

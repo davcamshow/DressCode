@@ -24,4 +24,5 @@ urlpatterns = [
     path('vision/', views.vision_computer, name='visioncomputer'),
     path('recomendar-outfit/', views.recomendar_outfit, name='recomendar_outfit'),
     path('guardar-outfit/', views.guardar_outfit, name='guardar_outfit'),
+    path('configuracion-inicial/', views.configuracion_inicial_view, name='onboarding_url'),
 ]
