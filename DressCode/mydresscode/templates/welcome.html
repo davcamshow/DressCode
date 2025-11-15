@@ -1,69 +1,69 @@
 {% load static %}
-<!--
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dresscode - Inicio</title>
-  <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DressCode Fashion</title>
+  <link rel="stylesheet" href="{% static 'css/welcome.css' %}" />
 </head>
-
 <body>
+  <!-- Canvas para el fondo dinámico -->
+  <canvas id="dynamic-bg"></canvas>
 
-  <section class="pantalla pantalla-inicio">
-    <div class="logo">
-      <img src="{% static 'img/logo.jpg' %}" alt="Logo Dresscode" class="logo-small">
-    </div>
+  <div class="container">
+    <!-- Barra superior -->
+    <nav class="topbar" aria-label="Main navigation">
+      <div class="menu-item active">Sobre Nosotros</div>
+      <div class="menu-item">Contacto</div>
+    </nav>
 
-    <div class="botones">
-      <a href="{% url 'login' %}" class="btn btn-naranja">Iniciar sesión</a>
-      <a href="{% url 'register' %}" class="btn btn-rojo">¿Eres nuevo? Crea tu cuenta</a>
-    </div>
-  </section>
-</body>
-</html>
--->
-
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DressCode - Inicio</title>
-  <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-
-<body>
-  <div class="welcome-container">
-
-    <!-- Header con logo y menú -->
-    <header>
-      <div class="logo">
-        <img src="{% static 'img/logo.jpg' %}" alt="Logo DressCode">
-      </div>
-      <nav class="menu">
-        <a href="{% url 'login' %}">Iniciar sesión</a>
-        <a href="{% url 'register' %}">Registrarse</a>
-      </nav>
-    </header>
-
-
-    <div class="welcome-text">
-      <h1>Bienvenido a DressCode</h1>
-      <p>Gestiona tu guardarropa y crea outfits perfectos con inteligencia artificial</p>
-    </div>
-    <div class="extra-spot"></div>
+    <!-- Contenido principal -->
+    <main class="main">
+      <section class="text-section">
+        <h1 id="typing-title"></h1>
+        <h2 id="typing-subtitle"></h2>
+        <p id="typing-description"></p>
+        <div class="buttons-container" id="buttons-container">
+          <button id="login-btn">INICIAR SESIÓN</button>
+          <button id="register-btn" class="secondary">REGÍSTRATE</button>
+        </div>
+      </section>
+      <section class="image-section">
+        <div class="decoration"></div>
+        <div class="carousel-container">
+          <div class="carousel">
+            <div class="carousel-slide active">
+              <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Mujer con outfit moderno" />
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=720&q=80" alt="Modelo con vestido elegante" />
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Hombre con estilo casual" />
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Mujer con ropa deportiva" />
+            </div>
+          </div>
+          
+          <!-- Controles del carrusel -->
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+          
+          <div class="carousel-controls">
+            <div class="carousel-indicators">
+              <div class="carousel-indicator active" data-index="0"></div>
+              <div class="carousel-indicator" data-index="1"></div>
+              <div class="carousel-indicator" data-index="2"></div>
+              <div class="carousel-indicator" data-index="3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
+
+  <script src="{% static 'js/welcome.js' %}"></script>
 </body>
-
 </html>
-
-
-
-
-
-

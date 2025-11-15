@@ -1,177 +1,420 @@
-/* Reset básico */
+/* Reset y estilos base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body, html {
-  height: 100%;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #ffffff, #fcefee, #fdf4f0);
-  color: #333;
-  overflow: hidden;
-}
-
-/* Contenedor principal */
-.welcome-container {
-  height: 100%;
-  width: 100%;
+body {
+  background: linear-gradient(135deg, #f5f0e8 0%, #ddd1c4 50%, #c9b09a 100%);
+  color: #3a2b1f;
+  min-height: 100vh;
+  overflow-x: hidden;
   position: relative;
 }
 
-header {
+/* Canvas para el fondo dinámico */
+#dynamic-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Contenedor principal - pantalla completa */
+.container {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Barra superior marrón con menú */
+.topbar {
+  background-color: rgba(107, 68, 35, 0.95);
+  color: white;
+  display: flex;
   align-items: center;
-  padding: 20px 60px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  z-index: 10;
-}
-
-header .logo img {
-  width: 120px;
-  border-radius: 12px;
-}
-
-/* Menú simple */
-.menu a {
-  text-decoration: none;
-  color: #555;
+  padding: 16px 40px;
+  gap: 40px;
   font-weight: 600;
-  margin-left: 25px;
-  padding: 8px 14px;
-  border-radius: 8px;
+  font-size: 16px;
+  flex-wrap: wrap;
+  user-select: none;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.topbar .menu-item {
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.topbar .menu-item:hover {
+  color: #f0c197;
+}
+
+.topbar .menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #f0c197;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Contenedor principal */
+.main {
+  display: flex;
+  padding: 60px 40px;
+  gap: 40px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  position: relative;
+}
+
+/* Texto principal */
+.text-section {
+  max-width: 55%;
+  min-width: 300px;
+  flex: 1;
+  padding-left: 40px;
+  position: relative;
+}
+
+.text-section h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #2a1a0f;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  min-height: 120px;
+}
+
+.text-section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #6b4423;
+  margin-bottom: 25px;
+  font-style: normal;
+  min-height: 60px;
+}
+
+.text-section p {
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: #5a4a3a;
+  margin-bottom: 35px;
+  line-height: 1.7;
+  max-width: 90%;
+  min-height: 90px;
+}
+
+/* Estilos para el efecto de escritura */
+.typing-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background-color: #6b4423;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Contenedor de botones */
+.buttons-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.text-section button {
+  background-color: #6b4423;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 16px 36px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+  min-width: 200px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.text-section button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.text-section button:hover::before {
+  left: 100%;
+}
+
+.text-section button:hover {
+  background-color: #8c5b35;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Segundo botón con estilo diferente */
+.text-section button.secondary {
+  background-color: transparent;
+  color: #6b4423;
+  border: 2px solid #6b4423;
+}
+
+.text-section button.secondary:hover {
+  background-color: rgba(107, 68, 35, 0.1);
+}
+
+/* Contenedor de imagen con máscara de degradado intenso */
+.image-section {
+  max-width: 35%;
+  min-width: 250px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Estilos para el carrusel */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 85%;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 120%;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* MÁSCARA DE DEGRADADO MUCHO MÁS INTENSA */
+.carousel::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  right: -20%;
+  bottom: -20%;
+  background: 
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 25%,
+      rgba(221, 209, 196, 0.2) 40%,
+      rgba(201, 176, 154, 0.4) 60%,
+      rgba(169, 144, 122, 0.7) 80%,
+      rgba(139, 114, 92, 0.9) 100%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(221, 209, 196, 0.3) 30%,
+      rgba(201, 176, 154, 0.6) 70%,
+      rgba(169, 144, 122, 0.9) 100%
+    );
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: overlay;
+  border-radius: 20px;
+}
+
+/* Segunda capa de degradado para más intensidad */
+.carousel::after {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  right: -15%;
+  bottom: -15%;
+  background: radial-gradient(
+    circle at 30% 50%,
+    transparent 10%,
+    rgba(245, 240, 232, 0.1) 30%,
+    rgba(221, 209, 196, 0.3) 50%,
+    rgba(169, 144, 122, 0.6) 70%,
+    rgba(139, 114, 92, 0.8) 90%
+  );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: soft-light;
+  border-radius: 18px;
+}
+
+/* Controles del carrusel */
+.carousel-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  z-index: 5;
+}
+
+.carousel-indicators {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.menu a:hover {
-  background: linear-gradient(90deg, #ff9a76, #ff7e5f);
+.carousel-indicator.active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(107, 68, 35, 0.7);
   color: white;
-  box-shadow: 0 4px 10px rgba(255,126,95,0.3);
-}
-
-/* Texto de bienvenida */
-.welcome-text {
-  position: absolute;
-  top: 120px;
-  left: 80px;
-  max-width: 500px;
-  text-align: left;
-  color: #444;
-}
-
-/* Título */
-.welcome-text h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #ff7e5f, #fcb0b0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 15px;
-}
-
-/* Párrafo */
-.welcome-text p {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  color: #666;
-}
-
-/* Efectos decorativos suaves */
-.welcome-container::before {
-  content: '';
-  position: absolute;
-  top: -80px;
-  right: -80px;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(255,182,193,0.4), transparent 70%);
+  border: none;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  z-index: 5;
 }
 
-.welcome-container::after {
-  content: '';
+.carousel-btn:hover {
+  background-color: rgba(107, 68, 35, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+/* Elemento decorativo */
+.decoration {
   position: absolute;
-  bottom: -60px;
-  left: -60px;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(255,154,118,0.3), transparent 70%);
+  width: 150px;
+  height: 150px;
+  background: rgba(107, 68, 35, 0.1);
   border-radius: 50%;
+  top: 15%;
+  right: 15%;
+  z-index: -1;
 }
 
-.welcome-container .extra-spot {
-  position: absolute;
-  bottom: -70px;
-  right: -70px;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(255,192,203,0.4), transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
-}
-
-/* RESPONSIVE */
+/* Responsive */
 @media (max-width: 768px) {
-  header {
+  .main {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 15px 25px;
+    align-items: center;
+    padding: 30px 20px;
   }
-
-  .menu {
-    margin-top: 8px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+  .text-section,
+  .image-section {
+    max-width: 100%;
+    min-width: auto;
+    text-align: center;
+    padding-left: 0;
   }
-
-  .menu a {
-    margin-left: 0;
-    font-size: 0.95rem;
-    padding: 6px 10px;
+  .text-section p {
+    max-width: 100%;
   }
-
-  .welcome-text {
-    margin-top: 140px; 
-    margin-left: 25px;
-    max-width: 90%;
+  .topbar {
+    justify-content: center;
+    padding: 12px 20px;
   }
-
-  .welcome-text h1 {
-    font-size: 2.2rem;
+  .buttons-container {
+    justify-content: center;
   }
-
-  .welcome-text p {
-    font-size: 1rem;
+  .text-section h1 {
+    font-size: 2.5rem;
   }
-
-  
-  .welcome-container::before {
-    width: 160px;
-    height: 160px;
-    top: -50px;
-    right: -50px;
+  .carousel-container {
+    max-width: 70%;
   }
-
-  .welcome-container::after {
-    width: 200px;
-    height: 200px;
-    bottom: -40px;
-    left: -40px;
-  }
-
-  .extra-spot {
-    width: 180px;
-    height: 180px;
-    bottom: -50px;
-    right: -50px;
+  .carousel::before,
+  .carousel::after {
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
   }
 }
