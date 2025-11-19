@@ -1,10 +1,57 @@
+// Elementos del DOM
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirm-password');
 const reqLength = document.getElementById('req-length');
 const reqUppercase = document.getElementById('req-uppercase');
 const reqNumber = document.getElementById('req-number');
 const reqSpecial = document.getElementById('req-special');
+const errorMessage = document.getElementById('error-message');
+const submitBtn = document.getElementById('submitBtn');
 
+// Crear partículas de fondo
+function createBackgroundParticles() {
+    const container = document.getElementById('bg-particles');
+    const particleCount = 15;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('bg-particle');
+        
+        const size = Math.random() * 80 + 15;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100 + 100}%`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+        particle.style.opacity = Math.random() * 0.08 + 0.03;
+        
+        container.appendChild(particle);
+    }
+}
+
+// Crear partículas decorativas internas
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 12;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 15 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100 + 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Validar contraseña en tiempo real
 function validatePassword(password) {
     reqLength.classList.toggle('valid', password.length >= 8);
     reqUppercase.classList.toggle('valid', /[A-Z]/.test(password));
@@ -12,28 +59,87 @@ function validatePassword(password) {
     reqSpecial.classList.toggle('valid', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password));
 }
 
-passwordInput.addEventListener('input', function() {
-    validatePassword(this.value);
-});
+// Mostrar mensaje de error
+function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    setTimeout(() => {
+        errorMessage.style.display = 'none';
+    }, 5000);
+}
 
-document.getElementById('passwordForm').addEventListener('submit', function(e) {
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-
-    if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden');
+// Configurar validación del formulario
+function setupFormValidation() {
+    const passwordForm = document.getElementById('passwordForm');
+    
+    passwordForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        return;
-    }
+        
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
-    if (
-        password.length < 8 ||
-        !/[A-Z]/.test(password) ||
-        !/[0-9]/.test(password) ||
-        !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
-    ) {
-        alert('La contraseña no cumple con los requisitos');
-        e.preventDefault();
-        return;
+        // Validar que las contraseñas coincidan
+        if (password !== confirmPassword) {
+            showError('Las contraseñas no coinciden');
+            confirmPasswordInput.classList.add('error');
+            return;
+        } else {
+            confirmPasswordInput.classList.remove('error');
+        }
+
+        // Validar requisitos de contraseña
+        if (
+            password.length < 8 ||
+            !/[A-Z]/.test(password) ||
+            !/[0-9]/.test(password) ||
+            !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+        ) {
+            showError('La contraseña no cumple con los requisitos');
+            return;
+        }
+
+        // Envío exitoso
+        submitBtn.classList.add('loading');
+        setTimeout(() => {
+            submitBtn.classList.remove('loading');
+            this.submit();
+        }, 1000);
+    });
+}
+
+// Configurar eventos de entrada
+function setupInputEvents() {
+    passwordInput.addEventListener('input', function() {
+        validatePassword(this.value);
+    });
+}
+
+// Ajustar altura del contenedor en pantallas pequeñas
+function adjustContainerHeight() {
+    const container = document.querySelector('.container');
+    const windowHeight = window.innerHeight;
+    const containerHeight = container.scrollHeight;
+    
+    if (windowHeight < 600 && containerHeight > windowHeight - 40) {
+        container.style.marginTop = '10px';
+        container.style.marginBottom = '10px';
+    } else {
+        container.style.marginTop = 'auto';
+        container.style.marginBottom = 'auto';
     }
-});
+}
+
+// Inicializar la aplicación
+function initApp() {
+    createBackgroundParticles();
+    createParticles();
+    setupFormValidation();
+    setupInputEvents();
+    adjustContainerHeight();
+    
+    // Ajustar altura cuando cambie el tamaño de la ventana
+    window.addEventListener('resize', adjustContainerHeight);
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', initApp);
