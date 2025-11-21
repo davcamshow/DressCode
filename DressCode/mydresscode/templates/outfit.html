@@ -8,82 +8,169 @@
   <link rel="stylesheet" href="{% static 'css/outfit.css' %}" />
 </head>
 <body>
+
+  <!-- ENCABEZADO -->
   <header class="top-bar">
     <div class="header-left">
       <span class="titulo">Recomendación de Outfit</span>
     </div>
-
     <div class="header-center">
-      <img src="{% static 'img/logo.jpg' %}" alt="Logo Mi Armario" />
-    </div> 
-
+      <img src="{% static 'img/logo.png' %}" alt="Logo Mi Armario" />
+    </div>
     <div class="header-right">
-      <a href="{% url 'inicio' %}" class="header-icon">
-        <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
-      </a>
+      <a href="{% url 'inicio' %}" class="salir-btn">Salir</a>
     </div>
   </header>
 
+  <!-- NAV DE OPCIONES -->
+  <nav class="main-nav">
+    <ul>
+      <li class="dropdown"
+          onmouseover="cargarOpciones('estilo','lista-estilo')"
+          onmouseleave="ocultarLista('lista-estilo')">
+        <a href="#">Generar por Estilo</a>
+        <ul class="dropdown-list" id="lista-estilo"></ul>
+      </li>
+
+      <li class="dropdown"
+          onmouseover="cargarOpciones('temporada','lista-temporada')"
+          onmouseleave="ocultarLista('lista-temporada')">
+        <a href="#">Generar por Temporada</a>
+        <ul class="dropdown-list" id="lista-temporada"></ul>
+      </li>
+
+      <li class="dropdown"
+          onmouseover="cargarOpciones('color','lista-color')"
+          onmouseleave="ocultarLista('lista-color')">
+        <a href="#">Generar por Color</a>
+        <ul class="dropdown-list" id="lista-color"></ul>
+      </li>
+        <a href="{% url 'recomendar_outfit' %}?modo=general">Generar Outfit General</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="canvas-area">
-    <div class="outfit-carousel">
-      {% if outfit.vestido %}
-        <div class="outfit-slide">
-          <img src="{{ outfit.vestido.imagen }}" alt="{{ outfit.vestido.tipo }}">
-          <p>{{ outfit.vestido.tipo }}</p>
-        </div>
-      {% else %}
-        {% if outfit.parte_superior_base %}
-          <div class="outfit-slide">
-            <img src="{{ outfit.parte_superior_base.imagen }}" alt="{{ outfit.parte_superior_base.tipo }}">
-            <p>{{ outfit.parte_superior_base.tipo }}</p>
-          </div>
-        {% endif %}
-        {% if outfit.parte_superior_externo %}
-          <div class="outfit-slide">
-            <img src="{{ outfit.parte_superior_externo.imagen }}" alt="{{ outfit.parte_superior_externo.tipo }}">
-            <p>{{ outfit.parte_superior_externo.tipo }}</p>
-          </div>
-        {% endif %}
-        {% if outfit.parte_inferior %}
-          <div class="outfit-slide">
-            <img src="{{ outfit.parte_inferior.imagen }}" alt="{{ outfit.parte_inferior.tipo }}">
-            <p>{{ outfit.parte_inferior.tipo }}</p>
-          </div>
-        {% endif %}
-      {% endif %}
 
-      {% if outfit.calzado %}
-        <div class="outfit-slide">
-          <img src="{{ outfit.calzado.imagen }}" alt="{{ outfit.calzado.tipo }}">
-          <p>{{ outfit.calzado.tipo }}</p>
-        </div>
-      {% endif %}
+    <!-- Carrusel automático -->
+    <div class="outfit-carousel-auto">
+      <div class="carousel-track">
 
-      {% if outfit.accesorio %}
-        <div class="outfit-slide">
-          <img src="{{ outfit.accesorio.imagen }}" alt="{{ outfit.accesorio.tipo }}">
-          <p>{{ outfit.accesorio.tipo }}</p>
-        </div>
-      {% endif %}
+        {% if outfit.vestido %}
+          <div class="outfit-card">
+            <img src="{{ outfit.vestido.imagen }}" alt="{{ outfit.vestido.tipo }}">
+            <span>{{ outfit.vestido.tipo }}</span>
+          </div>
+        {% else %}
+          {% if outfit.parte_superior_base %}
+            <div class="outfit-card">
+              <img src="{{ outfit.parte_superior_base.imagen }}" alt="{{ outfit.parte_superior_base.tipo }}">
+              <span>{{ outfit.parte_superior_base.tipo }}</span>
+            </div>
+          {% else %}
+            <div class="outfit-card outfit-vacio">
+              <p>No hay parte superior base disponible en este estilo o temporada en tu armario</p>
+            </div>
+          {% endif %}
+
+          {% if outfit.parte_superior_externo %}
+            <div class="outfit-card">
+              <img src="{{ outfit.parte_superior_externo.imagen }}" alt="{{ outfit.parte_superior_externo.tipo }}">
+              <span>{{ outfit.parte_superior_externo.tipo }}</span>
+            </div>
+          {% else %}
+            <div class="outfit-card outfit-vacio">
+              <p>No hay parte superior externa disponible en este estilo o temporada en tu armario</p>
+            </div>
+          {% endif %}
+
+          {% if outfit.parte_inferior %}
+            <div class="outfit-card">
+              <img src="{{ outfit.parte_inferior.imagen }}" alt="{{ outfit.parte_inferior.tipo }}">
+              <span>{{ outfit.parte_inferior.tipo }}</span>
+            </div>
+          {% else %}
+            <div class="outfit-card outfit-vacio">
+              <p>No hay parte inferior disponible en este estilo o temporada en tu armario</p>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if outfit.calzado %}
+          <div class="outfit-card">
+            <img src="{{ outfit.calzado.imagen }}" alt="{{ outfit.calzado.tipo }}">
+            <span>{{ outfit.calzado.tipo }}</span>
+          </div>
+        {% else %}
+          <div class="outfit-card outfit-vacio">
+            <p>No hay calzado disponible en este estilo o temporada en tu armario</p>
+          </div>
+        {% endif %}
+
+        {% if outfit.accesorios.items %}
+          {% for tipo, accesorio in outfit.accesorios.items %}
+            <div class="outfit-card">
+              <img src="{{ accesorio.imagen }}" alt="{{ accesorio.tipo }}">
+              <span>{{ accesorio.tipo  }}</span>
+            </div>
+          {% empty %}
+            <div class="outfit-card outfit-vacio">
+              <p>No hay accesorios disponibles en este estilo o temporada en tu armario</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="outfit-card outfit-vacio">
+            <p>No hay accesorios disponibles en este estilo o temporada en tu armario</p>
+          </div>
+        {% endif %}
+
+      </div>
     </div>
+
   </main>
 
+  <!-- PIE DE PÁGINA -->
   <footer class="footer-actions">
-    <form id="guardarOutfitForm" method="POST" action="{% url 'guardar_outfit' %}">
-      {% csrf_token %}
-      {% for img in imagenes %}
-        <input type="hidden" name="imagenes" value="{{ img }}">
-      {% endfor %}
-      {% for tipo in tipos %}
-        <input type="hidden" name="tipos" value="{{ tipo }}">
-      {% endfor %}
-      <button type="submit" class="save-btn">Guardar Outfit</button>
+    <form id="guardarOutfitForm" method="POST" action="{% url 'guardar_outfit' %}"> 
+      {% csrf_token %} 
+      {% for img in imagenes %} 
+      <input type="hidden" name="imagenes" value="{{ img }}"> 
+      {% endfor %} 
+      {% for tipo in tipos %} 
+      <input type="hidden" name="tipos" value="{{ tipo }}"> 
+      {% endfor %} 
+      <button type="submit" class="save-btn">Guardar Outfit</button> 
     </form>
 
-    <a href="{% url 'recomendar_outfit' %}?estilo={{ request.GET.estilo }}&temporada={{ request.GET.temporada }}" class="generate-btn">Generar nuevo outfit</a>
-    <a href="{% url 'inicio' %}" class="discard-btn">Salir</a>
+    <a href="{% url 'recomendar_outfit' %}?modo={{ request.GET.modo }}{% if request.GET.estilo %}&estilo={{ request.GET.estilo }}{% endif %}{% if request.GET.temporada %}&temporada={{ request.GET.temporada }}{% endif %}{% if request.GET.ciudad %}&ciudad={{ request.GET.ciudad }}{% endif %}" class="generate-btn">
+      Generar nuevo outfit
+    </a>
   </footer>
 
+
+  <div id="toast-guardado" class="toast-guardado">¡Guardado exitosamente! 🎉</div>
+
+  <!-- MODAL PARA CALIFICAR -->
+  <div id="ratingModal" class="rating-modal">
+    <div class="rating-content">
+      <h3>¿Qué te pareció esta recomendación?</h3>
+
+      <div class="stars">
+        <span class="star" data-value="5">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="1">★</span>
+      </div>
+
+
+      <button id="enviarRating" class="rating-btn">Enviar</button>
+    </div>
+  </div>
+
+
   <script src="{% static 'js/outfit.js' %}"></script>
+
 </body>
 </html>

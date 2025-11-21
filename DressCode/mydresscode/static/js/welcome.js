@@ -9,28 +9,32 @@ document.addEventListener('DOMContentLoaded', function() {
   const carouselContainer = document.querySelector('.carousel-container');
   const buttonsContainer = document.getElementById('buttons-container');
   
-  textSection.style.opacity = '0';
-  carouselContainer.style.opacity = '0';
   
-  setTimeout(() => {
-    textSection.style.transition = 'opacity 1s ease';
-    carouselContainer.style.transition = 'opacity 1s ease 0.3s';
-    textSection.style.opacity = '1';
-    carouselContainer.style.opacity = '1';
-    
-    // Iniciar efecto de escritura
-    startTypingEffect();
-    
-    // Iniciar carrusel
-    initCarousel();
-    
-    // Iniciar fondo dinámico
-    initDynamicBackground();
-    
-    // Configurar navegación de botones
-    setupButtonNavigation();
-  }, 300);
-});
+  
+ // Ocultar inicialmente (fuera del setTimeout)
+textSection.style.opacity = '0';
+carouselContainer.style.opacity = '0';
+
+// Luego aplicar transición y mostrar
+setTimeout(() => {
+  textSection.style.transition = 'opacity 1s ease';
+  carouselContainer.style.transition = 'opacity 1s ease 0.3s';
+  textSection.style.opacity = '1';
+  carouselContainer.style.opacity = '1';
+
+  // Iniciar efecto de escritura
+  startTypingEffect();
+
+  // Iniciar carrusel
+  initCarousel();
+
+  // Iniciar fondo dinámico
+  initDynamicBackground();
+
+  // Configurar navegación de botones
+  setupButtonNavigation();
+}, 300);  });
+
 
 // Configurar navegación de botones
 function setupButtonNavigation() {
