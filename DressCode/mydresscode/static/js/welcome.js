@@ -66,11 +66,11 @@ function startTypingEffect() {
     if (titleIndex < titleText.length) {
       titleElement.innerHTML = titleText.substring(0, titleIndex + 1) + '<span class="typing-cursor"></span>';
       titleIndex++;
-      setTimeout(typeTitle, 100);
+      setTimeout(typeTitle, 60); // REDUCIDO de 100ms a 60ms
     } else {
       // Quitar cursor del título y comenzar subtítulo
       titleElement.innerHTML = titleText;
-      setTimeout(typeSubtitle, 500);
+      setTimeout(typeSubtitle, 300); // REDUCIDO de 500ms a 300ms
     }
   }
   
@@ -79,11 +79,11 @@ function startTypingEffect() {
     if (subtitleIndex < subtitleText.length) {
       subtitleElement.innerHTML = subtitleText.substring(0, subtitleIndex + 1) + '<span class="typing-cursor"></span>';
       subtitleIndex++;
-      setTimeout(typeSubtitle, 80);
+      setTimeout(typeSubtitle, 50); // REDUCIDO de 80ms a 50ms
     } else {
       // Quitar cursor del subtítulo y comenzar descripción
       subtitleElement.innerHTML = subtitleText;
-      setTimeout(typeDescription, 500);
+      setTimeout(typeDescription, 300); // REDUCIDO de 500ms a 300ms
     }
   }
   
@@ -92,11 +92,11 @@ function startTypingEffect() {
     if (descriptionIndex < descriptionText.length) {
       descriptionElement.innerHTML = descriptionText.substring(0, descriptionIndex + 1) + '<span class="typing-cursor"></span>';
       descriptionIndex++;
-      setTimeout(typeDescription, 40);
+      setTimeout(typeDescription, 30); // REDUCIDO de 40ms a 30ms
     } else {
       // Quitar cursor y mostrar botones
       descriptionElement.innerHTML = descriptionText;
-      setTimeout(showButtons, 500);
+      setTimeout(showButtons, 300); // REDUCIDO de 500ms a 300ms
     }
   }
   

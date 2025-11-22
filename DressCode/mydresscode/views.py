@@ -55,8 +55,20 @@ def register_view(request):
 def register_password_view(request):
     if request.method == 'POST':
         contrasena = request.POST.get('contrasena')
+        confirmar_contrasena = request.POST.get('confirmar_contrasena')
         nombre = request.session.get('nombre')
         email = request.session.get('email')
+
+        # Validar que las contraseñas coincidan
+        if contrasena != confirmar_contrasena:
+            return render(request, 'Password.html', {'error': 'Las contraseñas no coinciden'})
+        
+        # Validar requisitos de contraseña
+        if (len(contrasena) < 8 or 
+            not any(c.isupper() for c in contrasena) or 
+            not any(c.isdigit() for c in contrasena) or 
+            not any(not c.isalnum() for c in contrasena)):
+            return render(request, 'Password.html', {'error': 'La contraseña no cumple los requisitos'})
 
         if nombre and email and contrasena:
             usuario = Usuario(
@@ -65,7 +77,17 @@ def register_password_view(request):
                 contrasena=make_password(contrasena)
             )
             usuario.save()
-            return redirect('Cuenta creada')
+            
+            # Limpiar session
+            if 'nombre' in request.session:
+                del request.session['nombre']
+            if 'email' in request.session:
+                del request.session['email']
+            
+            # Agregar mensaje de éxito y redirigir al login
+            messages.success(request, "¡Cuenta creada con éxito! ¡Bienvenido fashionista!")
+            return redirect('login')
+    
     return render(request, 'Password.html')
 
 def capturar_view(request):
@@ -83,6 +105,18 @@ def login_view(request):
     Maneja el inicio de sesión de usuarios de forma segura.
     """
     error = None
+    show_success_modal = False
+
+    # Verificar si debemos mostrar el modal de éxito
+    if request.COOKIES.get('show_success_modal') == 'true':
+        show_success_modal = True
+        # Crear una respuesta para limpiar la cookie
+        response = render(request, 'login.html', {
+            'error': error, 
+            'show_success_modal': show_success_modal
+        })
+        response.set_cookie('show_success_modal', '', max_age=0)  # Eliminar cookie
+        return response
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -100,7 +134,11 @@ def login_view(request):
             return redirect('inicio')
         else:
             error = "La contraseña es incorrecta."
-    return render(request, 'login.html', {'error': error})
+    
+    return render(request, 'login.html', {
+        'error': error, 
+        'show_success_modal': show_success_modal
+    })
 
 def logout_view(request):
     """
