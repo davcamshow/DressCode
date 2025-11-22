@@ -1,0 +1,296 @@
+{% extends "configuration.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wizard-container">
+    <h2>Completa tu Perfil</h2>
+    <p class="step-info">Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</p>
+    
+   <div class="progress-bar">
+     <div class="progress-fill" data-step="{{ wizard.steps.step1 }}"></div>
+   </div>
+
+    <form action="" method="post" id="tallas-form">{% csrf_token %}
+        {{ wizard.management_form }}
+        
+        {% if wizard.form.non_field_errors %}
+            <div class="error-message">
+                ❌ {{ wizard.form.non_field_errors|striptags }}
+            </div>
+        {% endif %}
+        
+        <h3>¿Cuál es tu talla de ropa?</h3>
+        <p class="instruction">Esto nos ayuda a refinar tus recomendaciones.</p>
+
+        <!-- Mensaje de advertencia general -->
+        <div class="warning-message" id="general-warning" style="display: none;">
+            ⚠️ Te falta completar todas las tallas requeridas
+        </div>
+
+        <!-- Talla Superior -->
+        <div class="talla-field-group">
+            <div class="talla-header">
+                <div class="talla-icon">👕</div>
+                <h4>Talla Superior (Camisas/Chaquetas)</h4>
+            </div>
+            {% if wizard.form.talla_superior.errors %}
+                <div class="talla-error">
+                    ❌ {{ wizard.form.talla_superior.errors|striptags }}
+                </div>
+            {% endif %}
+            <div class="talla-warning" id="superior-warning" style="display: none;">
+                ⚠️ Te falta seleccionar talla superior
+            </div>
+            <div class="choice-grid-6 talla-grid" id="superior-container"> 
+                {% for radio in wizard.form.talla_superior %}
+                    <label class="choice-label talla-card">
+                        {{ radio.tag }} 
+                        <span class="choice-content talla-content">
+                            <span class="talla-value">{{ radio.choice_label }}</span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Talla Inferior -->
+        <div class="talla-field-group">
+            <div class="talla-header">
+                <div class="talla-icon">👖</div>
+                <h4>Talla Inferior (Pantalones/Faldas)</h4>
+            </div>
+            {% if wizard.form.talla_inferior.errors %}
+                <div class="talla-error">
+                    ❌ {{ wizard.form.talla_inferior.errors|striptags }}
+                </div>
+            {% endif %}
+            <div class="talla-warning" id="inferior-warning" style="display: none;">
+                ⚠️ Te falta seleccionar talla inferior
+            </div>
+            <div class="choice-grid-6 talla-grid" id="inferior-container">
+                {% for radio in wizard.form.talla_inferior %}
+                    <label class="choice-label talla-card">
+                        {{ radio.tag }} 
+                        <span class="choice-content talla-content">
+                            <span class="talla-value">{{ radio.choice_label }}</span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Talla Calzado -->
+        <div class="talla-field-group">
+            <div class="talla-header">
+                <div class="talla-icon">👟</div>
+                <h4>Talla de Calzado</h4>
+            </div>
+            {% if wizard.form.talla_calzado.errors %}
+                <div class="talla-error">
+                    ❌ {{ wizard.form.talla_calzado.errors|striptags }}
+                </div>
+            {% endif %}
+            <div class="talla-warning" id="calzado-warning" style="display: none;">
+                ⚠️ Te falta seleccionar talla de calzado
+            </div>
+            <div class="choice-grid-6 talla-grid" id="calzado-container">
+                {% for radio in wizard.form.talla_calzado %}
+                    <label class="choice-label talla-card">
+                        {{ radio.tag }} 
+                        <span class="choice-content talla-content">
+                            <span class="talla-value">{{ radio.choice_label }}</span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="navigation-buttons">
+            {% if wizard.steps.prev %}
+                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="btn-style btn-anterior">
+                    &lt; Anterior
+                </button>
+            {% else %}
+                <div></div>
+            {% endif %}
+            
+            <button type="submit" class="btn-style btn-continuar" id="continue-btn" disabled>
+                Finalizar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const superiorRadios = document.querySelectorAll('#superior-container input[type="radio"]');
+    const inferiorRadios = document.querySelectorAll('#inferior-container input[type="radio"]');
+    const calzadoRadios = document.querySelectorAll('#calzado-container input[type="radio"]');
+    const continueBtn = document.getElementById('continue-btn');
+    const generalWarning = document.getElementById('general-warning');
+    const superiorWarning = document.getElementById('superior-warning');
+    const inferiorWarning = document.getElementById('inferior-warning');
+    const calzadoWarning = document.getElementById('calzado-warning');
+    
+    function updateContinueButton() {
+        const superiorSelected = Array.from(superiorRadios).some(radio => radio.checked);
+        const inferiorSelected = Array.from(inferiorRadios).some(radio => radio.checked);
+        const calzadoSelected = Array.from(calzadoRadios).some(radio => radio.checked);
+        
+        const allSelected = superiorSelected && inferiorSelected && calzadoSelected;
+        continueBtn.disabled = !allSelected;
+        
+        // Mostrar/ocultar mensajes específicos
+        superiorWarning.style.display = superiorSelected ? 'none' : 'block';
+        inferiorWarning.style.display = inferiorSelected ? 'none' : 'block';
+        calzadoWarning.style.display = calzadoSelected ? 'none' : 'block';
+        generalWarning.style.display = allSelected ? 'none' : 'block';
+        
+        if (allSelected) {
+            continueBtn.classList.add('btn-active');
+        } else {
+            continueBtn.classList.remove('btn-active');
+        }
+    }
+    
+    const allRadios = [...superiorRadios, ...inferiorRadios, ...calzadoRadios];
+    allRadios.forEach(radio => {
+        radio.addEventListener('change', updateContinueButton);
+    });
+    
+    document.getElementById('tallas-form').addEventListener('submit', function(e) {
+        const superiorSelected = Array.from(superiorRadios).some(radio => radio.checked);
+        const inferiorSelected = Array.from(inferiorRadios).some(radio => radio.checked);
+        const calzadoSelected = Array.from(calzadoRadios).some(radio => radio.checked);
+        
+        if (!superiorSelected || !inferiorSelected || !calzadoSelected) {
+            e.preventDefault();
+            generalWarning.style.display = 'block';
+            generalWarning.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+    
+    updateContinueButton();
+});
+</script>
+
+<style>
+/* GRID HORIZONTAL PARA TALLAS */
+.choice-grid-6.talla-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+@media (min-width: 768px) {
+    .choice-grid-6.talla-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+    }
+}
+
+/* TARJETAS DE TALLA COMPACTAS */
+.choice-label.talla-card {
+    min-height: auto;
+    padding: 5px;
+}
+
+.talla-content {
+    padding: 15px 5px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--light-color);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.talla-value {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+/* Estados de selección */
+.talla-card input:checked + .talla-content {
+    border: 3px solid var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(183, 110, 121, 0.3);
+}
+
+.talla-card:hover .talla-content {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Campos de talla más compactos */
+.talla-field-group {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 2px solid var(--border-color);
+}
+
+.talla-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.talla-icon {
+    font-size: 1.5em;
+    background: var(--primary-light);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.talla-header h4 {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 1.1em;
+}
+
+/* Mensajes de error específicos para tallas */
+.talla-error {
+    background: #FFE4E1;
+    color: var(--error-color);
+    font-weight: bold;
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 4px solid var(--error-color);
+    font-size: 0.85em;
+}
+
+.talla-warning {
+    background: #FFF8DC;
+    color: var(--warning-color);
+    font-weight: bold;
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 4px solid var(--warning-color);
+    font-size: 0.85em;
+}
+
+/* Botones */
+.btn-continuar:disabled {
+    background: var(--medium-color) !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-continuar.btn-active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    cursor: pointer;
+    opacity: 1;
+}
+</style>
+{% endblock %}

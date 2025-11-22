@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mydresscode',
+    'formtools',
 ]
 
 MIDDLEWARE = [
@@ -103,3 +104,5 @@ SUPABASE_STORAGE_BUCKET = 'armario-digital'
 
 print("=== CONFIGURACIÓN COMPLETADA ===")
 print("Supabase Host:", os.getenv('SUPABASE_DB_HOST'))
+
+LOGIN_URL = '/login/'

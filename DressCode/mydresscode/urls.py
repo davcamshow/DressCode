@@ -1,5 +1,9 @@
 from django.urls import path
 from . import views
+#config
+from .views import ConfiguracionWizard, FORMS, dashboard_view
+from django.shortcuts import render
+
 
 urlpatterns = [
     path('', views.home, name="home"),
@@ -23,7 +27,9 @@ urlpatterns = [
     path('vision/', views.vision_computer, name='visioncomputer'),
     path('recomendar-outfit/', views.recomendar_outfit, name='recomendar_outfit'),
     path('guardar-outfit/', views.guardar_outfit, name='guardar_outfit'),
-    path('configuracion-inicial/', views.configuracion_inicial_view, name='onboarding_url'),
     path('api/opciones-filtro/', views.opciones_filtro_api, name='opciones_filtro_api'),
-    
+    path('configuracion-inicial/', ConfiguracionWizard.as_view(FORMS), name='configuracion_inicial'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),  
 ]
+
+

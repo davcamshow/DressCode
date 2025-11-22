@@ -1,7 +1,8 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login, logout
-from .models import Usuario, Armario, Outfit, VerPrenda
+from .models import Usuario, Armario, Outfit, VerPrenda, Profile 
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages 
 from django.http import JsonResponse
@@ -20,7 +21,14 @@ import requests
 from PIL import UnidentifiedImageError
 from datetime import datetime
 import random   
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required # Se mantiene para otros usos, pero no en el Wizard
+from formtools.wizard.views import SessionWizardView
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+
+# Importa tus modelos y formularios
+from .forms import EstiloForm, ColorForm, EstacionForm, TallaForm 
+from .models import Profile, Usuario 
 
 logger = logging.getLogger(__name__)
 
@@ -34,14 +42,82 @@ try:
 except AttributeError:
     print("ADVERTENCIA: Las variables de Supabase no están configuradas en settings.py")
 
+# ---------------------------------------------------------------------------------
+# 1. DECORADOR DE REDIRECCIÓN (Control de Acceso y Onboarding)
+# ---------------------------------------------------------------------------------
+
+def configuracion_requerida(view_func):
+    """
+    Verifica que el usuario tenga una sesión activa ('usuario_id')
+    Y que haya completado la configuración inicial ('config_completada').
+    """
+    def wrapper_func(request, *args, **kwargs):
+        usuario_id = request.session.get('usuario_id')
+        
+        # 1. VERIFICACIÓN DE SESIÓN (Si no hay ID en sesión, redirige al login)
+        if not usuario_id:
+             return redirect('login') 
+        
+        # 2. VERIFICACIÓN DE CONFIGURACIÓN
+        try:
+            user_instance = Usuario.objects.get(idUsuario=usuario_id)
+            profile = Profile.objects.get(user=user_instance)
+        except (Usuario.DoesNotExist, Profile.DoesNotExist):
+            # Si el usuario o perfil no existen, forzamos login
+            return redirect('login') 
+
+        # Si la configuración NO está completa, forzamos el asistente
+        if not profile.config_completada:
+            # Nota: usamos reverse() aquí porque configuracion_inicial es un nombre de URL
+            return redirect(reverse('configuracion_inicial'))
+                
+        # Si todo está OK, procede a la vista
+        return view_func(request, *args, **kwargs)
+    return wrapper_func
+
+
+# ---------------------------------------------------------------------------------
+# 2. VISTAS PRINCIPALES Y PROTEGIDAS
+# ---------------------------------------------------------------------------------
+
 def home(request):
     return render(request, 'welcome.html')
 
 def recovery_view(request):
-    return render(request, 'recovery.html')
+    # FIX: Inicializar error aquí para evitar UnboundLocalError en la petición GET
+    error = None 
+    if request.method == 'POST':
+        correo = request.POST.get('email')
+        usuario = Usuario.objects.filter(email=correo).first()
+        if usuario:
+            request.session['recovery_email'] = correo
+            return redirect('newPassword')
+        else:
+            return render(request, 'recovery.html', {'error': 'Este correo no está registrado.'})
+    return render(request, 'recovery.html', {'error': error})
+
 
 def newPassword_view(request):
-    return render(request, 'newPassword.html')
+    correo = request.session.get('recovery_email')
+    error = None
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm-password')
+
+        if password != confirm_password:
+            error = 'Las contraseñas no coinciden.'
+        elif len(password) < 8 or not any(c.isupper() for c in password) or not any(c.isdigit() for c in password) or not any(not c.isalnum() for c in password):
+            error = 'La contraseña no cumple los requisitos.'
+        else:
+            usuario = Usuario.objects.filter(email=correo).first()
+            if usuario:
+                usuario.contrasena = make_password(password)
+                usuario.save()
+                del request.session['recovery_email']
+                return redirect('home')
+    return render(request, 'newPassword.html', {'error': error})
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -77,6 +153,10 @@ def register_password_view(request):
                 contrasena=make_password(contrasena)
             )
             usuario.save()
+
+            # --- CREAR PERFIL INCOMPLETO INMEDIATAMENTE DESPUÉS DEL REGISTRO ---
+            # Esto es necesario para que configuracion_requerida funcione sin error
+            Profile.objects.create(user=usuario, config_completada=False)
             
             # Limpiar session
             if 'nombre' in request.session:
@@ -90,32 +170,22 @@ def register_password_view(request):
     
     return render(request, 'Password.html')
 
-def capturar_view(request):
-    """Renderiza la página para capturar fotos con la cámara."""
-    return render(request, 'camera.html')
-
-def exit_view(request):
-    return render(request, 'Cuenta creada.html')
-
-def inicio(request):
-    return render(request, 'inicio.html')
 
 def login_view(request):
     """
     Maneja el inicio de sesión de usuarios de forma segura.
     """
-    error = None
+    error = None 
     show_success_modal = False
 
     # Verificar si debemos mostrar el modal de éxito
     if request.COOKIES.get('show_success_modal') == 'true':
         show_success_modal = True
-        # Crear una respuesta para limpiar la cookie
         response = render(request, 'login.html', {
             'error': error, 
             'show_success_modal': show_success_modal
         })
-        response.set_cookie('show_success_modal', '', max_age=0)  # Eliminar cookie
+        response.set_cookie('show_success_modal', '', max_age=0)  
         return response
 
     if request.method == 'POST':
@@ -129,9 +199,12 @@ def login_view(request):
             return render(request, 'login.html', {'error': error})
 
         if check_password(password, usuario.contrasena):
+            # Establece la sesión con tu ID de usuario
             request.session['usuario_id'] = usuario.idUsuario
             request.session['usuario_nombre'] = usuario.nombre
-            return redirect('inicio')
+            
+            # Redirige al destino protegido
+            return redirect('dashboard')
         else:
             error = "La contraseña es incorrecta."
     
@@ -139,46 +212,39 @@ def login_view(request):
         'error': error, 
         'show_success_modal': show_success_modal
     })
-
+    
 def logout_view(request):
     """
     Cierra la sesión del usuario y lo redirige a la página de login.
     """
     messages.success(request, "Sesión cerrada exitosamente.")
-    logout(request)
+    # Aunque tu usuario no es User, logout() limpia la sesión de Django.
+    logout(request) 
+    # Limpia también tu ID de sesión custom
+    if 'usuario_id' in request.session:
+        del request.session['usuario_id']
+    
     return redirect('login')
 
-def recovery_view(request):
-    if request.method == 'POST':
-        correo = request.POST.get('email')
-        usuario = Usuario.objects.filter(email=correo).first()
-        if usuario:
-            request.session['recovery_email'] = correo
-            return redirect('newPassword')
-        else:
-            return render(request, 'recovery.html', {'error': 'Este correo no está registrado.'})
-    return render(request, 'recovery.html')
 
-def newPassword_view(request):
-    correo = request.session.get('recovery_email')
-    error = None
+# Vistas protegidas
+@configuracion_requerida
+def dashboard_view(request):
+    """Destino después del login exitoso/onboarding."""
+    return render(request, 'inicio.html', {'message': '¡Bienvenido a tu Armario Digital!'})
 
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm-password')
 
-        if password != confirm_password:
-            error = 'Las contraseñas no coinciden.'
-        elif len(password) < 8 or not any(c.isupper() for c in password) or not any(c.isdigit() for c in password) or not any(not c.isalnum() for c in password):
-            error = 'La contraseña no cumple los requisitos.'
-        else:
-            usuario = Usuario.objects.filter(email=correo).first()
-            if usuario:
-                usuario.contrasena = make_password(password)
-                usuario.save()
-                del request.session['recovery_email']
-                return redirect('home')
-    return render(request, 'newPassword.html', {'error': error})
+@configuracion_requerida
+def inicio(request):
+    """Tu vista de inicio protegida."""
+    return render(request, 'inicio.html')
+
+def capturar_view(request):
+    """Renderiza la página para capturar fotos con la cámara."""
+    return render(request, 'camera.html')
+
+def exit_view(request):
+    return render(request, 'Cuenta creada.html')
 
 def my_closet(request):
     if 'usuario_id' not in request.session:
@@ -531,10 +597,6 @@ def recomendar_outfit(request):
     })
 
 
-
-
-from django.http import JsonResponse
-
 def opciones_filtro_api(request):
     modo = request.GET.get('modo')
     usuario_id = request.session.get('usuario_id')
@@ -554,9 +616,6 @@ def opciones_filtro_api(request):
         opciones = []
 
     return JsonResponse({'opciones': opciones})
-
-
-
 
 
 @csrf_exempt
@@ -604,10 +663,66 @@ def guardar_outfit(request):
 
     return JsonResponse({'error': 'Petición inválida.'}, status=400)
 
-def configuracion_inicial_view(request):
-    # Lógica para verificar el estado de Supabase...
-    # Si la configuración está COMPLETA, redirigir: return redirect('home_url') 
+# ---------------------------------------------------------------------------------
+# 5. CONFIGURACIÓN DEL ASISTENTE (WIZARD)
+# ---------------------------------------------------------------------------------
 
-    # Si la configuración está INCOMPLETA, renderizar el template:
-    return render(request, 'configuracionInicial.html')
+# 1. Define la secuencia de pasos
+FORMS = [
+    ("estilos", EstiloForm),
+    ("colores", ColorForm),
+    ("estaciones", EstacionForm),
+    ("tallas", TallaForm), 
+]
 
+# 2. Define las plantillas usando TUS NOMBRES DE ARCHIVO
+TEMPLATES = {
+    "estilos": "styleinitial.html",     
+    "colores": "colorsinitial.html",    
+    "estaciones": "stationinitial.html",  
+    "tallas": "sizeinitial.html",       
+}
+
+# En tu views.py - CORRIGE el método done del ConfiguracionWizard
+
+class ConfiguracionWizard(SessionWizardView):
+    
+    def get_template_names(self):
+        return [TEMPLATES[self.steps.current]]
+        
+    def done(self, form_list, **kwargs):
+        data = self.get_all_cleaned_data()
+        
+        # CORRECCIÓN: Obtener el usuario de la SESIÓN, no de request.user
+        usuario_id = self.request.session.get('usuario_id')
+        if not usuario_id:
+            messages.error(self.request, "Debes iniciar sesión para completar la configuración.")
+            return redirect('login')
+        
+        try:
+            # Usar tu modelo Usuario personalizado
+            user_instance = Usuario.objects.get(idUsuario=usuario_id)
+            profile = Profile.objects.get(user=user_instance)
+        except (Usuario.DoesNotExist, Profile.DoesNotExist):
+            messages.error(self.request, "Error: No se encontró tu perfil.")
+            return redirect('login') 
+
+        # Guardar los datos
+        profile.estilos = data.get('estilos', [])
+        profile.colores_fav = data.get('colores_fav', [])
+        profile.temporadas_fav = data.get('temporadas_fav', [])
+        
+        # Tallas
+        profile.talla_superior = data.get('talla_superior')
+        profile.talla_inferior = data.get('talla_inferior')
+        profile.talla_calzado = data.get('talla_calzado')
+        
+        # Marcar como completo y guardar
+        profile.config_completada = True
+        profile.save()
+
+        # Mensaje de éxito
+        messages.success(self.request, "¡Configuración completada! Bienvenido a tu armario digital.")
+
+        # Redirigir al dashboard/inicio
+        return redirect('dashboard')  # Asegúrate que esta URL existe

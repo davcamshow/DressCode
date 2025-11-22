@@ -1,0 +1,127 @@
+{% extends "configuration.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wizard-container">
+    <h2>Descubre tus Favoritas</h2>
+    <p class="step-info">Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</p>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" data-step="{{ wizard.steps.step1 }}"></div>
+    </div>
+
+    <form action="" method="post" id="temporadas-form">{% csrf_token %}
+        {{ wizard.management_form }}
+        
+        <h3>¿Cuáles son tus temporadas favoritas?</h3>
+        <p class="instruction">Para recomendarte prendas según el clima</p>
+
+        <!-- Mensaje de error general -->
+        {% if wizard.form.temporadas_fav.errors %}
+            <div class="error-message">
+                ❌ {{ wizard.form.temporadas_fav.errors|striptags }}
+            </div>
+        {% endif %}
+
+        <!-- Mensaje de advertencia JavaScript -->
+        <div class="warning-message" id="js-warning-message" style="display: none;">
+            ⚠️ Te falta seleccionar al menos una temporada
+        </div>
+
+        <div class="choice-grid-4" id="temporadas-container">
+            {% for checkbox in wizard.form.temporadas_fav %}
+                {% with key=checkbox.data.value %}
+                <label class="choice-label">
+                    {{ checkbox.tag }} 
+                    <span class="choice-content season-{{ key }}">
+                        <span class="season-icon">
+                            {% if key == "PRIMAVERA" %}🌸
+                            {% elif key == "VERANO" %}☀️
+                            {% elif key == "OTONO" %}🍂
+                            {% elif key == "INVIERNO" %}❄️
+                            {% endif %}
+                        </span>
+                        <span class="choice-text">{{ checkbox.choice_label }}</span>
+                    </span>
+                </label>
+                {% endwith %}
+            {% endfor %}
+        </div>
+        
+        <div class="navigation-buttons">
+            {% if wizard.steps.prev %}
+                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="btn-style btn-anterior">
+                    &lt; Anterior
+                </button>
+            {% else %}
+                <div></div>
+            {% endif %}
+            
+            <button type="submit" class="btn-style btn-continuar" id="continue-btn" disabled>
+                Continuar &gt;
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('#temporadas-container input[type="checkbox"]');
+    const continueBtn = document.getElementById('continue-btn');
+    const warningMessage = document.getElementById('js-warning-message');
+    
+    function updateContinueButton() {
+        const atLeastOneChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        continueBtn.disabled = !atLeastOneChecked;
+        
+        if (!atLeastOneChecked) {
+            warningMessage.style.display = 'block';
+        } else {
+            warningMessage.style.display = 'none';
+        }
+        
+        if (atLeastOneChecked) {
+            continueBtn.classList.add('btn-active');
+        } else {
+            continueBtn.classList.remove('btn-active');
+        }
+    }
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateContinueButton);
+    });
+    
+    document.getElementById('temporadas-form').addEventListener('submit', function(e) {
+        const atLeastOneChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        if (!atLeastOneChecked) {
+            e.preventDefault();
+            warningMessage.style.display = 'block';
+            warningMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+    
+    updateContinueButton();
+});
+</script>
+
+<style>
+.season-icon {
+    font-size: 2em;
+    margin-bottom: 8px;
+}
+
+.choice-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+@media (min-width: 768px) {
+    .choice-grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+}
+</style>
+{% endblock %}
