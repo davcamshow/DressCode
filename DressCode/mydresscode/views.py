@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login, logout
 from .models import Usuario, Armario, Outfit, VerPrenda
@@ -379,47 +379,140 @@ def outfit(request):
 def vision_computer(request):
     return render(request, 'visioncomputer.html')
 
-
 def recomendar_outfit(request):
-    import random
-
     estilo = request.GET.get('estilo')
     temporada = request.GET.get('temporada')
+    ciudad = request.GET.get('ciudad', 'Morelia')
+    color = request.GET.get('color')   # <-- nuevo
+    modo = request.GET.get('modo', None)
     usuario_id = request.session.get('usuario_id')
 
-    def obtener_prenda_por_tipo(tipos):
+    # --- Lógica por COLOR ---
+    if modo == 'color' and color:
         query = supabase.table("armario").select("*")
-
         if usuario_id:
             query = query.eq("idUsuario", usuario_id)
-        if estilo:
-            query = query.ilike("estilo", f"%{estilo}%")
-        if temporada:
-            query = query.ilike("temporada", f"%{temporada}%")
-
         prendas = query.execute().data
 
-        return [
-            p for p in prendas
-            if 'tipo' in p and any(t.lower() in p['tipo'].lower() for t in tipos)
-        ]
+        # Filtrar prendas por color exacto
+        prendas_color = [p for p in prendas if p.get('color') and p['color'].lower() == color.lower()]
 
-    # Obtener todas las opciones posibles
+        vestidos = [p for p in prendas_color if 'vestido' in p['tipo'].lower()]
+        partes_superiores = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['camisa','blusa'])]
+        partes_inferiores = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['pantalón','falda','short'])]
+        calzados = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['zapato','sandalia','tenis','bota'])]
+        accesorios = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['bolso','collar','pulsera','reloj','sombrero','cinturón','cartera','aretes'])]
+
+        usar_vestido = vestidos and random.choice([True, False])
+        if usar_vestido:
+            outfit = {
+                'vestido': random.choice(vestidos),
+                'calzado': random.choice(calzados) if calzados else None,
+                'accesorios': {'Extra': random.choice(accesorios)} if accesorios else {}
+            }
+        else:
+            outfit = {
+                'parte_superior_base': random.choice(partes_superiores) if partes_superiores else None,
+                'parte_inferior': random.choice(partes_inferiores) if partes_inferiores else None,
+                'calzado': random.choice(calzados) if calzados else None,
+                'accesorios': {'Extra': random.choice(accesorios)} if accesorios else {}
+            }
+
+        return render(request, 'outfit.html', {
+            'outfit': outfit,
+            'color': color
+        })
+
+    # --- Lógica por CLIMA (lo que ya tenías) ---
+    def obtener_clima(ciudad):
+        API_KEY = '8a33fa8635d6adf10672a0fa18b68316'
+        url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={API_KEY}&units=metric&lang=es'
+        try:
+            resp = requests.get(url, timeout=5)  # timeout evita bloqueos
+            data = resp.json()
+            return {
+                'temp': data.get('main', {}).get('temp'),
+                'condicion': data.get('weather', [{}])[0].get('main', '').lower()
+            }
+        except Exception as e:
+            print("Error al obtener clima:", e)
+            return {'temp': None, 'condicion': None}
+
+    clima = obtener_clima(ciudad)
+    temp = clima['temp']
+
+    def tipos_por_temperatura(temp):
+        if temp is None:
+            return []
+        if temp < 10:
+            return ['Abrigo', 'Bufanda', 'Camisa', 'Blusa', 'Suéter', 'Botas']
+        elif temp < 18:
+            return ['Chaqueta', 'Suéter', 'Bufanda', 'Camisa', 'Blusa', 'Zapatos formales', 'Zapatillas']
+        elif temp < 25:
+            return ['Camisa', 'Blusa', 'Pantalón', 'Zapatillas', 'Zapatos formales', 'Tenis deportivos', 'Mocasines']
+        else:
+            return ['Shorts', 'Falda', 'Vestido', 'Sandalias', 'Gafas de sol', 'Camisa', 'Blusa']
+
+    tipos_clima = tipos_por_temperatura(temp)
+
+    def obtener_prenda_por_tipo(tipos):
+        try:
+            query = supabase.table("armario").select("*")
+            if usuario_id:
+                query = query.eq("idUsuario", usuario_id)
+            if estilo:
+                query = query.ilike("estilo", f"%{estilo}%")
+            if temporada:
+                query = query.ilike("temporada", f"%{temporada}%")
+            prendas = query.execute().data
+        except Exception as e:
+            print("Error al consultar Supabase:", e)
+            prendas = []
+        return [p for p in prendas if 'tipo' in p and any(t.lower() in p['tipo'].lower() for t in tipos)]
+
+    def filtrar_por_clima(lista):
+        return [p for p in lista if any(t in p['tipo'] for t in tipos_clima)]
+
     vestidos = obtener_prenda_por_tipo(['Vestido'])
     partes_superiores = obtener_prenda_por_tipo(['Camisa', 'Blusa'])
-    capas_externas = obtener_prenda_por_tipo(['Suéter', 'Chaqueta', 'Abrigo'])
+    capas_externas = filtrar_por_clima(obtener_prenda_por_tipo(['Suéter', 'Chaqueta', 'Abrigo']))
     partes_inferiores = obtener_prenda_por_tipo(['Pantalón', 'Falda', 'Shorts', 'Traje'])
-    calzados = obtener_prenda_por_tipo(['Zapatos formales', 'Tenis deportivos', 'Sandalias', 'Botas', 'Mocasines', 'Zapatillas'])
-    accesorios = obtener_prenda_por_tipo(['Bolso', 'Collar', 'Pulsera', 'Reloj', 'Gafas de sol', 'Sombrero', 'Bufanda', 'Cinturón', 'Cartera'])
+    calzados = filtrar_por_clima(obtener_prenda_por_tipo(['Zapatos formales', 'Tenis deportivos', 'Sandalias', 'Botas', 'Mocasines', 'Zapatillas']))
+    accesorios_clima = filtrar_por_clima(obtener_prenda_por_tipo(['Bufanda', 'Gafas de sol']))
+    otros_accesorios = obtener_prenda_por_tipo(['Bolso', 'Collar', 'Pulsera', 'Reloj', 'Sombrero', 'Cinturón', 'Cartera', 'Aretes'])
 
-    #  Elegir aleatoriamente si usar vestido o conjunto
+    accesorios = accesorios_clima + otros_accesorios
+
+    tipos_deseados = ['Bolso', 'Collar', 'Pulsera', 'Reloj', 'Gafas de sol', 'Sombrero', 'Bufanda', 'Cinturón', 'Cartera']
+    accesorios_por_tipo = {tipo: [] for tipo in tipos_deseados}
+    for acc in accesorios:
+        for tipo in tipos_deseados:
+            if tipo.lower() in acc.get('tipo', '').lower():
+                accesorios_por_tipo[tipo].append(acc)
+
+    accesorios_seleccionados = {}
+    if accesorios_por_tipo['Bufanda']:
+        accesorios_seleccionados['Bufanda'] = random.choice(accesorios_por_tipo['Bufanda'])
+    for tipo in ['Bolso', 'Cartera']:
+        if accesorios_por_tipo[tipo]:
+            accesorios_seleccionados['Bolso'] = random.choice(accesorios_por_tipo[tipo])
+            break
+    for tipo in tipos_deseados:
+        if tipo in ['Bufanda', 'Bolso', 'Cartera']:
+            continue
+        if tipo == 'Collar' and 'Bufanda' in accesorios_seleccionados:
+            continue
+        if accesorios_por_tipo[tipo] and tipo not in accesorios_seleccionados:
+            accesorios_seleccionados[tipo] = random.choice(accesorios_por_tipo[tipo])
+    if not accesorios_seleccionados and accesorios:
+        accesorios_seleccionados['Extra'] = random.choice(accesorios)
+
     usar_vestido = vestidos and random.choice([True, False])
-
     if usar_vestido:
         outfit = {
             'vestido': random.choice(vestidos),
             'calzado': random.choice(calzados) if calzados else None,
-            'accesorio': random.choice(accesorios) if accesorios else None
+            'accesorios': accesorios_seleccionados
         }
     else:
         outfit = {
@@ -427,23 +520,51 @@ def recomendar_outfit(request):
             'parte_superior_externo': random.choice(capas_externas) if capas_externas else None,
             'parte_inferior': random.choice(partes_inferiores) if partes_inferiores else None,
             'calzado': random.choice(calzados) if calzados else None,
-            'accesorio': random.choice(accesorios) if accesorios else None
+            'accesorios': accesorios_seleccionados
         }
-        
 
-    imagenes = []
-    tipos = []
+    return render(request, 'outfit.html', {
+        'outfit': outfit,
+        'clima': clima,
+        'estilo': estilo,
+        'temporada': temporada
+    })
 
-    for key, prenda in outfit.items():
-        if prenda and 'imagen' in prenda:
-            imagenes.append(prenda['imagen'])
-            tipos.append(key)
 
-    return render(request, 'outfit.html', {'outfit': outfit})
+
+
+from django.http import JsonResponse
+
+def opciones_filtro_api(request):
+    modo = request.GET.get('modo')
+    usuario_id = request.session.get('usuario_id')
+
+    query = supabase.table("armario").select("*")
+    if usuario_id:
+        query = query.eq("idUsuario", usuario_id)
+    prendas = query.execute().data
+
+    if modo == 'estilo':
+        opciones = sorted(set(p['estilo'] for p in prendas if p.get('estilo')))
+    elif modo == 'temporada':
+        opciones = sorted(set(p['temporada'] for p in prendas if p.get('temporada')))
+    elif modo == 'color':
+        opciones = sorted(set(p['color'] for p in prendas if p.get('color')))
+    else:
+        opciones = []
+
+    return JsonResponse({'opciones': opciones})
+
+
+
+
 
 @csrf_exempt
 def guardar_outfit(request):
     if request.method == 'POST':
+        if request.headers.get("x-requested-with") != "XMLHttpRequest":
+            return JsonResponse({'error': 'Solo AJAX permitido.'}, status=400)
+
         if 'usuario_id' not in request.session:
             return JsonResponse({'error': 'Usuario no autenticado.'}, status=401)
 
