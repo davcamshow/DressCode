@@ -100,11 +100,18 @@ document.getElementById("guardarOutfitForm").addEventListener("submit", async fu
     });
 
     if (response.ok) {
+        let data = await response.json();
+
+        // Guardar el ID del outfit recién creado
+        document.getElementById("idOutfit").value = data.outfit_id;
+
         mostrarToast();
+
+        // Mostrar modal de estrellas
         document.getElementById("ratingModal").style.display = "flex";
-    } else {
-        alert("Error al guardar 😥");
-    }
+      } else {
+          alert("Error al guardar 😥");
+      }
 });
 
 function mostrarToast() {
@@ -142,7 +149,9 @@ document.getElementById("enviarRating").addEventListener("click", function () {
     return;
   }
 
-  // Puedes enviar la calificación a Django
+  let idUsuario = document.getElementById("idUsuario").value;
+  let idOutfit = document.getElementById("idOutfit").value;
+
   fetch("/guardar-rating/", {
     method: "POST",
     headers: {
@@ -150,12 +159,20 @@ document.getElementById("enviarRating").addEventListener("click", function () {
       "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
     },
     body: JSON.stringify({
-      rating: selectedRating
+      rating: selectedRating,
+      idUsuario: idUsuario,
+      idOutfit: idOutfit
     })
+  })
+  .then(res => res.json())
+  .then(data => {
+      console.log(data);
+      alert("¡Gracias por tu valoración!");
   });
 
   document.getElementById("ratingModal").style.display = "none";
 });
+
 
 
 

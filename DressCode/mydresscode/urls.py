@@ -31,6 +31,8 @@ urlpatterns = [
     path('configuracion-inicial/', ConfiguracionWizard.as_view(FORMS), name='configuracion_inicial'),
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('sideface/', views.sideface_view, name='sideface'), 
+    path("guardar-rating/", views.guardar_rating, name="guardar_rating"),
+
 ]
 
 

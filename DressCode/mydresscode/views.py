@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection, OperationalError
 from django.contrib.auth import authenticate, login, logout
-from .models import Usuario, Armario, Outfit, VerPrenda, Profile 
+from .models import Usuario, Armario, Outfit, VerPrenda, Profile, Recomendacion
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages 
 from django.http import JsonResponse
@@ -737,4 +737,32 @@ class ConfiguracionWizard(SessionWizardView):
         # Redirigir al dashboard/inicio
         return redirect('dashboard')  # Asegúrate que esta URL existe
     
-    
+@csrf_exempt
+def guardar_rating(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            rating = data.get("rating")
+            id_usuario = data.get("idUsuario")
+            id_outfit = data.get("idOutfit")
+
+            if not rating or not id_usuario or not id_outfit:
+                return JsonResponse({"error": "Faltan datos"}, status=400)
+
+            usuario = Usuario.objects.get(idUsuario=id_usuario)
+            outfit = Outfit.objects.get(idOutfit=id_outfit)
+
+            Recomendacion.objects.create(
+                idUsuario=usuario,
+                idOutfit=outfit,
+                valoracion=int(rating),
+                clima_del_dia="N/A"
+            )
+
+            return JsonResponse({"mensaje": "Valoración guardada correctamente"})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Método no permitido"}, status=405)

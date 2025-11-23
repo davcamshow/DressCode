@@ -70,7 +70,8 @@ class Recomendacion(models.Model):
     idOutfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, db_column='idOutfit')    # FK a Outfit
     fecha_generacion = models.DateTimeField(auto_now_add=True)
     clima_del_dia = models.CharField(max_length=45)
-    valoracion = models.CharField(max_length=45) # Puedes ajustar si es categoría o FK
+    valoracion = models.IntegerField()   # de 1 a 5
+
 
     class Meta:
         db_table = 'recomendacion'
@@ -81,6 +82,7 @@ class Recomendacion(models.Model):
 
     
     #agrego para el perfil del usuario
+
 class Profile(models.Model):
     user = models.OneToOneField(
         'Usuario', 
