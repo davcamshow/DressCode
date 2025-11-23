@@ -456,55 +456,35 @@ def sideface_view(request):
     return render(request, 'sideface.html') 
 
 def recomendar_outfit(request):
-    estilo = request.GET.get('estilo')
-    temporada = request.GET.get('temporada')
     ciudad = request.GET.get('ciudad', 'Morelia')
-    color = request.GET.get('color')   # <-- nuevo
     modo = request.GET.get('modo', None)
     usuario_id = request.session.get('usuario_id')
 
-    # --- Lógica por COLOR ---
-    if modo == 'color' and color:
-        query = supabase.table("armario").select("*")
-        if usuario_id:
-            query = query.eq("idUsuario", usuario_id)
-        prendas = query.execute().data
+    # --- Obtener perfil del usuario ---
+    estilo = None
+    temporada = None
+    color = None
+    if usuario_id:
+        perfil = supabase.table("perfil_usuario").select("*").eq("id_Usuario", usuario_id).execute().data
+        if perfil:
+            estilo = perfil[0].get('estilo_favorito')
+            temporada = perfil[0].get('temporada_favorita')
+            color = perfil[0].get('color_favorito')
 
-        # Filtrar prendas por color exacto
-        prendas_color = [p for p in prendas if p.get('color') and p['color'].lower() == color.lower()]
+    # Si vienen parámetros en GET, tienen prioridad
+    estilo = request.GET.get('estilo', estilo)
+    temporada = request.GET.get('temporada', temporada)
+    color = request.GET.get('color', color)
 
-        vestidos = [p for p in prendas_color if 'vestido' in p['tipo'].lower()]
-        partes_superiores = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['camisa','blusa'])]
-        partes_inferiores = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['pantalón','falda','short'])]
-        calzados = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['zapato','sandalia','tenis','bota'])]
-        accesorios = [p for p in prendas_color if any(t in p['tipo'].lower() for t in ['bolso','collar','pulsera','reloj','sombrero','cinturón','cartera','aretes'])]
+    # --- NUEVO: modo color inteligente ---
+    modo_color = (modo == 'color' and color)
 
-        usar_vestido = vestidos and random.choice([True, False])
-        if usar_vestido:
-            outfit = {
-                'vestido': random.choice(vestidos),
-                'calzado': random.choice(calzados) if calzados else None,
-                'accesorios': {'Extra': random.choice(accesorios)} if accesorios else {}
-            }
-        else:
-            outfit = {
-                'parte_superior_base': random.choice(partes_superiores) if partes_superiores else None,
-                'parte_inferior': random.choice(partes_inferiores) if partes_inferiores else None,
-                'calzado': random.choice(calzados) if calzados else None,
-                'accesorios': {'Extra': random.choice(accesorios)} if accesorios else {}
-            }
-
-        return render(request, 'outfit.html', {
-            'outfit': outfit,
-            'color': color
-        })
-
-    # --- Lógica por CLIMA (lo que ya tenías) ---
+    # --- Lógica por CLIMA ---
     def obtener_clima(ciudad):
         API_KEY = '8a33fa8635d6adf10672a0fa18b68316'
         url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={API_KEY}&units=metric&lang=es'
         try:
-            resp = requests.get(url, timeout=5)  # timeout evita bloqueos
+            resp = requests.get(url, timeout=5)
             data = resp.json()
             return {
                 'temp': data.get('main', {}).get('temp'),
@@ -527,27 +507,45 @@ def recomendar_outfit(request):
         elif temp < 25:
             return ['Camisa', 'Blusa', 'Pantalón', 'Zapatillas', 'Zapatos formales', 'Tenis deportivos', 'Mocasines']
         else:
-            return ['Shorts', 'Falda', 'Vestido', 'Sandalias', 'Gafas de sol', 'Camisa', 'Blusa']
+            return ['Shorts', 'Falda', 'Vestido', 'Sandalias', 'Gafas de sol', 'Sombrero', 'Camisa', 'Blusa']
 
     tipos_clima = tipos_por_temperatura(temp)
 
     def obtener_prenda_por_tipo(tipos):
+        prendas = []
         try:
             query = supabase.table("armario").select("*")
             if usuario_id:
                 query = query.eq("idUsuario", usuario_id)
+
+            # filtro estilo
             if estilo:
-                query = query.ilike("estilo", f"%{estilo}%")
+                query = query.ilike("estilo", f"%{estilo.lower()}%")
+
+            # filtro temporada
             if temporada:
-                query = query.ilike("temporada", f"%{temporada}%")
-            prendas = query.execute().data
+                query = query.ilike("temporada", f"%{temporada.lower()}%")
+
+            # filtro color (modificado)
+            if modo_color and color:
+                query = query.eq("color", color)
+            elif color:
+                query = query.ilike("color", f"%{color.lower()}%")
+
+            prendas = query.execute().data or []
         except Exception as e:
             print("Error al consultar Supabase:", e)
-            prendas = []
+
         return [p for p in prendas if 'tipo' in p and any(t.lower() in p['tipo'].lower() for t in tipos)]
 
     def filtrar_por_clima(lista):
-        return [p for p in lista if any(t in p['tipo'] for t in tipos_clima)]
+        # Si ya tenemos suficientes prendas por gustos, no filtramos por clima
+        if len(lista) >= 3:  
+            return lista  # PRIORIDAD A ESTILO + TEMPORADA + COLOR
+
+        # Si hay muy pocas prendas, entonces sí aplicamos clima
+        return [p for p in lista if any(t.lower() in p['tipo'].lower() for t in tipos_clima)]
+
 
     vestidos = obtener_prenda_por_tipo(['Vestido'])
     partes_superiores = obtener_prenda_por_tipo(['Camisa', 'Blusa'])
@@ -603,7 +601,8 @@ def recomendar_outfit(request):
         'outfit': outfit,
         'clima': clima,
         'estilo': estilo,
-        'temporada': temporada
+        'temporada': temporada,
+        'color': color
     })
 
 
@@ -626,6 +625,37 @@ def opciones_filtro_api(request):
         opciones = []
 
     return JsonResponse({'opciones': opciones})
+
+def obtener_preferencias_por_valoracion(usuario_id):
+    # Obtener solo las recomendaciones del usuario
+    recomendaciones = Recomendacion.objects.filter(idUsuario=usuario_id)
+
+    afinidad_colores = {}
+    afinidad_estilos = {}
+    afinidad_temporada = {}
+
+    for rec in recomendaciones:
+        # Cada rec.idOutfit apunta a un outfit calificado
+        outfit = rec.idOutfit  
+
+        # Sumamos puntajes según la valoración
+        score = rec.valoracion or 0
+
+        if outfit and score > 0:
+            # Colores
+            if outfit.color_principal:
+                afinidad_colores[outfit.color_principal] = afinidad_colores.get(outfit.color_principal, 0) + score
+
+            # Estilo
+            if outfit.estilo:
+                afinidad_estilos[outfit.estilo] = afinidad_estilos.get(outfit.estilo, 0) + score
+
+            # Temporada
+            if outfit.temporada:
+                afinidad_temporada[outfit.temporada] = afinidad_temporada.get(outfit.temporada, 0) + score
+
+    return afinidad_colores, afinidad_estilos, afinidad_temporada
+
 
 
 @csrf_exempt

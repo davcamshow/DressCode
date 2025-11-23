@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Armar Outfit</title>
   <link rel="stylesheet" href="{% static 'css/outfit.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -28,27 +29,32 @@
       <li class="dropdown"
           onmouseover="cargarOpciones('estilo','lista-estilo')"
           onmouseleave="ocultarLista('lista-estilo')">
-        <a href="#">Generar por Estilo</a>
+        <a href="#"><i class="fa-solid fa-shirt"></i> Generar por Estilo</a>
         <ul class="dropdown-list" id="lista-estilo"></ul>
       </li>
 
       <li class="dropdown"
           onmouseover="cargarOpciones('temporada','lista-temporada')"
           onmouseleave="ocultarLista('lista-temporada')">
-        <a href="#">Generar por Temporada</a>
+        <a href="#"><i class="fa-solid fa-snowflake"></i> Generar por Temporada</a>
         <ul class="dropdown-list" id="lista-temporada"></ul>
       </li>
 
       <li class="dropdown"
           onmouseover="cargarOpciones('color','lista-color')"
           onmouseleave="ocultarLista('lista-color')">
-        <a href="#">Generar por Color</a>
+        <a href="#"><i class="fa-solid fa-palette"></i> Generar por Color</a>
         <ul class="dropdown-list" id="lista-color"></ul>
       </li>
-        <a href="{% url 'recomendar_outfit' %}?modo=general">Generar Outfit General</a>
+
+      <li>
+        <a href="{% url 'recomendar_outfit' %}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Outfit Personalizado
+        </a>
       </li>
     </ul>
   </nav>
+
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="canvas-area">
@@ -128,6 +134,7 @@
       </div>
     </div>
 
+
   </main>
 
   <!-- PIE DE PÁGINA -->
@@ -157,11 +164,11 @@
       <h3>¿Qué te pareció esta recomendación?</h3>
 
       <div class="stars">
-        <span class="star" data-value="1">★</span>
-        <span class="star" data-value="2">★</span>
-        <span class="star" data-value="3">★</span>
-        <span class="star" data-value="4">★</span>
         <span class="star" data-value="5">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="1">★</span>
       </div>
 
 

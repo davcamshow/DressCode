@@ -197,6 +197,7 @@ body {
   opacity: 1;
 }
 
+
 @keyframes scroll-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -331,3 +332,44 @@ body {
   border: none;
   cursor: pointer;
 }
+
+.floating-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #945b05;
+  color: #fffaf3;
+  border-radius: 50%;
+  padding: 16px;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+  z-index: 999;
+}
+.floating-btn:hover {
+  background-color: #d4b483;
+  color: #3e2c23;
+}
+
+.outfit-info-card {
+  position: absolute;
+  top: 90px;
+  right: 30px;
+  width: 320px;
+  max-height: calc(100vh - 150px);
+  /* Paleta que ya usas 💛 */
+  background: #fffaf3; /* blanco cálido */
+  border: 2px solid #d4b483; /* doradito suave */
+  color: #3e2c23; /* café oscuro */
+
+  /* Estética más bonita */
+  border-radius: 25px;         /* más redondo */
+  padding: 22px 24px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* Sombras suaves */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+
