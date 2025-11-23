@@ -1,4 +1,3 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
@@ -189,6 +188,22 @@
                 el.querySelector('svg').classList.add('w-5', 'h-5', 'sm:w-6', 'sm:h-6');
             });
         }
+
+        // ✅ NUEVO: Event listener para el botón de favoritos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener para el botón de favoritos en el header
+            document.querySelectorAll('.favorites-trigger').forEach(trigger => {
+                trigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Guardar en sessionStorage que queremos ir a Favoritos
+                    sessionStorage.setItem('defaultFilter', 'Favoritos');
+                    
+                    // Redirigir al armario
+                    window.location.href = "{% url 'my_closet' %}";
+                });
+            });
+        });
     </script>
 
     <div class="app-container">
@@ -211,10 +226,13 @@
 
                     <div class="flex items-center justify-end gap-2">
                         <a href="{% url 'my_closet' %}" class="btn-secondary-custom p-1 sm:p-3 rounded-full sm:block" title="Mi Armario">
-                           
                             <img src="{% static 'img/gancho-de-ropa.png' %}" alt="Armario" class="w-9 h-9 object-contain">
                         </a>
-                      <a href="{% url 'my_closet' %}?filter=Favoritos" class="btn-secondary-custom p-2 sm:p-3 rounded-full" title="Favoritos">
+                        
+                        <!-- ✅ BOTÓN DE FAVORITOS CON LA CLASE CORRECTA -->
+                        <a href="javascript:void(0)" 
+                           class="btn-secondary-custom p-2 sm:p-3 rounded-full favorites-trigger" 
+                           title="Favoritos">
                             <span data-icon="Heart" class="text-primary-accent"></span>
                         </a>
                                                 
@@ -228,7 +246,7 @@
                                     <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-b-lg">Cerrar sesión</a>
                                 </div>
                             </div>
-                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -270,7 +288,6 @@
                             Generar Outfit
                             </a>
 
-                                                        <!-- Cambiar el enlace del botón "Capturar Prenda" en inicio.html -->
                             <a href="{% url 'seleccionar_categoria' %}" class="px-6 py-3 rounded-lg font-semibold text-white bg-btn-capture hover:bg-[#e65a62] transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-btn-capture focus:ring-offset-2 flex items-center gap-2">
                                 <span data-icon="Camera"></span>
                                 Capturar Prenda
@@ -399,12 +416,6 @@
     <script>
         lucide.createIcons();
     </script>
-    <script>
-function setFavoritesFilter() {
-    // Guardar en sessionStorage que queremos ir a Favoritos
-    sessionStorage.setItem('defaultFilter', 'Favoritos');
-}
-</script>
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {

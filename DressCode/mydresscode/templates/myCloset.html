@@ -897,6 +897,21 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       console.log('✨ DressCode - Mi Armario Cargado');
+
+      const defaultFilter = sessionStorage.getItem('defaultFilter');
+    if (defaultFilter === 'Favoritos') {
+        // Limpiar el storage
+        sessionStorage.removeItem('defaultFilter');
+        
+        // Activar el filtro de favoritos automáticamente
+        const favoritesButton = document.querySelector('.filter-btn[data-filter="Favoritos"]');
+        if (favoritesButton) {
+            setTimeout(() => {
+                favoritesButton.click();
+            }, 100);
+        }
+    }
+    
       
       // Elementos del DOM
       const filterButtons = document.querySelectorAll('.filter-btn');
