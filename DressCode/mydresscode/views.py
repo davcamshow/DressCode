@@ -452,6 +452,9 @@ def outfit(request):
 def vision_computer(request):
     return render(request, 'visioncomputer.html')
 
+def sideface_view(request):
+    return render(request, 'sideface.html') 
+
 def recomendar_outfit(request):
     estilo = request.GET.get('estilo')
     temporada = request.GET.get('temporada')
@@ -733,3 +736,5 @@ class ConfiguracionWizard(SessionWizardView):
 
         # Redirigir al dashboard/inicio
         return redirect('dashboard')  # Asegúrate que esta URL existe
+    
+    

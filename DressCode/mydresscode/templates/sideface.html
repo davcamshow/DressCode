@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil | DressCode</title>
+  
+  <style>
+    /* --- Paleta de Colores --- */
+    :root {
+      --color-primary: #21281e;
+      --color-secondary: #a47968;
+      --color-light: #f3d09f;
+      --color-neutral2: #605b57;
+      --color-neutral3: #8a6163;
+      --color-dark: #3a3021;
+      --color-warm1: #dea583;
+      --color-warm2: #cf8e71;
+      --color-cream: #fbefbc;
+      --sombra-suave: 0 4px 20px rgba(58, 48, 33, 0.08);
+      --sombra-media: 0 8px 30px rgba(58, 48, 33, 0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fbfbe9 0%, #fbefbc 50%, #f3d09f 100%);
+      background-attachment: fixed;
+      color: var(--color-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* --- Contenedor Principal --- */
+    .profile-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: var(--sombra-media);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* --- Panel Izquierdo (Perfil) --- */
+    .profile-panel {
+      flex: 0 0 300px;
+      background: linear-gradient(135deg, #fbfbe9 0%, #fbefbc 100%);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-right: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dea583 0%, #cf8e71 100%);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+      box-shadow: var(--sombra-media);
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+
+    .profile-email {
+      color: var(--color-neutral2);
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .preferences {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .pref-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .pref-title {
+      font-size: 14px;
+      color: var(--color-neutral2);
+      margin-bottom: 10px;
+    }
+
+    .color-circle {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background-color: var(--color-secondary);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .style-badge {
+      background-color: var(--color-neutral3);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    /* --- Panel Derecho (Contenido) --- */
+    .content-panel {
+      flex: 1;
+      padding: 30px;
+      position: relative;
+    }
+
+    /* --- Encabezado Superior --- */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .header-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-btn {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-btn:hover {
+      background-color: var(--color-light);
+      transform: translateY(-2px);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .sizes {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .size-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .size-type {
+      font-size: 14px;
+      color: var(--color-neutral2);
+      margin-bottom: 10px;
+    }
+
+    .size-value {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--color-primary);
+      background-color: var(--color-light);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .calendar-section {
+      margin-bottom: 25px;
+    }
+
+    .event {
+      background: linear-gradient(135deg, #cf8e71 0%, #dea583 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: var(--sombra-media);
+    }
+
+    .event-date {
+      font-size: 14px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .event-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .event-style {
+      font-size: 14px;
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      background-color: var(--color-neutral3);
+      transform: translateY(-2px);
+      box-shadow: var(--sombra-media);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      .profile-container {
+        flex-direction: column;
+      }
+      
+      .profile-panel {
+        flex: none;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+      }
+      
+      .top-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      
+      .header-buttons {
+        flex-direction: row;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Contenedor Principal -->
+  <div class="profile-container">
+    <!-- Panel Izquierdo - Perfil -->
+    <div class="profile-panel">
+      <div class="profile-pic">CH</div>
+      <div class="profile-name">Carolina Herrera</div>
+      <div class="profile-email">hrr7.caro@newyork</div>
+      
+      <div class="preferences">
+        <div class="pref-item">
+          <div class="pref-title">Color favorito</div>
+          <div class="color-circle"></div>
+        </div>
+        <div class="pref-item">
+          <div class="pref-title">Estilo frecuente</div>
+          <div class="style-badge">Casual</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho - Contenido -->
+    <div class="content-panel">
+      <!-- Encabezado Superior -->
+      <div class="top-header">
+        <div class="page-title">Mi Perfil</div>
+        <div class="header-buttons">
+          <a href="{% url 'inicio' %}" class="header-btn" title="Inicio">🏠</a>
+          <a href="#" class="header-btn" title="Configuración">⚙️</a>
+        </div>
+      </div>
+      
+      <div class="section-title">Mis tallas</div>
+      <div class="sizes">
+        <div class="size-item">
+          <div class="size-type">Superior</div>
+          <div class="size-value">M</div>
+        </div>
+        <div class="size-item">
+          <div class="size-type">Inferior</div>
+          <div class="size-value">9</div>
+        </div>
+        <div class="size-item">
+          <div class="size-type">Calzado</div>
+          <div class="size-value">26 MX</div>
+        </div>
+      </div>
+      
+      <div class="section-title">Calendario</div>
+      <div class="calendar-section">
+        <div class="event">
+          <div class="event-date">LUNES, 15 DE DICIEMBRE</div>
+          <div class="event-title">Fiesta de Ramón</div>
+          <div class="event-style">Estilo único</div>
+          <button class="btn">Probar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+     // Solo funcionalidad para el botón Probar (sin alertas)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Botón Probar
+      document.querySelector('.btn').addEventListener('click', function() {
+        console.log('Probando estilo para el evento');
+        // Aquí puedes implementar la funcionalidad de probar el estilo
+        // SIN alert() - solo acciones silenciosas
+      });
+    });
+  </script>
+</body>
+</html>
