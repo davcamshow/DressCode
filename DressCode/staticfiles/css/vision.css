@@ -1,0 +1,246 @@
+
+/* Estilos Básicos */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Fondo simulado del cuerpo de la app */
+}
+
+/* --- Estilos del Modal (Ventana Emergente) --- */
+
+.modal-fondo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Para ocultarlo al inicio, podrías usar: display: none; */
+}
+
+.modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 450px; /* Ancho máximo similar al de la imagen */
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-encabezado h2 {
+    margin: 0;
+    color: #e57373; /* Color rosa/morado de la app simulada */
+}
+
+.cerrar-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+    line-height: 1;
+}
+
+/* --- Estilos del Formulario y Campos --- */
+
+.formulario-prenda {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.obligatorio {
+    color: red;
+}
+
+.campo-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.campo-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    appearance: none; /* Oculta la flecha por defecto en algunos navegadores */
+    background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.4H18.8c-5%200-9.6%202-13.2%206.4-3.6%204.4-4.8%2010-3.2%2015.7l128%20128c3.2%203.2%207.6%204.8%2012%204.8s8.8-1.6%2012-4.8l128-128c4.8-5.6%204.8-13.2%200-17.6z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 10px center / 12px;
+    background-color: #f9f9f9;
+}
+
+/* --- Imagen y Botón de Cámara --- */
+
+.campo-imagen {
+    position: relative;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.imagen-prenda {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.btn-camara {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Favoritos (Switch) --- */
+
+.campo-favoritos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-radius: 12px;
+    background-color: #fdf6fa; /* Fondo rosa claro */
+    margin-top: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.switch-contenedor {
+    flex-grow: 1;
+}
+
+.switch-contenedor p {
+    margin: 0;
+    line-height: 1.2;
+    font-size: 14px;
+    color: #555;
+}
+
+.switch-contenedor p:first-of-type {
+    font-weight: bold;
+    color: #333;
+}
+
+.corazon {
+    font-size: 1.2em;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Estilos del Switch (Toggle) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 25px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-image: linear-gradient(to right, #ff7e5f, #feb47b); /* Simulación de gradiente */
+    background-color: #cc3366; /* Color de fondo si no usas gradiente */
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* --- Acciones y Botones --- */
+
+.modal-acciones {
+    display: flex;
+    justify-content: flex-end; /* Alinear a la derecha como en la imagen */
+    gap: 10px;
+    padding-top: 20px;
+}
+
+.btn-cancelar, .btn-guardar {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: opacity 0.2s;
+}
+
+.btn-cancelar {
+    background-color: white;
+    color: #888;
+    border: 1px solid #ddd;
+}
+
+.btn-guardar {
+    /* Simulación de gradiente morado a rosa */
+    background-image: linear-gradient(to right, #ac42b4, #e54b8d);
+    color: white;
+    box-shadow: 0 4px 6px rgba(172, 66, 180, 0.3);
+}
+
+.btn-cancelar:hover, .btn-guardar:hover {
+    opacity: 0.9;
+}

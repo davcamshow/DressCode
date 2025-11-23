@@ -4,75 +4,1080 @@
   {% load static %}
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Armario</title>
-  <link rel="stylesheet" href="{% static 'css/myCloset.css' %}">
+  <title>Mi Armario | DressCode</title>
+  
+  <!-- CSS INLINE MEJORADO -->
+  <style>
+    /* --- Nueva Paleta de Colores Mejorada --- */
+    :root {
+      --color-fondo-principal: #fbfbe9;
+      --color-primario: #3a3021;
+      --color-secundario: #a47968;
+      --color-acento-claro: #f3d09f;
+      --color-favorito: #cf8e71;
+      --color-texto-claro: #605b57;
+      --color-resaltado: #21281e;
+      --color-blanco: #ffffff;
+      --color-borde: #e0e0e0;
+      --color-dorado: #fbefbc;
+      --color-terciario: #8a6163;
+      --color-gris-elegante: #494a45;
+      --color-beige: #a1917c;
+      --color-durazno: #dea583;
+      --sombra-suave: 0 4px 20px rgba(58, 48, 33, 0.08);
+      --sombra-media: 0 8px 30px rgba(58, 48, 33, 0.12);
+      --gradiente-primario: linear-gradient(135deg, #f3d09f 0%, #fbefbc 100%);
+      --gradiente-secundario: linear-gradient(135deg, #a47968 0%, #cf8e71 100%);
+    }
+
+    /* --- Reset y Tipografía Mejorada --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fbfbe9 0%, #fbefbc 50%, #f3d09f 100%);
+      background-attachment: fixed;
+      color: var(--color-primario);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 80px;
+    }
+
+    /* --- Encabezado Mejorado --- */
+    .main-header-container {
+      padding: 1.5rem 1rem 1rem;
+      background: var(--color-blanco);
+      box-shadow: var(--sombra-media);
+      border-radius: 0 0 25px 25px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-header-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradiente-secundario);
+    }
+
+    .top-nav-icons {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 2rem;
+      background: var(--color-fondo-principal);
+      padding: 12px;
+      border-radius: 20px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .nav-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--color-texto-claro);
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-icon:hover {
+      color: var(--color-primario);
+      transform: translateY(-2px);
+    }
+
+    .nav-icon.primary-icon {
+      background: var(--gradiente-primario);
+      color: var(--color-primario);
+      font-weight: 600;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .nav-icon img {
+      width: 22px;
+      height: 22px;
+      margin-bottom: 4px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-icon:hover img {
+      transform: scale(1.1);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+      color: var(--color-primario);
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 25%;
+      width: 50%;
+      height: 2px;
+      background: var(--gradiente-secundario);
+      border-radius: 2px;
+    }
+
+    .item-count {
+      color: var(--color-texto-claro);
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* --- Búsqueda Mejorada --- */
+    .search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px 50px 16px 20px;
+      border: 2px solid var(--color-acento-claro);
+      border-radius: 30px;
+      background: var(--color-blanco);
+      font-size: 15px;
+      color: var(--color-primario);
+      box-shadow: var(--sombra-suave);
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-secundario);
+      box-shadow: 0 0 0 3px rgba(164, 121, 104, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: var(--color-beige);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-secundario);
+      font-size: 18px;
+    }
+
+    /* --- Filtros de Categoría Mejorados --- */
+    .category-filters {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      margin-bottom: 25px;
+      padding: 15px 5px;
+      scrollbar-width: none;
+      background: var(--color-blanco);
+      border-radius: 20px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .category-filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--color-fondo-principal);
+      border: 2px solid transparent;
+      padding: 12px 15px;
+      border-radius: 18px;
+      min-width: 80px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      color: var(--color-texto-claro);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradiente-primario);
+      transition: left 0.3s ease;
+      z-index: 0;
+    }
+
+    .filter-btn:hover::before {
+      left: 0;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--color-acento-claro);
+    }
+
+    .filter-btn.active {
+      background: var(--gradiente-secundario);
+      color: var(--color-blanco);
+      border-color: var(--color-secundario);
+      box-shadow: var(--sombra-media);
+    }
+
+    .filter-btn .btn-icon {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-btn .btn-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: brightness(0.8);
+    }
+
+    .filter-btn.active .btn-icon img {
+      filter: brightness(0) invert(1);
+    }
+
+    .filter-btn span {
+      font-size: 12px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* --- Estadísticas Mejoradas --- */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .stat-box {
+      background: var(--color-blanco);
+      border-radius: 16px;
+      padding: 18px 10px;
+      text-align: center;
+      box-shadow: var(--sombra-suave);
+      border: 1px solid var(--color-acento-claro);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradiente-primario);
+    }
+
+    .stat-box:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--sombra-media);
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--color-primario);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--color-texto-claro);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* --- Sección de Favoritos Mejorada --- */
+    .favorites-section {
+      margin: 25px 15px;
+      padding: 20px;
+      background: var(--color-blanco);
+      border-radius: 20px;
+      box-shadow: var(--sombra-media);
+      border: 1px solid var(--color-acento-claro);
+      position: relative;
+    }
+
+    .favorites-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradiente-secundario);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .favorites-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--color-fondo-principal);
+    }
+
+    .favorites-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primario);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .favorites-title::before {
+      content: "★";
+      color: var(--color-favorito);
+      font-size: 24px;
+      text-shadow: 0 2px 4px rgba(207, 142, 113, 0.3);
+    }
+
+    .favorites-count {
+      font-size: 14px;
+      color: var(--color-secundario);
+      font-weight: 600;
+      background: var(--color-fondo-principal);
+      padding: 6px 12px;
+      border-radius: 15px;
+    }
+
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .favorite-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 1/1;
+      background: var(--color-fondo-principal);
+      box-shadow: var(--sombra-suave);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .favorite-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-acento-claro);
+      box-shadow: var(--sombra-media);
+    }
+
+    .favorite-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .empty-favorites {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--color-texto-claro);
+    }
+
+    .empty-favorites p {
+      margin-bottom: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .empty-favorites small {
+      color: var(--color-beige);
+      font-style: italic;
+    }
+
+    /* --- Grid de Prendas Mejorado --- */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      padding: 0 15px;
+    }
+
+      .photo-item {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+   aspect-ratio: 1/1.08; /* Mínimo espacio extra */
+    box-shadow: var(--sombra-intensa);
+    background: var(--gradiente-principal);
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-acento);
+    display: flex;
+    flex-direction: column;
+  }
+
+    .photo-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-acento-claro);
+      box-shadow: 0 12px 40px rgba(58, 48, 33, 0.15);
+    }
+
+    
+.photo-item img {
+  width: 100%;
+   height: 82%; /* Máximo espacio para imagen */
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+    .prenda-info {
+ padding: 4px 6px; /* Padding mínimo */
+   min-height: 18%; /* Altura mínima */
+  background: rgba(251, 239, 188, 0.85);
+   border-top: 1px solid rgba(222, 165, 131, 0.2);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.prenda-nombre {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-texto);
+    margin-bottom: 1px;
+    line-height: 1; /* Sin espacio entre líneas */
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.prenda-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    gap: 2px; /* Espacio mínimo entre elementos */
+    line-height: 1;
+}
+
+.prenda-color {
+    color: var(--color-secundario);
+    font-weight: 600;
+    background: rgba(222, 165, 131, 0.15);
+    padding: 0px 3px; /* Menos padding */
+    border-radius: 3px;
+    flex-shrink: 0; /* Evita que se encoja */
+}
+
+
+.prenda-temporada {
+    color: var(--color-texto-claro);
+    font-weight: 500;
+    font-style: italic;
+    flex-shrink: 0; /* Evita que se encoja */
+    text-align: right;
+    
+}
+
+.prenda-nombre:empty,
+.prenda-color:empty,
+.prenda-temporada:empty {
+    display: none;
+}
+
+
+    .photo-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .heart {
+      position: absolute;
+      top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .heart:hover {
+      transform: scale(1.15);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .heart::before {
+      content: "♥";
+      color: #e0e0e0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .heart.active::before {
+      color: var(--color-favorito);
+      text-shadow: 0 2px 8px rgba(207, 142, 113, 0.4);
+    }
+
+    .heart.active {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 15px rgba(207, 142, 113, 0.3);
+    }
+
+    .no-items-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--color-texto-claro);
+      background: var(--color-blanco);
+      border-radius: 20px;
+      box-shadow: var(--sombra-suave);
+      margin: 20px 0;
+    }
+
+    .no-items-message::before {
+      content: '👗';
+      font-size: 48px;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    /* --- Botón Flotante Mejorado --- */
+    .floating-add-btn {
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 70px;
+      height: 70px;
+      background: var(--gradiente-secundario);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(164, 121, 104, 0.4);
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border: 3px solid var(--color-blanco);
+    }
+
+    .floating-add-btn:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 12px 40px rgba(164, 121, 104, 0.6);
+    }
+
+    .floating-add-btn::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      border: 2px solid var(--color-secundario);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    /* --- Mensajes Mejorados --- */
+    .mensaje-exito, .mensaje-flotante {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 30px;
+      border-radius: 15px;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: var(--sombra-media);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .mensaje-exito {
+      background: rgba(164, 121, 104, 0.95);
+      color: white;
+    }
+
+    .mensaje-flotante {
+      background: rgba(33, 40, 30, 0.95);
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .favorite-item {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 1/1.2; /* Misma proporción que photo-item */
+    background: var(--gradiente-dorado);
+    box-shadow: var(--sombra-media);
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-acento);
+    display: flex;
+    flex-direction: column;
+}
+
+.favorite-item img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+}
+
+    /* --- Responsive Mejorado --- */
+    @media (min-width: 768px) {
+      .photo-grid, .favorites-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .main-header-container {
+        padding: 2rem 2rem 1.5rem;
+      }
+      
+      .category-filters {
+        justify-content: center;
+      }
+
+      .prenda-nombre {
+    font-size: 13px;
+  }
+  
+  .prenda-details {
+    font-size: 10px;
+  }
+    }
+
+    @media (max-width: 480px) {
+    .photo-item {
+        aspect-ratio: 1/1.1; /* Aún más compacto */
+    }
+    
+    .prenda-info {
+        padding: 6px 8px;
+    }
+    
+    .prenda-nombre {
+        font-size: 12px;
+        margin-bottom: 1px;
+    }
+    
+    .prenda-details {
+        font-size: 9px;
+    }
+}
+
+    @media (min-width: 1024px) {
+      .photo-grid, .favorites-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 0 20px;
+      }
+      
+      .favorites-section {
+        margin: 30px 20px;
+        padding: 25px;
+      }
+    }
+
+    /* --- Animaciones adicionales --- */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .photo-item, .stat-box, .filter-btn {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .photo-item:nth-child(2) { animation-delay: 0.1s; }
+    .photo-item:nth-child(3) { animation-delay: 0.2s; }
+    .photo-item:nth-child(4) { animation-delay: 0.3s; }
+  </style>
+  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
-  <header class="top-bar">
-    <div class="header-left">Mi Armario</div>
-    <div class="header-center">
-      <img src="{% static 'img/logo.png' %}" alt="Logo Mi Armario" />
-    </div>
-    <div class="header-right">
-      <a href="{% url 'inicio' %}" class="header-icon">
-        <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio" />
+  <div class="main-header-container">
+    <div class="top-nav-icons">
+      <a href="{% url 'inicio' %}" class="nav-icon">
+        <img src="{% static 'img/iconoInicio.png' %}" alt="Inicio">
+        <span>Inicio</span>
+      </a>
+      <a href="{% url 'outfit' %}"class="nav-icon">
+        <img src="{% static 'img/iconoOutfits.png' %}" alt="Outfits">
+        <span>Outfits</span>
+      </a>
+      <a href="{% url 'inicio' %}"class="nav-icon primary-icon">
+        <img src="{% static 'img/gancho-de-ropa.png' %}" alt="Armario">
+        <span>Armario</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <img src="{% static 'img/foto-de-perfil.png' %}" alt="Perfil">
+        <span>Perfil</span>
       </a>
     </div>
-  </header>
 
-  <section class="filter-section">
-    <nav class="filters">
-      <button class="active" data-filter="Todo">Todo</button>
-      <button data-filter="Favoritos">Favoritos</button>
-      <button data-filter="prenda">Ropa</button>
-      <button data-filter="accesorio">Accesorios</button>
-      <button data-filter="calzado">Calzado</button>
+    <h1>Mi Armario</h1>
+    <p class="item-count">
+      {% if prendas_del_armario %}
+        {{ prendas_del_armario|length }} piezas únicas en tu colección
+      {% else %}
+        0 piezas únicas en tu colección
+      {% endif %}
+    </p>
+    
+    <div class="search-container">
+      <input type="search" id="wardrobeSearch" placeholder="Buscar en tu armario..." class="search-input">
+      <div class="search-icon">🔍</div>
+    </div>
+
+    <nav class="category-filters">
+      <button class="filter-btn active" data-filter="Todo">
+        <div class="btn-icon"><img src="{% static 'img/iconoTodo.png' %}" alt="Todo"></div>
+        <span>Todo</span>
+      </button>
+      <button class="filter-btn" data-filter="Bolsas">
+        <div class="btn-icon"><img src="{% static 'img/iconoBolsas.png' %}" alt="Bolsas"></div>
+        <span>Bolsas</span>
+      </button>
+      <button class="filter-btn" data-filter="Cinturones">
+        <div class="btn-icon"><img src="{% static 'img/iconoCinturones.png' %}" alt="Cinturones"></div>
+        <span>Cinturones</span>
+      </button>
+      <button class="filter-btn" data-filter="Blazers">
+        <div class="btn-icon"><img src="{% static 'img/iconoBlazers.png' %}" alt="Blazers"></div>
+        <span>Blazers</span>
+      </button>
+      <button class="filter-btn" data-filter="Vestidos">
+        <div class="btn-icon"><img src="{% static 'img/iconoVestidos.png' %}" alt="Vestidos"></div>
+        <span>Vestidos</span>
+      </button>
+      <button class="filter-btn" data-filter="Zapatos">
+        <div class="btn-icon"><img src="{% static 'img/iconoZapatos.png' %}" alt="Zapatos"></div>
+        <span>Zapatos</span>
+      </button>
+      <button class="filter-btn" data-filter="Accesorios">
+        <div class="btn-icon"><img src="{% static 'img/iconoAccesorios.png' %}" alt="Accesorios"></div>
+        <span>Accesorios</span>
+      </button>
+      <button class="filter-btn" data-filter="Favoritos">
+        <div class="btn-icon">★</div>
+        <span>Favoritos</span>
+      </button>
     </nav>
-    <p id="contador">{{ prendas_del_armario|length }} elementos</p>
-  </section>
 
-  <section class="photo-grid" id="photoGrid">
-    {% if prendas_del_armario %}
-      {% for prenda in prendas_del_armario %}
-        <div class="photo-item"
-             data-id="{{ prenda.idPrenda }}"
-             data-tipo="{{ prenda.tipo }}"
-             data-categoria="{{ prenda.clasificacion|default:'prenda'|lower }}"
-             data-favorito="{{ prenda.esFavorito|yesno:'true,false' }}">
-          <img src="{{ prenda.imagen }}" alt="{{ prenda.tipo }}" loading="lazy">
-          <i class="heart {% if prenda.esFavorito %}active{% endif %}" data-prenda-id="{{ prenda.idPrenda }}"></i>
-        </div>
-      {% endfor %}
-    {% else %}
-      <p class="no-items-message">¡Tu armario está vacío!</p>
-    {% endif %}
-  </section>
-
-  <footer class="bottom-nav">
-    <a href="{% url 'inicio' %}" class="nav-btn">
-      <img src="{% static 'img/iconoInicio.png'%}" alt="Inicio" />
-      <span>Inicio</span>
-    </a>
-    <div class="nav-dot"></div>
-    <a href="{% url 'categoria' %}" class="nav-btn">
-      <img src="{% static 'img/iconoAñadir.jpg' %}" alt="Añadir" />
-      <span>Añadir</span>
-    </a>
-  </footer>
-
-  <div id="selectionActions" class="selection-actions hidden">
-    <button id="cancelSelection" class="action-btn cancel">Cancelar</button>
-    <span id="selectionCount">0 seleccionadas</span>
-    <button id="deleteSelection" class="action-btn delete">
-      <img src="{% static 'img/iconoDelete.png' %}" alt="Eliminar" />
-    </button>
+    <section class="stats-section">
+      <div class="stat-box">
+        <span class="stat-number">
+          {% if prendas_del_armario %}
+            {{ prendas_del_armario|length }}
+          {% else %}
+            0
+          {% endif %}
+        </span>
+        <span class="stat-label">Piezas</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number" id="favorites-count">0</span>
+        <span class="stat-label">Favoritos</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">89%</span>
+        <span class="stat-label">Uso</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">42</span>
+        <span class="stat-label">Outfits</span>
+      </div>
+    </section>
   </div>
 
-  <div id="mensajeExito" class="mensaje-exito hidden">Eliminación exitosa</div>
-  <div id="mensajeError" class="mensaje-flotante hidden">No se pudo eliminar</div>
+  <!-- SECCIÓN DE FAVORITOS MEJORADA -->
+  <section class="favorites-section">
+    <div class="favorites-header">
+      <h2 class="favorites-title">Mis Prendas Favoritas</h2>
+      <span class="favorites-count" id="favorites-counter">0 prendas</span>
+    </div>
+    <div class="favorites-grid" id="favoritesGrid">
+      <div class="empty-favorites">
+        <p> Aún no tienes prendas favoritas</p>
+        <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
+      </div>
+    </div>
+  </section>
 
-  <script src="{% static 'js/myCloset.js' %}"></script>
+  <!-- GRID DE PRENDAS MEJORADO -->
+  <!-- En la sección photo-grid, actualiza cada photo-item -->
+<section class="photo-grid" id="photoGrid">
+  {% if prendas_del_armario %}
+    {% for prenda in prendas_del_armario %}
+      <div class="photo-item"
+           data-id="{{ prenda.idPrenda }}"
+           data-tipo="{{ prenda.tipo }}"
+           data-categoria="{{ prenda.clasificacion|default:'prenda'|lower }}"
+           data-favorito="{{ prenda.esFavorito|yesno:'true,false' }}">
+        <img src="{{ prenda.imagen }}" alt="{{ prenda.tipo }}" loading="lazy">
+        <i class="heart {% if prenda.esFavorito %}active{% endif %}" data-prenda-id="{{ prenda.idPrenda }}"></i>
+        
+        <!-- NUEVO: Información de la prenda -->
+        <div class="prenda-info">
+          <h3 class="prenda-nombre">{{ prenda.tipo }}</h3>
+          <div class="prenda-details">
+            <span class="prenda-color">{{ prenda.color }}</span>
+            <span class="prenda-temporada">{{ prenda.temporada }}</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="no-items-message">¡Tu armario está vacío! Agrega tu primera prenda.</p>
+  {% endif %}
+</section>
+  
+  <a href="{% url 'categoria' %}" class="floating-add-btn">
+    <span>+</span>
+  </a>
+
+  <!-- JavaScript con funcionalidad mejorada -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('✨ DressCode - Mi Armario Cargado');
+      
+      // Elementos del DOM
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const hearts = document.querySelectorAll('.heart');
+      const favoritesGrid = document.getElementById('favoritesGrid');
+      const favoritesCounter = document.getElementById('favorites-counter');
+      const favoritesCountStat = document.getElementById('favorites-count');
+      const photoGrid = document.getElementById('photoGrid');
+      const searchInput = document.getElementById('wardrobeSearch');
+      
+      // Estado de la aplicación
+      let currentFilter = 'Todo';
+      let favorites = [];
+      let searchTerm = '';
+
+      // Inicializar favoritos
+      function initializeFavorites() {
+        const favoriteItems = document.querySelectorAll('.photo-item[data-favorito="true"]');
+        favorites = Array.from(favoriteItems).map(item => ({
+          id: item.dataset.id,
+          tipo: item.dataset.tipo,
+          categoria: item.dataset.categoria,
+          imagen: item.querySelector('img').src
+        }));
+        updateFavoritesDisplay();
+      }
+
+      // Actualizar display de favoritos
+      function updateFavoritesDisplay() {
+        favoritesCounter.textContent = `${favorites.length} prenda${favorites.length !== 1 ? 's' : ''}`;
+        favoritesCountStat.textContent = favorites.length;
+        
+        if (favorites.length === 0) {
+          favoritesGrid.innerHTML = `
+            <div class="empty-favorites">
+              <p>🌟 Aún no tienes prendas favoritas</p>
+              <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
+            </div>
+          `;
+        } else {
+          favoritesGrid.innerHTML = favorites.map(fav => `
+            <div class="favorite-item" data-id="${fav.id}">
+              <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
+            </div>
+          `).join('');
+        }
+
+         if (favorites.length > 0) {
+        favoritesGrid.innerHTML = favorites.map(fav => `
+            <div class="favorite-item" data-id="${fav.id}">
+                <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
+                <div class="prenda-info">
+                    <h3 class="prenda-nombre">${fav.tipo}</h3>
+                    <div class="prenda-details">
+                        <span class="prenda-color">${fav.color}</span>
+                        <span class="prenda-temporada">${fav.temporada}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+      }
+
+      // Toggle favorito con animación
+      function toggleFavorite(heart) {
+         const photoItem = heart.closest('.photo-item');
+    const prendaId = photoItem.dataset.id;
+    const prendaTipo = photoItem.querySelector('.prenda-nombre').textContent;
+    const prendaColor = photoItem.querySelector('.prenda-color').textContent;
+    const prendaTemporada = photoItem.querySelector('.prenda-temporada').textContent;
+    const prendaImagen = photoItem.querySelector('img').src;
+    
+        const isCurrentlyFavorite = heart.classList.contains('active');
+        
+        // Animación del corazón
+        heart.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+          heart.style.transform = 'scale(1)';
+        }, 300);
+        
+        if (isCurrentlyFavorite) {
+          heart.classList.remove('active');
+          photoItem.dataset.favorito = 'false';
+          favorites = favorites.filter(fav => fav.id !== prendaId);
+        } else {
+          heart.classList.add('active');
+          photoItem.dataset.favorito = 'true';
+          favorites.push({
+            id: prendaId,
+            tipo: prendaTipo,
+            categoria: photoItem.dataset.categoria,
+            imagen: prendaImagen
+          });
+
+          favorites.push({
+            id: prendaId,
+            tipo: prendaTipo,
+            color: prendaColor,
+            temporada: prendaTemporada,
+            categoria: photoItem.dataset.categoria,
+            imagen: prendaImagen
+        });
+        }
+        
+        updateFavoritesDisplay();
+        filterItems(currentFilter); // Re-aplicar filtro actual
+        
+        // Aquí puedes agregar la llamada a Supabase
+        console.log('Favorito actualizado:', { prendaId, esFavorito: !isCurrentlyFavorite });
+      }
+
+      // Filtrar prendas con búsqueda
+      function filterItems(filter) {
+        const items = document.querySelectorAll('.photo-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+          const categoria = item.dataset.categoria;
+          const tipo = item.dataset.tipo.toLowerCase();
+          const esFavorito = item.dataset.favorito === 'true';
+          let show = false;
+          
+          // Aplicar filtro principal
+          switch(filter) {
+            case 'Todo':
+              show = true;
+              break;
+            case 'Favoritos':
+              show = esFavorito;
+              break;
+            default:
+              show = categoria === filter.toLowerCase();
+          }
+          
+          // Aplicar búsqueda
+          if (show && searchTerm) {
+            show = tipo.includes(searchTerm.toLowerCase());
+          }
+          
+          item.style.display = show ? 'block' : 'none';
+          if (show) visibleCount++;
+        });
+        
+        // Mostrar/ocultar secciones
+        const favoritesSection = document.querySelector('.favorites-section');
+        if (filter === 'Favoritos') {
+          favoritesSection.style.display = 'none';
+          photoGrid.style.display = 'grid';
+        } else {
+          favoritesSection.style.display = 'block';
+          photoGrid.style.display = 'grid';
+        }
+      }
+
+      // Event Listeners
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.dataset.filter;
+          filterItems(currentFilter);
+        });
+      });
+
+      hearts.forEach(heart => {
+        heart.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleFavorite(this);
+        });
+      });
+
+      // Búsqueda en tiempo real
+      searchInput.addEventListener('input', function() {
+        searchTerm = this.value.trim();
+        filterItems(currentFilter);
+      });
+
+      // Inicializar
+      initializeFavorites();
+      filterItems(currentFilter);
+    });
+  </script>
 </body>
 </html>

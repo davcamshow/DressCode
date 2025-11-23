@@ -245,7 +245,6 @@ def capturar_view(request):
 
 def exit_view(request):
     return render(request, 'Cuenta creada.html')
-
 def my_closet(request):
     if 'usuario_id' not in request.session:
         messages.error(request, "Debes iniciar sesión para ver tu armario.")
@@ -255,6 +254,14 @@ def my_closet(request):
         usuario_id = request.session['usuario_id']
         usuario = Usuario.objects.get(idUsuario=usuario_id)
         prendas = Armario.objects.filter(idUsuario=usuario).order_by('-fecha')
+
+        # DEBUG: Ver qué datos tenemos
+        print(f"Usuario: {usuario}")
+        print(f"Número de prendas: {prendas.count()}")
+        if prendas.exists():
+            primera_prenda = prendas.first()
+            print(f"Primera prenda: {primera_prenda}")
+            print(f"Atributos de la prenda: {dir(primera_prenda)}")
 
         context = {
             'prendas_del_armario': prendas 
@@ -268,7 +275,7 @@ def my_closet(request):
         print(f"Error al cargar el armario: {e}")
         messages.error(request, "Hubo un error al cargar tu armario digital.")
         return render(request, 'myCloset.html', {})
-
+    
 def categoria(request):
     return render(request, 'category.html')
 

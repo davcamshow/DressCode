@@ -54,6 +54,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'DressCode.wsgi.application'
 
 DATABASES = {
@@ -91,7 +93,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "mydresscode" / "static"]
+# Directorios donde buscar archivos estáticos
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'mydresscode/static'),
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Envía al usuario a la URL de configuración (onboarding_url)
@@ -106,3 +112,7 @@ print("=== CONFIGURACIÓN COMPLETADA ===")
 print("Supabase Host:", os.getenv('SUPABASE_DB_HOST'))
 
 LOGIN_URL = '/login/'
+
+
+# Para producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
