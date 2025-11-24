@@ -1,6 +1,3 @@
-"""
-Django settings for DressCode project.
-"""
 
 from pathlib import Path
 import os
@@ -60,20 +57,12 @@ WSGI_APPLICATION = 'DressCode.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'postgres',
-        'USER':'postgres',
-        #'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
-        'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
-        #'HOST':os.getenv('SUPABASE_DB_HOST'),
-        'HOST':os.getenv('SUPABASE_DB_HOST'),
-        'PORT':'5432',
-        'OPTIONS':{
-            'sslmode': 'require',
-            },
-    }
+        'NAME': 'postgres', 
+        'USER': 'postgres.uovktvztwuzstzbzjafr', 
+        'PASSWORD': 'Ghbase2121',
+        'HOST': 'aws-1-us-east-2.pooler.supabase.com', 
+        'PORT': '5432',}
 }
 
 AUTH_PASSWORD_VALIDATORS = [
