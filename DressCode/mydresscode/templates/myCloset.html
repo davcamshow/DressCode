@@ -747,6 +747,223 @@
     .photo-item:nth-child(2) { animation-delay: 0.1s; }
     .photo-item:nth-child(3) { animation-delay: 0.2s; }
     .photo-item:nth-child(4) { animation-delay: 0.3s; }
+
+/* --- Estilos para prendas seleccionadas MEJORADO Y MÁS LLAMATIVO --- */
+.photo-item.selected {
+  border-color: var(--color-secundario);
+  border-width: 4px;
+  box-shadow: 
+    0 0 0 4px rgba(164, 121, 104, 0.4), 
+    0 8px 25px rgba(164, 121, 104, 0.3),
+    0 0 30px rgba(207, 142, 113, 0.2);
+  transform: scale(1.03);
+  animation: pulse-selected 2s infinite;
+}
+
+.photo-item.selected::before {
+  content: '✓';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 32px;
+  height: 32px;
+  background: var(--gradiente-secundario);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 3;
+  box-shadow: 0 4px 12px rgba(164, 121, 104, 0.6);
+  border: 2px solid var(--color-blanco);
+}
+
+.photo-item.selected::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, 
+    rgba(164, 121, 104, 0.2) 0%, 
+    rgba(207, 142, 113, 0.15) 50%, 
+    rgba(222, 165, 131, 0.1) 100%);
+  z-index: 1;
+  border-radius: 20px;
+  border: 2px solid rgba(164, 121, 104, 0.3);
+}
+
+@keyframes pulse-selected {
+  0% {
+    box-shadow: 
+      0 0 0 4px rgba(164, 121, 104, 0.4),
+      0 8px 25px rgba(164, 121, 104, 0.3),
+      0 0 30px rgba(207, 142, 113, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 6px rgba(164, 121, 104, 0.3),
+      0 8px 30px rgba(164, 121, 104, 0.4),
+      0 0 40px rgba(207, 142, 113, 0.3);
+  }
+  100% {
+    box-shadow: 
+      0 0 0 4px rgba(164, 121, 104, 0.4),
+      0 8px 25px rgba(164, 121, 104, 0.3),
+      0 0 30px rgba(207, 142, 113, 0.2);
+  }
+}
+
+.photo-item {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* --- Botón de Eliminar más llamativo --- */
+.delete-btn {
+  position: fixed;
+  bottom: 190px;
+  right: 25px;
+  width: 70px;
+  height: 70px;
+  background: var(--gradiente-secundario);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border: 3px solid var(--color-blanco);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.delete-btn.active {
+  opacity: 1;
+  pointer-events: all;
+  animation: pulse-delete 1.5s infinite;
+}
+
+.delete-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 12px 40px rgba(164, 121, 104, 0.8);
+  animation: none;
+}
+
+@keyframes pulse-delete {
+  0% {
+    box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+  }
+  50% {
+    box-shadow: 
+      0 8px 30px rgba(164, 121, 104, 0.9), 
+      0 0 0 12px rgba(164, 121, 104, 0.15);
+  }
+  100% {
+    box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+  }
+}
+/* --- Modal de Confirmación --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(58, 48, 33, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  background: var(--color-blanco);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--sombra-media);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  color: var(--color-secundario);
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--color-primario);
+}
+
+.modal-message {
+  font-size: 16px;
+  color: var(--color-texto-claro);
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 16px;
+}
+
+.modal-btn.cancel {
+  background: var(--color-fondo-principal);
+  color: var(--color-texto-claro);
+}
+
+.modal-btn.cancel:hover {
+  background: var(--color-acento-claro);
+}
+
+.modal-btn.delete {
+  background: var(--gradiente-secundario);
+  color: var(--color-blanco);
+}
+
+.modal-btn.delete:hover {
+  box-shadow: 0 4px 15px rgba(164, 121, 104, 0.4);
+  transform: translateY(-2px);
+}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -893,206 +1110,337 @@
     <span>+</span>
   </a>
 
+  <!-- Botón de eliminar -->
+<div class="delete-btn" id="deleteBtn">
+  <span>🗑️</span>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-content">
+    <div class="modal-icon">🗑️</div>
+    <h2 class="modal-title">Eliminar prenda</h2>
+    <p class="modal-message" id="modalMessage">¿Estás seguro de que quieres eliminar esta prenda? Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="cancelDelete">Cancelar</button>
+      <button class="modal-btn delete" id="confirmDelete">Eliminar</button>
+    </div>
+  </div>
+</div>
+
   <!-- JavaScript con funcionalidad mejorada -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('✨ DressCode - Mi Armario Cargado');
+   document.addEventListener('DOMContentLoaded', function() {
+  console.log('✨ DressCode - Mi Armario Cargado');
 
-      const defaultFilter = sessionStorage.getItem('defaultFilter');
-    if (defaultFilter === 'Favoritos') {
-        // Limpiar el storage
-        sessionStorage.removeItem('defaultFilter');
-        
-        // Activar el filtro de favoritos automáticamente
-        const favoritesButton = document.querySelector('.filter-btn[data-filter="Favoritos"]');
-        if (favoritesButton) {
-            setTimeout(() => {
-                favoritesButton.click();
-            }, 100);
-        }
+  // Configuración de Supabase
+  const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const TABLE_NAME = 'armario';
+
+  const defaultFilter = sessionStorage.getItem('defaultFilter');
+  if (defaultFilter === 'Favoritos') {
+    sessionStorage.removeItem('defaultFilter');
+    const favoritesButton = document.querySelector('.filter-btn[data-filter="Favoritos"]');
+    if (favoritesButton) {
+      setTimeout(() => {
+        favoritesButton.click();
+      }, 100);
     }
+  }
+  
+  // Elementos del DOM
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const hearts = document.querySelectorAll('.heart');
+  const favoritesGrid = document.getElementById('favoritesGrid');
+  const favoritesCounter = document.getElementById('favorites-counter');
+  const favoritesCountStat = document.getElementById('favorites-count');
+  const photoGrid = document.getElementById('photoGrid');
+  const searchInput = document.getElementById('wardrobeSearch');
+  const deleteBtn = document.getElementById('deleteBtn');
+  const deleteModal = document.getElementById('deleteModal');
+  const cancelDeleteBtn = document.getElementById('cancelDelete');
+  const confirmDeleteBtn = document.getElementById('confirmDelete');
+  const modalMessage = document.getElementById('modalMessage');
+  
+  // Estado de la aplicación
+  let currentFilter = 'Todo';
+  let favorites = [];
+  let searchTerm = '';
+  let selectedItems = [];
+
+  // Inicializar favoritos
+  function initializeFavorites() {
+    const favoriteItems = document.querySelectorAll('.photo-item[data-favorito="true"]');
+    favorites = Array.from(favoriteItems).map(item => ({
+      id: item.dataset.id,
+      tipo: item.dataset.tipo,
+      categoria: item.dataset.categoria,
+      imagen: item.querySelector('img').src
+    }));
+    updateFavoritesDisplay();
+  }
+
+  // Actualizar display de favoritos
+  function updateFavoritesDisplay() {
+    favoritesCounter.textContent = `${favorites.length} prenda${favorites.length !== 1 ? 's' : ''}`;
+    favoritesCountStat.textContent = favorites.length;
     
-      
-      // Elementos del DOM
-      const filterButtons = document.querySelectorAll('.filter-btn');
-      const hearts = document.querySelectorAll('.heart');
-      const favoritesGrid = document.getElementById('favoritesGrid');
-      const favoritesCounter = document.getElementById('favorites-counter');
-      const favoritesCountStat = document.getElementById('favorites-count');
-      const photoGrid = document.getElementById('photoGrid');
-      const searchInput = document.getElementById('wardrobeSearch');
-      
-      // Estado de la aplicación
-      let currentFilter = 'Todo';
-      let favorites = [];
-      let searchTerm = '';
-
-      // Inicializar favoritos
-      function initializeFavorites() {
-        const favoriteItems = document.querySelectorAll('.photo-item[data-favorito="true"]');
-        favorites = Array.from(favoriteItems).map(item => ({
-          id: item.dataset.id,
-          tipo: item.dataset.tipo,
-          categoria: item.dataset.categoria,
-          imagen: item.querySelector('img').src
-        }));
-        updateFavoritesDisplay();
-      }
-
-      // Actualizar display de favoritos
-      function updateFavoritesDisplay() {
-        favoritesCounter.textContent = `${favorites.length} prenda${favorites.length !== 1 ? 's' : ''}`;
-        favoritesCountStat.textContent = favorites.length;
-        
-        if (favorites.length === 0) {
-          favoritesGrid.innerHTML = `
-            <div class="empty-favorites">
-              <p>🌟 Aún no tienes prendas favoritas</p>
-              <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
-            </div>
-          `;
-        } else {
-          favoritesGrid.innerHTML = favorites.map(fav => `
-            <div class="favorite-item" data-id="${fav.id}">
-              <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
-            </div>
-          `).join('');
-        }
-
-         if (favorites.length > 0) {
-        favoritesGrid.innerHTML = favorites.map(fav => `
-            <div class="favorite-item" data-id="${fav.id}">
-                <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
-                <div class="prenda-info">
-                    <h3 class="prenda-nombre">${fav.tipo}</h3>
-                    <div class="prenda-details">
-                        <span class="prenda-color">${fav.color}</span>
-                        <span class="prenda-temporada">${fav.temporada}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+    if (favorites.length === 0) {
+      favoritesGrid.innerHTML = `
+        <div class="empty-favorites">
+          <p>🌟 Aún no tienes prendas favoritas</p>
+          <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
+        </div>
+      `;
+    } else {
+      favoritesGrid.innerHTML = favorites.map(fav => `
+        <div class="favorite-item" data-id="${fav.id}">
+          <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
+        </div>
+      `).join('');
     }
-      }
+  }
 
-      // Toggle favorito con animación
-      function toggleFavorite(heart) {
-         const photoItem = heart.closest('.photo-item');
-    const prendaId = photoItem.dataset.id;
+  // Toggle favorito con animación Y BASE DE DATOS
+  async function toggleFavorite(heart) {
+    const photoItem = heart.closest('.photo-item');
+    const prendaId = parseInt(photoItem.dataset.id);
     const prendaTipo = photoItem.querySelector('.prenda-nombre').textContent;
-    const prendaColor = photoItem.querySelector('.prenda-color').textContent;
-    const prendaTemporada = photoItem.querySelector('.prenda-temporada').textContent;
     const prendaImagen = photoItem.querySelector('img').src;
     
-        const isCurrentlyFavorite = heart.classList.contains('active');
-        
-        // Animación del corazón
-        heart.style.transform = 'scale(1.3)';
-        setTimeout(() => {
-          heart.style.transform = 'scale(1)';
-        }, 300);
-        
-        if (isCurrentlyFavorite) {
-          heart.classList.remove('active');
-          photoItem.dataset.favorito = 'false';
-          favorites = favorites.filter(fav => fav.id !== prendaId);
-        } else {
-          heart.classList.add('active');
-          photoItem.dataset.favorito = 'true';
-          favorites.push({
-            id: prendaId,
-            tipo: prendaTipo,
-            categoria: photoItem.dataset.categoria,
-            imagen: prendaImagen
-          });
+    const isCurrentlyFavorite = heart.classList.contains('active');
+    const nuevoEstado = !isCurrentlyFavorite;
+    
+    try {
+      // Actualizar en Supabase
+      const { error } = await supabase
+        .from(TABLE_NAME)
+        .update({ esFavorito: nuevoEstado })
+        .eq('idPrenda', prendaId);
 
-          favorites.push({
-            id: prendaId,
-            tipo: prendaTipo,
-            color: prendaColor,
-            temporada: prendaTemporada,
-            categoria: photoItem.dataset.categoria,
-            imagen: prendaImagen
-        });
-        }
-        
-        updateFavoritesDisplay();
-        filterItems(currentFilter); // Re-aplicar filtro actual
-        
-        // Aquí puedes agregar la llamada a Supabase
-        console.log('Favorito actualizado:', { prendaId, esFavorito: !isCurrentlyFavorite });
+      if (error) {
+        console.error('Error actualizando favorito:', error);
+        alert('Error al actualizar favorito');
+        return;
       }
 
-      // Filtrar prendas con búsqueda
-      function filterItems(filter) {
-        const items = document.querySelectorAll('.photo-item');
-        let visibleCount = 0;
-        
-        items.forEach(item => {
-          const categoria = item.dataset.categoria;
-          const tipo = item.dataset.tipo.toLowerCase();
-          const esFavorito = item.dataset.favorito === 'true';
-          let show = false;
-          
-          // Aplicar filtro principal
-          switch(filter) {
-            case 'Todo':
-              show = true;
-              break;
-            case 'Favoritos':
-              show = esFavorito;
-              break;
-            default:
-              show = categoria === filter.toLowerCase();
-          }
-          
-          // Aplicar búsqueda
-          if (show && searchTerm) {
-            show = tipo.includes(searchTerm.toLowerCase());
-          }
-          
-          item.style.display = show ? 'block' : 'none';
-          if (show) visibleCount++;
+      // Animación del corazón
+      heart.style.transform = 'scale(1.3)';
+      setTimeout(() => {
+        heart.style.transform = 'scale(1)';
+      }, 300);
+      
+      if (nuevoEstado) {
+        heart.classList.add('active');
+        photoItem.dataset.favorito = 'true';
+        favorites.push({
+          id: prendaId,
+          tipo: prendaTipo,
+          categoria: photoItem.dataset.categoria,
+          imagen: prendaImagen
         });
-        
-        // Mostrar/ocultar secciones
-        const favoritesSection = document.querySelector('.favorites-section');
-        if (filter === 'Favoritos') {
-          favoritesSection.style.display = 'none';
-          photoGrid.style.display = 'grid';
-        } else {
-          favoritesSection.style.display = 'block';
-          photoGrid.style.display = 'grid';
-        }
+      } else {
+        heart.classList.remove('active');
+        photoItem.dataset.favorito = 'false';
+        favorites = favorites.filter(fav => fav.id !== prendaId);
+      }
+      
+      updateFavoritesDisplay();
+      filterItems(currentFilter);
+      
+      console.log('Favorito actualizado en BD:', { prendaId, esFavorito: nuevoEstado });
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al actualizar favorito');
+    }
+  }
+
+  // Función para seleccionar/deseleccionar prendas
+  function toggleSelection(photoItem) {
+    const prendaId = photoItem.dataset.id;
+    const isSelected = photoItem.classList.contains('selected');
+    
+    if (isSelected) {
+      photoItem.classList.remove('selected');
+      selectedItems = selectedItems.filter(id => id !== prendaId);
+    } else {
+      photoItem.classList.add('selected');
+      selectedItems.push(prendaId);
+    }
+    
+    // Mostrar/ocultar botón de eliminar
+    if (selectedItems.length > 0) {
+      deleteBtn.classList.add('active');
+    } else {
+      deleteBtn.classList.remove('active');
+    }
+  }
+
+  // Filtrar prendas con búsqueda
+  function filterItems(filter) {
+    const items = document.querySelectorAll('.photo-item');
+    let visibleCount = 0;
+    
+    items.forEach(item => {
+      const categoria = item.dataset.categoria;
+      const tipo = item.dataset.tipo.toLowerCase();
+      const esFavorito = item.dataset.favorito === 'true';
+      let show = false;
+      
+      // Aplicar filtro principal
+      switch(filter) {
+        case 'Todo':
+          show = true;
+          break;
+        case 'Favoritos':
+          show = esFavorito;
+          break;
+        default:
+          show = categoria === filter.toLowerCase();
+      }
+      
+      // Aplicar búsqueda
+      if (show && searchTerm) {
+        show = tipo.includes(searchTerm.toLowerCase());
+      }
+      
+      item.style.display = show ? 'block' : 'none';
+      if (show) visibleCount++;
+    });
+    
+    // Mostrar/ocultar secciones
+    const favoritesSection = document.querySelector('.favorites-section');
+    if (filter === 'Favoritos') {
+      favoritesSection.style.display = 'none';
+      photoGrid.style.display = 'grid';
+    } else {
+      favoritesSection.style.display = 'block';
+      photoGrid.style.display = 'grid';
+    }
+  }
+
+  // Mostrar modal de confirmación
+  function showDeleteModal() {
+    if (selectedItems.length === 0) return;
+    
+    if (selectedItems.length === 1) {
+      const prenda = document.querySelector(`.photo-item[data-id="${selectedItems[0]}"]`);
+      const prendaTipo = prenda.querySelector('.prenda-nombre').textContent;
+      modalMessage.textContent = `¿Estás seguro de que quieres eliminar "${prendaTipo}"? Esta acción no se puede deshacer.`;
+    } else {
+      modalMessage.textContent = `¿Estás seguro de que quieres eliminar ${selectedItems.length} prendas? Esta acción no se puede deshacer.`;
+    }
+    
+    deleteModal.classList.add('active');
+  }
+
+  // Eliminar prendas seleccionadas DE LA BASE DE DATOS
+  async function deleteSelectedItems() {
+    try {
+      const ids = selectedItems.map(id => parseInt(id));
+      
+      // Eliminar de Supabase
+      const { error } = await supabase
+        .from(TABLE_NAME)
+        .delete()
+        .in('idPrenda', ids);
+
+      if (error) {
+        console.error('Error eliminando prendas:', error);
+        alert('Error al eliminar prendas');
+        deleteModal.classList.remove('active');
+        return;
       }
 
-      // Event Listeners
-      filterButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          filterButtons.forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          currentFilter = this.dataset.filter;
-          filterItems(currentFilter);
-        });
+      // Eliminar del DOM solo si se eliminó de la BD
+      selectedItems.forEach(id => {
+        const prenda = document.querySelector(`.photo-item[data-id="${id}"]`);
+        if (prenda) {
+          // Eliminar de favoritos si está ahí
+          if (prenda.dataset.favorito === 'true') {
+            favorites = favorites.filter(fav => fav.id !== id);
+          }
+          
+          // Eliminar del DOM
+          prenda.remove();
+        }
       });
+      
+      // Actualizar contadores
+      updateFavoritesDisplay();
+      
+      // Limpiar selección
+      selectedItems = [];
+      deleteBtn.classList.remove('active');
+      
+      // Cerrar modal
+      deleteModal.classList.remove('active');  
+      console.log('Prendas eliminadas de BD:', ids);
+      
+    } catch (error) {
+      console.error('Error general:', error);
+      alert('Error al eliminar prendas');
+      deleteModal.classList.remove('active');
+    }
+  }
 
-      hearts.forEach(heart => {
-        heart.addEventListener('click', function(e) {
-          e.stopPropagation();
-          toggleFavorite(this);
-        });
-      });
-
-      // Búsqueda en tiempo real
-      searchInput.addEventListener('input', function() {
-        searchTerm = this.value.trim();
-        filterItems(currentFilter);
-      });
-
-      // Inicializar
-      initializeFavorites();
+  // Event Listeners
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.filter;
       filterItems(currentFilter);
     });
+  });
+
+  hearts.forEach(heart => {
+    heart.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleFavorite(this);
+    });
+  });
+
+  // Event listener para seleccionar prendas
+  document.querySelectorAll('.photo-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      // Evitar selección al hacer clic en el corazón
+      if (!e.target.closest('.heart')) {
+        toggleSelection(this);
+      }
+    });
+  });
+
+  // Event listener para botón de eliminar
+  deleteBtn.addEventListener('click', showDeleteModal);
+
+  // Event listeners para el modal
+  cancelDeleteBtn.addEventListener('click', function() {
+    deleteModal.classList.remove('active');
+  });
+
+  confirmDeleteBtn.addEventListener('click', deleteSelectedItems);
+
+  // Cerrar modal al hacer clic fuera
+  deleteModal.addEventListener('click', function(e) {
+    if (e.target === deleteModal) {
+      deleteModal.classList.remove('active');
+    }
+  });
+
+  // Búsqueda en tiempo real
+  searchInput.addEventListener('input', function() {
+    searchTerm = this.value.trim();
+    filterItems(currentFilter);
+  });
+
+  // Inicializar
+  initializeFavorites();
+  filterItems(currentFilter);
+});
   </script>
 </body>
 </html>
