@@ -452,8 +452,106 @@ def outfit(request):
 def vision_computer(request):
     return render(request, 'visioncomputer.html')
 
+# En views.py - modifica la vista sideface_view para asegurar formatos de color
 def sideface_view(request):
-    return render(request, 'sideface.html') 
+    """Vista para mostrar el perfil del usuario con datos reales"""
+    if 'usuario_id' not in request.session:
+        messages.error(request, "Debes iniciar sesión para ver tu perfil.")
+        return redirect('login')
+    
+    try:
+        usuario_id = request.session['usuario_id']
+        
+        # Obtener datos del usuario desde la tabla Usuario
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        # Obtener perfil del usuario desde la tabla perfil_usuario
+        profile = Profile.objects.get(user=usuario_id)
+        
+        # Obtener iniciales para el avatar
+        def get_iniciales(nombre):
+            if not nombre:
+                return "US"
+            palabras = nombre.split()
+            if len(palabras) >= 2:
+                return f"{palabras[0][0]}{palabras[-1][0]}".upper()
+            elif len(palabras) == 1:
+                return nombre[:2].upper()
+            else:
+                return "US"
+        
+        # Procesar colores para asegurar formato válido
+        colores_fav = profile.colores_fav or ['#a47968']  # Color por defecto
+        
+        # Si los colores no están en formato HEX, mapearlos
+        color_map = {
+            'rojo': '#ff0000',
+            'azul': '#0000ff', 
+            'verde': '#00ff00',
+            'amarillo': '#ffff00',
+            'negro': '#000000',
+            'blanco': '#ffffff',
+            'rosa': '#ff69b4',
+            'morado': '#800080',
+            'naranja': '#ffa500',
+            'gris': '#808080',
+            'marron': '#8b4513',
+            'beige': '#f5f5dc',
+        }
+        
+        colores_procesados = []
+        for color in colores_fav:
+            if color.lower() in color_map:
+                colores_procesados.append(color_map[color.lower()])
+            elif color.startswith('#'):
+                colores_procesados.append(color)
+            else:
+                # Si no es un color reconocido, usar el por defecto
+                colores_procesados.append('#a47968')
+        
+        # Si no hay colores, usar el por defecto
+        if not colores_procesados:
+            colores_procesados = ['#a47968']
+        
+        # Preparar datos para el template
+        context = {
+            'nombre_completo': usuario.nombre,
+            'email': usuario.email,
+            'iniciales': get_iniciales(usuario.nombre),
+            'talla_superior': profile.talla_superior or 'No definida',
+            'talla_inferior': profile.talla_inferior or 'No definida', 
+            'talla_calzado': profile.talla_calzado or 'No definida',
+            'estilos_fav': profile.estilos or ['Casual'],
+            'colores_fav': colores_procesados,  # Usar colores procesados
+        }
+        
+        # DEBUG: Ver qué datos se están enviando
+        print(f"DEBUG - Colores favoritos: {colores_procesados}")
+        print(f"DEBUG - Estilos favoritos: {profile.estilos}")
+        
+        return render(request, 'sideface.html', context)
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, "Error: No se encontró tu perfil de usuario.")
+        return redirect('login')
+    except Profile.DoesNotExist:
+        messages.error(request, "Error: No se encontró la configuración de tu perfil.")
+        return redirect('configuracion_inicial')
+    except Exception as e:
+        print(f"Error al cargar el perfil: {e}")
+        messages.error(request, "Hubo un error al cargar tu perfil.")
+        # Pasar datos por defecto para que no se rompa el template
+        context = {
+            'nombre_completo': 'Usuario',
+            'email': 'email@ejemplo.com',
+            'iniciales': 'US',
+            'talla_superior': 'No definida',
+            'talla_inferior': 'No definida',
+            'talla_calzado': 'No definida',
+            'estilos_fav': ['Casual'],
+            'colores_fav': ['#a47968'],
+        }
+        return render(request, 'sideface.html', context) 
 
 def recomendar_outfit(request):
     ciudad = request.GET.get('ciudad', 'Morelia')
