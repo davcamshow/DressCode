@@ -116,7 +116,6 @@
       height: 35px;
       border-radius: 50%;
       margin: 0 auto;
-      background-color: var(--color-secondary);
       box-shadow: var(--sombra-suave);
     }
 
@@ -128,6 +127,7 @@
       font-size: 14px;
       display: inline-block;
       font-weight: 600;
+      margin: 2px;
     }
 
     /* --- Panel Derecho (Contenido) --- */
@@ -171,6 +171,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      text-decoration: none;
     }
 
     .header-btn:hover {
@@ -263,6 +264,16 @@
       box-shadow: var(--sombra-media);
     }
 
+    .color-dot {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin: 0 5px;
+      border: 2px solid white;
+      box-shadow: var(--sombra-suave);
+    }
+
     /* --- Responsive --- */
     @media (max-width: 768px) {
       .profile-container {
@@ -293,18 +304,18 @@
   <div class="profile-container">
     <!-- Panel Izquierdo - Perfil -->
     <div class="profile-panel">
-      <div class="profile-pic">CH</div>
-      <div class="profile-name">Carolina Herrera</div>
-      <div class="profile-email">hrr7.caro@newyork</div>
+      <div class="profile-pic">{{ iniciales }}</div>
+      <div class="profile-name">{{ nombre_completo }}</div>
+      <div class="profile-email">{{ email }}</div>
       
       <div class="preferences">
         <div class="pref-item">
           <div class="pref-title">Color favorito</div>
-          <div class="color-circle"></div>
+          <div class="color-circle" style="background-color: {{ colores_fav.0 }};"></div>
         </div>
         <div class="pref-item">
           <div class="pref-title">Estilo frecuente</div>
-          <div class="style-badge">Casual</div>
+          <div class="style-badge">{{ estilos_fav.0 }}</div>
         </div>
       </div>
     </div>
@@ -324,39 +335,47 @@
       <div class="sizes">
         <div class="size-item">
           <div class="size-type">Superior</div>
-          <div class="size-value">M</div>
+          <div class="size-value">{{ talla_superior }}</div>
         </div>
         <div class="size-item">
           <div class="size-type">Inferior</div>
-          <div class="size-value">9</div>
+          <div class="size-value">{{ talla_inferior }}</div>
         </div>
         <div class="size-item">
           <div class="size-type">Calzado</div>
-          <div class="size-value">26 MX</div>
+          <div class="size-value">{{ talla_calzado }}</div>
         </div>
       </div>
       
-      <div class="section-title">Calendario</div>
+      <div class="section-title">Mis Preferencias</div>
       <div class="calendar-section">
         <div class="event">
-          <div class="event-date">LUNES, 15 DE DICIEMBRE</div>
-          <div class="event-title">Fiesta de Ramón</div>
-          <div class="event-style">Estilo único</div>
-          <button class="btn">Probar</button>
+          <div class="event-date">ESTILOS FAVORITOS</div>
+          <div class="event-title">
+            {% for estilo in estilos_fav %}
+              <span class="style-badge">{{ estilo }}</span>
+            {% endfor %}
+          </div>
+          <div class="event-style">
+            COLORES FAVORITOS: 
+            {% for color in colores_fav %}
+              <span class="color-dot" style="background-color: {{ color }};" title="{{ color }}"></span>
+            {% endfor %}
+            {% if not colores_fav %}
+              <span>No hay colores definidos</span>
+            {% endif %}
+          </div>
+          <button class="btn" onclick="location.href='{% url 'configuracion_inicial' %}'">Editar Preferencias</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-     // Solo funcionalidad para el botón Probar (sin alertas)
     document.addEventListener('DOMContentLoaded', function() {
-      // Botón Probar
-      document.querySelector('.btn').addEventListener('click', function() {
-        console.log('Probando estilo para el evento');
-        // Aquí puedes implementar la funcionalidad de probar el estilo
-        // SIN alert() - solo acciones silenciosas
-      });
+      console.log('Perfil cargado correctamente');
+      // Debug: mostrar colores en consola
+      console.log('Colores disponibles:', {{ colores_fav|safe }});
     });
   </script>
 </body>
