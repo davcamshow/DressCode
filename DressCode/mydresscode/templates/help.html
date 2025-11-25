@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - DRESSCODE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg: #fbefbc;          
+            --color-text: #21281e;       
+            --color-text-secondary: #494a45; 
+            --color-accent: #8a6163;     
+            --color-accent-light: #a47968; 
+            --color-card: #f3d09f;        
+            --color-card-hover: #fbefbc;  
+            --color-border: #a1917c;       
+            --color-highlight: rgba(138, 97, 99, 0.15); 
+            --color-success: #605b57;     
+            --shadow: 0 8px 25px rgba(33, 40, 30, 0.1);
+            --shadow-hover: 0 15px 35px rgba(138, 97, 99, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* ENCABEZADO MEJORADO */
+        .header {
+            text-align: center;
+            padding: 50px 0 40px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(138, 97, 99, 0.08) 0%, rgba(251, 239, 188, 0.3) 100%);
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(161, 145, 124, 0.2);
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light), #dea583);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            color: var(--color-text);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+            border-radius: 2px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 25px auto;
+            line-height: 1.7;
+            font-weight: 400;
+            background: rgba(243, 208, 159, 0.4);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--color-accent);
+        }
+        
+        .header-icons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .header-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(243, 208, 159, 0.6);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            min-width: 120px;
+            border: 1px solid rgba(161, 145, 124, 0.3);
+        }
+        
+        .header-icon:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(138, 97, 99, 0.15);
+            background: rgba(251, 239, 188, 0.8);
+        }
+        
+        .header-icon i {
+            font-size: 1.8rem;
+            color: var(--color-accent);
+            margin-bottom: 10px;
+        }
+        
+        .header-icon span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .header-icons {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+        
+        .section {
+            background: var(--color-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--color-border);
+            position: relative;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(138, 97, 99, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .section:hover::before {
+            opacity: 1;
+        }
+        
+        .section-title {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--color-accent);
+            border-radius: 2px;
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .accordion {
+            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(251, 239, 188, 0.7);
+            border: 1px solid rgba(138, 97, 99, 0.2);
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(33, 40, 30, 0.05);
+        }
+        
+        .accordion:hover {
+            background: rgba(251, 239, 188, 0.9);
+            border-color: rgba(138, 97, 99, 0.3);
+            box-shadow: 0 5px 15px rgba(138, 97, 99, 0.1);
+        }
+        
+        .accordion-header {
+            padding: 18px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: background 0.3s;
+            color: var(--color-text);
+            font-size: 16px;
+        }
+        
+        .accordion-header:hover {
+            background: var(--color-highlight);
+        }
+        
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--color-accent);
+            transition: transform 0.3s;
+        }
+        
+        .accordion.active .accordion-header::after {
+            content: '-';
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding: 0 20px;
+        }
+        
+        .accordion.active .accordion-content {
+            max-height: 500px;
+            padding: 0 20px 20px;
+        }
+        
+        .accordion-content p {
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-accent);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            background: rgba(251, 239, 188, 0.8);
+            color: var(--color-text);
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 2px 5px rgba(33, 40, 30, 0.05);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: rgba(251, 239, 188, 0.95);
+            box-shadow: 0 0 0 2px rgba(138, 97, 99, 0.1), 0 4px 10px rgba(138, 97, 99, 0.15);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: var(--color-success);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 4px 10px rgba(96, 91, 87, 0.3);
+        }
+        
+        .btn:hover {
+              background-color: #e96d74;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(96, 91, 87, 0.4);
+        }
+      
+        .contact-info {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(243, 208, 159, 0.4);
+            border-radius: 15px;
+            border-left: 4px solid var(--color-accent);
+            box-shadow: 0 5px 15px rgba(33, 40, 30, 0.08);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+        
+        .contact-item i {
+            margin-right: 15px;
+            color: var(--color-accent);
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+        
+        .feature-highlight {
+            display: flex;
+            align-items: center;
+            background: var(--color-highlight);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--color-accent);
+        }
+        
+        .feature-highlight i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--color-accent);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            background: rgba(243, 208, 159, 0.4);
+            border-radius: 15px;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .logo {
+            font-weight: bold;
+            color: var(--color-accent);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Centro de Ayuda y Contacto</h1>
+                <p>Resuelve tus dudas sobre el sistema DRESSCODE un armario digital, que genera combinaciones automáticas y recomendaciones según clima y preferencias</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-question-circle"></i> Preguntas Frecuentes</h2>
+                
+                <div class="feature-highlight">
+                    <i class="fas fa-tshirt"></i>
+                    <div>
+                        <strong>Sistema de Armario y Recomendaciones para Vestir</strong>
+                        <p>Organiza, combina y planifica tus outfits fácilmente</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        ¿Cómo funciona el sistema de recomendaciones por clima?
+                    </div>
+                    <div class="accordion-content">
+                        <p>Nuestro sistema analiza la temperatura actual y las condiciones climáticas para sugerir outfits apropiados. Para días fríos recomienda capas y abrigos, mientras que para climas cálidos sugiere prendas ligeras y frescas.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        ¿Cómo capturo nuevas prendas para mi armario digital?
+                    </div>
+                    <div class="accordion-content">
+                        <p>Usa la función <strong>"Capturar Prenda"</strong> para añadir nuevas prendas desde inicio o en el botón flotante de mi armario. Puedes tomar fotos con tu cámara o subir imágenes existentes. El sistema te desplegará menús para identificar colores, tipo de prenda, ocasión y temporada.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        ¿Cómo genera outfits automáticamente la aplicación?
+                    </div>
+                    <div class="accordion-content">
+                        <p>Al hacer clic en <strong>"Generar Outfit"</strong>, nuestro algoritmo inteligente combina prendas de tu armario considerando: compatibilidad de colores, estilo personal, ocasión, clima actual y tus prendas favoritas.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        ¿Puedo guardar y organizar mis outfits favoritos?
+                    </div>
+                    <div class="accordion-content">
+                        <p>Sí, la sección <strong>"Mis Outfits"</strong> te permite guardar tus mejores combinaciones. Puedes categorizarlas por ocasión (trabajo, casual, formal) y acceder rápidamente a ellas cuando las necesites.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        ¿Cómo mejora el sistema sus recomendaciones con el tiempo?
+                    </div>
+                    <div class="accordion-content">
+                        <p>La aplicación aprende de tus preferencias. Cuando marcas outfits como favoritos o calificas las combinaciones sugeridas, el sistema refina sus futuras recomendaciones para alinearse mejor con tu estilo personal.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-envelope"></i> Contáctanos</h2>
+                
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Nombre completo</label>
+                        <input type="text" id="name" class="form-control" placeholder="Tu nombre">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="email" class="form-control" placeholder="tu@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Asunto</label>
+                        <select id="subject" class="form-control">
+                            <option value="">Selecciona un asunto</option>
+                            <option value="technical">Problema técnico con la app</option>
+                            <option value="armario">Dudas sobre el armario digital</option>
+                            <option value="recomendaciones">Sugerencias para recomendaciones</option>
+                            <option value="clima">Problemas con detección de clima</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Mensaje</label>
+                        <textarea id="message" class="form-control" placeholder="Describe tu consulta o problema..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Enviar Mensaje</button>
+                </form>
+                
+                <div class="contact-info">
+                    <h3 style="color: var(--color-accent); margin-bottom: 15px; font-weight: 600;">Otras formas de contactarnos</h3>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>soporte@dresscode.com</span>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+52 78 56 320 145</span>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-globe"></i>
+                        <span>www.dresscode.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><span class="logo">DressCode</span> &copy; 2025</p>
+        </div>
+    </div>
+
+    <script>
+       
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const accordion = header.parentElement;
+                accordion.classList.toggle('active');
+            });
+        });
+        
+        // formulario
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Gracias por tu mensaje! Nuestro equipo de DressCode te contactará pronto.');
+            this.reset();
+        });
+        
+        // Efecto de aparición suave al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+        
+        // Estilos iniciales para animación
+        const style = document.createElement('style');
+        style.textContent = `
+            .section {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.5s, transform 0.5s;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

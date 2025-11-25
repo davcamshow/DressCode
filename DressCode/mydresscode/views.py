@@ -940,6 +940,7 @@ def guardar_rating(request):
 
     return JsonResponse({"error": "Método no permitido"}, status=405)
 
+<<<<<<< HEAD
 @csrf_exempt
 def segmentar_prenda(request):
     """
@@ -1118,3 +1119,7 @@ def simular_segmentacion(imagen):
         return Image.open(imagen)
     
     
+=======
+def ayuda_contacto(request):
+    return render(request, 'help.html')
+>>>>>>> 43114ededd75a80917ee2aa38933f2bb2bfcd016
