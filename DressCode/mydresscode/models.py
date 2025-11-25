@@ -19,11 +19,11 @@ class Usuario(models.Model):
 
 class Armario(models.Model):
     idPrenda = models.AutoField(primary_key=True)
-    idUsuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='prendas', db_column='idUsuario')
+    idUsuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='prendas_segmentadas', db_column='idUsuario')
     color = models.CharField(max_length=40)
     tipo = models.CharField(max_length=50)
     imagen = models.CharField(max_length=255)
-    imagen_segmentada = models.CharField(max_length=255, blank=True, null=True)  # ✅ aquí sí
+    imagen_segmentada = models.CharField(max_length=255, blank=True, null=True)  # ✅ Campo para imágenes segmentadas
     temporada = models.CharField(max_length=40, blank=True)
     estilo = models.CharField(max_length=60, blank=True)
     clasificacion = models.CharField(max_length=60, blank=True)

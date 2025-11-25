@@ -24,10 +24,14 @@
       --color-gris-elegante: #494a45;
       --color-beige: #a1917c;
       --color-durazno: #dea583;
+      --color-segmentada: #5d9e9e;
       --sombra-suave: 0 4px 20px rgba(58, 48, 33, 0.08);
       --sombra-media: 0 8px 30px rgba(58, 48, 33, 0.12);
+      --sombra-intensa: 0 12px 40px rgba(58, 48, 33, 0.15);
       --gradiente-primario: linear-gradient(135deg, #f3d09f 0%, #fbefbc 100%);
       --gradiente-secundario: linear-gradient(135deg, #a47968 0%, #cf8e71 100%);
+      --gradiente-dorado: linear-gradient(135deg, #fbefbc 0%, #f3d09f 100%);
+      --gradiente-segmentada: linear-gradient(135deg, #e8f4f8 0%, #d4edf2 100%);
     }
 
     /* --- Reset y Tipografía Mejorada --- */
@@ -392,22 +396,24 @@
       position: relative;
       border-radius: 16px;
       overflow: hidden;
-      aspect-ratio: 1/1;
-      background: var(--color-fondo-principal);
-      box-shadow: var(--sombra-suave);
+      aspect-ratio: 1/1.2;
+      background: var(--gradiente-dorado);
+      box-shadow: var(--sombra-media);
       transition: all 0.3s ease;
-      border: 2px solid transparent;
+      border: 2px solid var(--color-acento-claro);
+      display: flex;
+      flex-direction: column;
     }
 
     .favorite-item:hover {
       transform: translateY(-5px);
       border-color: var(--color-acento-claro);
-      box-shadow: var(--sombra-media);
+      box-shadow: var(--sombra-intensa);
     }
 
     .favorite-item img {
       width: 100%;
-      height: 100%;
+      height: 70%;
       object-fit: cover;
     }
 
@@ -437,18 +443,19 @@
       padding: 0 15px;
     }
 
-      .photo-item {
-    position: relative;
-    border-radius: 18px;
-    overflow: hidden;
-   aspect-ratio: 1/1.08; /* Mínimo espacio extra */
-    box-shadow: var(--sombra-intensa);
-    background: var(--gradiente-principal);
-    transition: all 0.3s ease;
-    border: 2px solid var(--color-acento);
-    display: flex;
-    flex-direction: column;
-  }
+    .photo-item {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      aspect-ratio: 1/1.08;
+      box-shadow: var(--sombra-intensa);
+      background: var(--gradiente-primario);
+      transition: all 0.3s ease;
+      border: 2px solid var(--color-acento-claro);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
 
     .photo-item:hover {
       transform: translateY(-5px);
@@ -456,70 +463,111 @@
       box-shadow: 0 12px 40px rgba(58, 48, 33, 0.15);
     }
 
-    
-.photo-item img {
-  width: 100%;
-   height: 82%; /* Máximo espacio para imagen */
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
+    .photo-item img {
+      width: 100%;
+      height: 82%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    /* --- Estilos para imágenes segmentadas --- */
+    .prenda-img.segmentada {
+      background: var(--gradiente-segmentada);
+      border: 2px solid var(--color-segmentada);
+    }
+
+    .segmentada-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(93, 158, 158, 0.95);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      z-index: 2;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 2px 8px rgba(93, 158, 158, 0.3);
+    }
+
+    /* Indicador visual para imágenes segmentadas */
+    .photo-item:has(.segmentada) {
+      border: 2px solid var(--color-segmentada);
+      box-shadow: 0 4px 20px rgba(93, 158, 158, 0.25);
+    }
+
+    .photo-item:has(.segmentada)::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, 
+        rgba(93, 158, 158, 0.1) 0%, 
+        rgba(93, 158, 158, 0.05) 50%, 
+        rgba(93, 158, 158, 0.02) 100%);
+      border-radius: 20px;
+      z-index: -1;
+    }
+
     .prenda-info {
- padding: 4px 6px; /* Padding mínimo */
-   min-height: 18%; /* Altura mínima */
-  background: rgba(251, 239, 188, 0.85);
-   border-top: 1px solid rgba(222, 165, 131, 0.2);
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+      padding: 4px 6px;
+      min-height: 18%;
+      background: rgba(251, 239, 188, 0.85);
+      border-top: 1px solid rgba(222, 165, 131, 0.2);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
-.prenda-nombre {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--color-texto);
-    margin-bottom: 1px;
-    line-height: 1; /* Sin espacio entre líneas */
-    text-align: center;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+    .prenda-nombre {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 1px;
+      line-height: 1;
+      text-align: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
-.prenda-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 9px;
-    gap: 2px; /* Espacio mínimo entre elementos */
-    line-height: 1;
-}
+    .prenda-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      gap: 2px;
+      line-height: 1;
+    }
 
-.prenda-color {
-    color: var(--color-secundario);
-    font-weight: 600;
-    background: rgba(222, 165, 131, 0.15);
-    padding: 0px 3px; /* Menos padding */
-    border-radius: 3px;
-    flex-shrink: 0; /* Evita que se encoja */
-}
+    .prenda-color {
+      color: var(--color-secundario);
+      font-weight: 600;
+      background: rgba(222, 165, 131, 0.15);
+      padding: 0px 3px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
 
+    .prenda-temporada {
+      color: var(--color-texto-claro);
+      font-weight: 500;
+      font-style: italic;
+      flex-shrink: 0;
+      text-align: right;
+    }
 
-.prenda-temporada {
-    color: var(--color-texto-claro);
-    font-weight: 500;
-    font-style: italic;
-    flex-shrink: 0; /* Evita que se encoja */
-    text-align: right;
-    
-}
-
-.prenda-nombre:empty,
-.prenda-color:empty,
-.prenda-temporada:empty {
-    display: none;
-}
-
+    .prenda-nombre:empty,
+    .prenda-color:empty,
+    .prenda-temporada:empty {
+      display: none;
+    }
 
     .photo-item:hover img {
       transform: scale(1.05);
@@ -528,9 +576,9 @@
     .heart {
       position: absolute;
       top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
       background: rgba(255, 255, 255, 0.9);
       border-radius: 50%;
       display: flex;
@@ -540,6 +588,7 @@
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.5);
+      z-index: 3;
     }
 
     .heart:hover {
@@ -654,24 +703,217 @@
       display: none !important;
     }
 
-    .favorite-item {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    aspect-ratio: 1/1.2; /* Misma proporción que photo-item */
-    background: var(--gradiente-dorado);
-    box-shadow: var(--sombra-media);
-    transition: all 0.3s ease;
-    border: 2px solid var(--color-acento);
-    display: flex;
-    flex-direction: column;
-}
+    /* --- Estilos para prendas seleccionadas MEJORADO --- */
+    .photo-item.selected {
+      border-color: var(--color-secundario);
+      border-width: 4px;
+      box-shadow: 
+        0 0 0 4px rgba(164, 121, 104, 0.4), 
+        0 8px 25px rgba(164, 121, 104, 0.3),
+        0 0 30px rgba(207, 142, 113, 0.2);
+      transform: scale(1.03);
+      animation: pulse-selected 2s infinite;
+    }
 
-.favorite-item img {
-    width: 100%;
-    height: 70%;
-    object-fit: cover;
-}
+    .photo-item.selected::before {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 32px;
+      height: 32px;
+      background: var(--gradiente-secundario);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(164, 121, 104, 0.6);
+      border: 2px solid var(--color-blanco);
+    }
+
+    .photo-item.selected::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, 
+        rgba(164, 121, 104, 0.2) 0%, 
+        rgba(207, 142, 113, 0.15) 50%, 
+        rgba(222, 165, 131, 0.1) 100%);
+      z-index: 1;
+      border-radius: 20px;
+      border: 2px solid rgba(164, 121, 104, 0.3);
+    }
+
+    @keyframes pulse-selected {
+      0% {
+        box-shadow: 
+          0 0 0 4px rgba(164, 121, 104, 0.4),
+          0 8px 25px rgba(164, 121, 104, 0.3),
+          0 0 30px rgba(207, 142, 113, 0.2);
+      }
+      50% {
+        box-shadow: 
+          0 0 0 6px rgba(164, 121, 104, 0.3),
+          0 8px 30px rgba(164, 121, 104, 0.4),
+          0 0 40px rgba(207, 142, 113, 0.3);
+      }
+      100% {
+        box-shadow: 
+          0 0 0 4px rgba(164, 121, 104, 0.4),
+          0 8px 25px rgba(164, 121, 104, 0.3),
+          0 0 30px rgba(207, 142, 113, 0.2);
+      }
+    }
+
+    /* --- Botón de Eliminar más llamativo --- */
+    .delete-btn {
+      position: fixed;
+      bottom: 190px;
+      right: 25px;
+      width: 70px;
+      height: 70px;
+      background: var(--gradiente-secundario);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border: 3px solid var(--color-blanco);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .delete-btn.active {
+      opacity: 1;
+      pointer-events: all;
+      animation: pulse-delete 1.5s infinite;
+    }
+
+    .delete-btn:hover {
+      transform: scale(1.15);
+      box-shadow: 0 12px 40px rgba(164, 121, 104, 0.8);
+      animation: none;
+    }
+
+    @keyframes pulse-delete {
+      0% {
+        box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+      }
+      50% {
+        box-shadow: 
+          0 8px 30px rgba(164, 121, 104, 0.9), 
+          0 0 0 12px rgba(164, 121, 104, 0.15);
+      }
+      100% {
+        box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
+      }
+    }
+
+    /* --- Modal de Confirmación --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(58, 48, 33, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: var(--color-blanco);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--sombra-media);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: var(--color-secundario);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--color-primario);
+    }
+
+    .modal-message {
+      font-size: 16px;
+      color: var(--color-texto-claro);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 12px 25px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 16px;
+    }
+
+    .modal-btn.cancel {
+      background: var(--color-fondo-principal);
+      color: var(--color-texto-claro);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--color-acento-claro);
+    }
+
+    .modal-btn.delete {
+      background: var(--gradiente-secundario);
+      color: var(--color-blanco);
+    }
+
+    .modal-btn.delete:hover {
+      box-shadow: 0 4px 15px rgba(164, 121, 104, 0.4);
+      transform: translateY(-2px);
+    }
 
     /* --- Responsive Mejorado --- */
     @media (min-width: 768px) {
@@ -688,32 +930,32 @@
       }
 
       .prenda-nombre {
-    font-size: 13px;
-  }
-  
-  .prenda-details {
-    font-size: 10px;
-  }
+        font-size: 13px;
+      }
+      
+      .prenda-details {
+        font-size: 10px;
+      }
     }
 
     @media (max-width: 480px) {
-    .photo-item {
-        aspect-ratio: 1/1.1; /* Aún más compacto */
+      .photo-item {
+          aspect-ratio: 1/1.1;
+      }
+      
+      .prenda-info {
+          padding: 6px 8px;
+      }
+      
+      .prenda-nombre {
+          font-size: 12px;
+          margin-bottom: 1px;
+      }
+      
+      .prenda-details {
+          font-size: 9px;
+      }
     }
-    
-    .prenda-info {
-        padding: 6px 8px;
-    }
-    
-    .prenda-nombre {
-        font-size: 12px;
-        margin-bottom: 1px;
-    }
-    
-    .prenda-details {
-        font-size: 9px;
-    }
-}
 
     @media (min-width: 1024px) {
       .photo-grid, .favorites-grid {
@@ -747,223 +989,6 @@
     .photo-item:nth-child(2) { animation-delay: 0.1s; }
     .photo-item:nth-child(3) { animation-delay: 0.2s; }
     .photo-item:nth-child(4) { animation-delay: 0.3s; }
-
-/* --- Estilos para prendas seleccionadas MEJORADO Y MÁS LLAMATIVO --- */
-.photo-item.selected {
-  border-color: var(--color-secundario);
-  border-width: 4px;
-  box-shadow: 
-    0 0 0 4px rgba(164, 121, 104, 0.4), 
-    0 8px 25px rgba(164, 121, 104, 0.3),
-    0 0 30px rgba(207, 142, 113, 0.2);
-  transform: scale(1.03);
-  animation: pulse-selected 2s infinite;
-}
-
-.photo-item.selected::before {
-  content: '✓';
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 32px;
-  height: 32px;
-  background: var(--gradiente-secundario);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  z-index: 3;
-  box-shadow: 0 4px 12px rgba(164, 121, 104, 0.6);
-  border: 2px solid var(--color-blanco);
-}
-
-.photo-item.selected::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(135deg, 
-    rgba(164, 121, 104, 0.2) 0%, 
-    rgba(207, 142, 113, 0.15) 50%, 
-    rgba(222, 165, 131, 0.1) 100%);
-  z-index: 1;
-  border-radius: 20px;
-  border: 2px solid rgba(164, 121, 104, 0.3);
-}
-
-@keyframes pulse-selected {
-  0% {
-    box-shadow: 
-      0 0 0 4px rgba(164, 121, 104, 0.4),
-      0 8px 25px rgba(164, 121, 104, 0.3),
-      0 0 30px rgba(207, 142, 113, 0.2);
-  }
-  50% {
-    box-shadow: 
-      0 0 0 6px rgba(164, 121, 104, 0.3),
-      0 8px 30px rgba(164, 121, 104, 0.4),
-      0 0 40px rgba(207, 142, 113, 0.3);
-  }
-  100% {
-    box-shadow: 
-      0 0 0 4px rgba(164, 121, 104, 0.4),
-      0 8px 25px rgba(164, 121, 104, 0.3),
-      0 0 30px rgba(207, 142, 113, 0.2);
-  }
-}
-
-.photo-item {
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-/* --- Botón de Eliminar más llamativo --- */
-.delete-btn {
-  position: fixed;
-  bottom: 190px;
-  right: 25px;
-  width: 70px;
-  height: 70px;
-  background: var(--gradiente-secundario);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
-  text-decoration: none;
-  box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
-  z-index: 1000;
-  transition: all 0.3s ease;
-  border: 3px solid var(--color-blanco);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.delete-btn.active {
-  opacity: 1;
-  pointer-events: all;
-  animation: pulse-delete 1.5s infinite;
-}
-
-.delete-btn:hover {
-  transform: scale(1.15);
-  box-shadow: 0 12px 40px rgba(164, 121, 104, 0.8);
-  animation: none;
-}
-
-@keyframes pulse-delete {
-  0% {
-    box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
-  }
-  50% {
-    box-shadow: 
-      0 8px 30px rgba(164, 121, 104, 0.9), 
-      0 0 0 12px rgba(164, 121, 104, 0.15);
-  }
-  100% {
-    box-shadow: 0 8px 30px rgba(164, 121, 104, 0.6);
-  }
-}
-/* --- Modal de Confirmación --- */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(58, 48, 33, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal-content {
-  background: var(--color-blanco);
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-  box-shadow: var(--sombra-media);
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
-}
-
-.modal-overlay.active .modal-content {
-  transform: translateY(0);
-}
-
-.modal-icon {
-  font-size: 48px;
-  margin-bottom: 15px;
-  color: var(--color-secundario);
-}
-
-.modal-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: var(--color-primario);
-}
-
-.modal-message {
-  font-size: 16px;
-  color: var(--color-texto-claro);
-  margin-bottom: 25px;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.modal-btn {
-  padding: 12px 25px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  font-size: 16px;
-}
-
-.modal-btn.cancel {
-  background: var(--color-fondo-principal);
-  color: var(--color-texto-claro);
-}
-
-.modal-btn.cancel:hover {
-  background: var(--color-acento-claro);
-}
-
-.modal-btn.delete {
-  background: var(--gradiente-secundario);
-  color: var(--color-blanco);
-}
-
-.modal-btn.delete:hover {
-  box-shadow: 0 4px 15px rgba(164, 121, 104, 0.4);
-  transform: translateY(-2px);
-}
   </style>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1078,369 +1103,388 @@
     </div>
   </section>
 
-  <!-- GRID DE PRENDAS MEJORADO -->
-  <!-- En la sección photo-grid, actualiza cada photo-item -->
-<section class="photo-grid" id="photoGrid">
-  {% if prendas_del_armario %}
-    {% for prenda in prendas_del_armario %}
-      <div class="photo-item"
-           data-id="{{ prenda.idPrenda }}"
-           data-tipo="{{ prenda.tipo }}"
-           data-categoria="{{ prenda.clasificacion|default:'prenda'|lower }}"
-           data-favorito="{{ prenda.esFavorito|yesno:'true,false' }}">
-        <img src="{{ prenda.imagen }}" alt="{{ prenda.tipo }}" loading="lazy">
-        <i class="heart {% if prenda.esFavorito %}active{% endif %}" data-prenda-id="{{ prenda.idPrenda }}"></i>
-        
-        <!-- NUEVO: Información de la prenda -->
-        <div class="prenda-info">
-          <h3 class="prenda-nombre">{{ prenda.tipo }}</h3>
-          <div class="prenda-details">
-            <span class="prenda-color">{{ prenda.color }}</span>
-            <span class="prenda-temporada">{{ prenda.temporada }}</span>
+  <!-- GRID DE PRENDAS MEJORADO CON IMÁGENES SEGMENTADAS -->
+  <section class="photo-grid" id="photoGrid">
+    {% if prendas_del_armario %}
+      {% for prenda in prendas_del_armario %}
+        <div class="photo-item"
+             data-id="{{ prenda.idPrenda }}"
+             data-tipo="{{ prenda.tipo }}"
+             data-categoria="{{ prenda.clasificacion|default:'prenda'|lower }}"
+             data-favorito="{{ prenda.esFavorito|yesno:'true,false' }}"
+             data-segmentada="{% if prenda.imagen_segmentada %}true{% else %}false{% endif %}">
+          
+          <!-- MOSTRAR IMAGEN SEGMENTADA SI EXISTE, SINO LA ORIGINAL -->
+          {% if prenda.imagen_segmentada %}
+            <img src="{{ prenda.imagen_segmentada }}" 
+                 alt="{{ prenda.tipo }} - Sin fondo" 
+                 class="prenda-img segmentada"
+                 loading="lazy"
+                 title="Prenda con fondo removido">
+            <div class="segmentada-badge">🎯 Sin fondo</div>
+          {% else %}
+            <img src="{{ prenda.imagen }}" 
+                 alt="{{ prenda.tipo }}" 
+                 class="prenda-img"
+                 loading="lazy">
+          {% endif %}
+          
+          <i class="heart {% if prenda.esFavorito %}active{% endif %}" data-prenda-id="{{ prenda.idPrenda }}"></i>
+          
+          <!-- Información de la prenda -->
+          <div class="prenda-info">
+            <h3 class="prenda-nombre">{{ prenda.tipo }}</h3>
+            <div class="prenda-details">
+              <span class="prenda-color">{{ prenda.color }}</span>
+              <span class="prenda-temporada">{{ prenda.temporada }}</span>
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p class="no-items-message">¡Tu armario está vacío! Agrega tu primera prenda.</p>
-  {% endif %}
-</section>
+      {% endfor %}
+    {% else %}
+      <p class="no-items-message">¡Tu armario está vacío! Agrega tu primera prenda.</p>
+    {% endif %}
+  </section>
   
   <a href="{% url 'categoria' %}" class="floating-add-btn">
     <span>+</span>
   </a>
 
   <!-- Botón de eliminar -->
-<div class="delete-btn" id="deleteBtn">
-  <span>🗑️</span>
-</div>
+  <div class="delete-btn" id="deleteBtn">
+    <span>🗑️</span>
+  </div>
 
-<!-- Modal de confirmación de eliminación -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal-content">
-    <div class="modal-icon">🗑️</div>
-    <h2 class="modal-title">Eliminar prenda</h2>
-    <p class="modal-message" id="modalMessage">¿Estás seguro de que quieres eliminar esta prenda? Esta acción no se puede deshacer.</p>
-    <div class="modal-actions">
-      <button class="modal-btn cancel" id="cancelDelete">Cancelar</button>
-      <button class="modal-btn delete" id="confirmDelete">Eliminar</button>
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-icon">🗑️</div>
+      <h2 class="modal-title">Eliminar prenda</h2>
+      <p class="modal-message" id="modalMessage">¿Estás seguro de que quieres eliminar esta prenda? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="cancelDelete">Cancelar</button>
+        <button class="modal-btn delete" id="confirmDelete">Eliminar</button>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- JavaScript con funcionalidad mejorada -->
   <script>
-   document.addEventListener('DOMContentLoaded', function() {
-  console.log('✨ DressCode - Mi Armario Cargado');
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('✨ DressCode - Mi Armario Cargado');
 
-  // Configuración de Supabase
-  const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const TABLE_NAME = 'armario';
+      // Configuración de Supabase
+      const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc';
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const TABLE_NAME = 'armario';
 
-  const defaultFilter = sessionStorage.getItem('defaultFilter');
-  if (defaultFilter === 'Favoritos') {
-    sessionStorage.removeItem('defaultFilter');
-    const favoritesButton = document.querySelector('.filter-btn[data-filter="Favoritos"]');
-    if (favoritesButton) {
-      setTimeout(() => {
-        favoritesButton.click();
-      }, 100);
-    }
-  }
-  
-  // Elementos del DOM
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const hearts = document.querySelectorAll('.heart');
-  const favoritesGrid = document.getElementById('favoritesGrid');
-  const favoritesCounter = document.getElementById('favorites-counter');
-  const favoritesCountStat = document.getElementById('favorites-count');
-  const photoGrid = document.getElementById('photoGrid');
-  const searchInput = document.getElementById('wardrobeSearch');
-  const deleteBtn = document.getElementById('deleteBtn');
-  const deleteModal = document.getElementById('deleteModal');
-  const cancelDeleteBtn = document.getElementById('cancelDelete');
-  const confirmDeleteBtn = document.getElementById('confirmDelete');
-  const modalMessage = document.getElementById('modalMessage');
-  
-  // Estado de la aplicación
-  let currentFilter = 'Todo';
-  let favorites = [];
-  let searchTerm = '';
-  let selectedItems = [];
-
-  // Inicializar favoritos
-  function initializeFavorites() {
-    const favoriteItems = document.querySelectorAll('.photo-item[data-favorito="true"]');
-    favorites = Array.from(favoriteItems).map(item => ({
-      id: item.dataset.id,
-      tipo: item.dataset.tipo,
-      categoria: item.dataset.categoria,
-      imagen: item.querySelector('img').src
-    }));
-    updateFavoritesDisplay();
-  }
-
-  // Actualizar display de favoritos
-  function updateFavoritesDisplay() {
-    favoritesCounter.textContent = `${favorites.length} prenda${favorites.length !== 1 ? 's' : ''}`;
-    favoritesCountStat.textContent = favorites.length;
-    
-    if (favorites.length === 0) {
-      favoritesGrid.innerHTML = `
-        <div class="empty-favorites">
-          <p>🌟 Aún no tienes prendas favoritas</p>
-          <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
-        </div>
-      `;
-    } else {
-      favoritesGrid.innerHTML = favorites.map(fav => `
-        <div class="favorite-item" data-id="${fav.id}">
-          <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
-        </div>
-      `).join('');
-    }
-  }
-
-  // Toggle favorito con animación Y BASE DE DATOS
-  async function toggleFavorite(heart) {
-    const photoItem = heart.closest('.photo-item');
-    const prendaId = parseInt(photoItem.dataset.id);
-    const prendaTipo = photoItem.querySelector('.prenda-nombre').textContent;
-    const prendaImagen = photoItem.querySelector('img').src;
-    
-    const isCurrentlyFavorite = heart.classList.contains('active');
-    const nuevoEstado = !isCurrentlyFavorite;
-    
-    try {
-      // Actualizar en Supabase
-      const { error } = await supabase
-        .from(TABLE_NAME)
-        .update({ esFavorito: nuevoEstado })
-        .eq('idPrenda', prendaId);
-
-      if (error) {
-        console.error('Error actualizando favorito:', error);
-        alert('Error al actualizar favorito');
-        return;
-      }
-
-      // Animación del corazón
-      heart.style.transform = 'scale(1.3)';
-      setTimeout(() => {
-        heart.style.transform = 'scale(1)';
-      }, 300);
-      
-      if (nuevoEstado) {
-        heart.classList.add('active');
-        photoItem.dataset.favorito = 'true';
-        favorites.push({
-          id: prendaId,
-          tipo: prendaTipo,
-          categoria: photoItem.dataset.categoria,
-          imagen: prendaImagen
-        });
-      } else {
-        heart.classList.remove('active');
-        photoItem.dataset.favorito = 'false';
-        favorites = favorites.filter(fav => fav.id !== prendaId);
+      const defaultFilter = sessionStorage.getItem('defaultFilter');
+      if (defaultFilter === 'Favoritos') {
+        sessionStorage.removeItem('defaultFilter');
+        const favoritesButton = document.querySelector('.filter-btn[data-filter="Favoritos"]');
+        if (favoritesButton) {
+          setTimeout(() => {
+            favoritesButton.click();
+          }, 100);
+        }
       }
       
-      updateFavoritesDisplay();
-      filterItems(currentFilter);
+      // Elementos del DOM
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const hearts = document.querySelectorAll('.heart');
+      const favoritesGrid = document.getElementById('favoritesGrid');
+      const favoritesCounter = document.getElementById('favorites-counter');
+      const favoritesCountStat = document.getElementById('favorites-count');
+      const photoGrid = document.getElementById('photoGrid');
+      const searchInput = document.getElementById('wardrobeSearch');
+      const deleteBtn = document.getElementById('deleteBtn');
+      const deleteModal = document.getElementById('deleteModal');
+      const cancelDeleteBtn = document.getElementById('cancelDelete');
+      const confirmDeleteBtn = document.getElementById('confirmDelete');
+      const modalMessage = document.getElementById('modalMessage');
       
-      console.log('Favorito actualizado en BD:', { prendaId, esFavorito: nuevoEstado });
-      
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error al actualizar favorito');
-    }
-  }
+      // Estado de la aplicación
+      let currentFilter = 'Todo';
+      let favorites = [];
+      let searchTerm = '';
+      let selectedItems = [];
 
-  // Función para seleccionar/deseleccionar prendas
-  function toggleSelection(photoItem) {
-    const prendaId = photoItem.dataset.id;
-    const isSelected = photoItem.classList.contains('selected');
-    
-    if (isSelected) {
-      photoItem.classList.remove('selected');
-      selectedItems = selectedItems.filter(id => id !== prendaId);
-    } else {
-      photoItem.classList.add('selected');
-      selectedItems.push(prendaId);
-    }
-    
-    // Mostrar/ocultar botón de eliminar
-    if (selectedItems.length > 0) {
-      deleteBtn.classList.add('active');
-    } else {
-      deleteBtn.classList.remove('active');
-    }
-  }
-
-  // Filtrar prendas con búsqueda
-  function filterItems(filter) {
-    const items = document.querySelectorAll('.photo-item');
-    let visibleCount = 0;
-    
-    items.forEach(item => {
-      const categoria = item.dataset.categoria;
-      const tipo = item.dataset.tipo.toLowerCase();
-      const esFavorito = item.dataset.favorito === 'true';
-      let show = false;
-      
-      // Aplicar filtro principal
-      switch(filter) {
-        case 'Todo':
-          show = true;
-          break;
-        case 'Favoritos':
-          show = esFavorito;
-          break;
-        default:
-          show = categoria === filter.toLowerCase();
-      }
-      
-      // Aplicar búsqueda
-      if (show && searchTerm) {
-        show = tipo.includes(searchTerm.toLowerCase());
-      }
-      
-      item.style.display = show ? 'block' : 'none';
-      if (show) visibleCount++;
-    });
-    
-    // Mostrar/ocultar secciones
-    const favoritesSection = document.querySelector('.favorites-section');
-    if (filter === 'Favoritos') {
-      favoritesSection.style.display = 'none';
-      photoGrid.style.display = 'grid';
-    } else {
-      favoritesSection.style.display = 'block';
-      photoGrid.style.display = 'grid';
-    }
-  }
-
-  // Mostrar modal de confirmación
-  function showDeleteModal() {
-    if (selectedItems.length === 0) return;
-    
-    if (selectedItems.length === 1) {
-      const prenda = document.querySelector(`.photo-item[data-id="${selectedItems[0]}"]`);
-      const prendaTipo = prenda.querySelector('.prenda-nombre').textContent;
-      modalMessage.textContent = `¿Estás seguro de que quieres eliminar "${prendaTipo}"? Esta acción no se puede deshacer.`;
-    } else {
-      modalMessage.textContent = `¿Estás seguro de que quieres eliminar ${selectedItems.length} prendas? Esta acción no se puede deshacer.`;
-    }
-    
-    deleteModal.classList.add('active');
-  }
-
-  // Eliminar prendas seleccionadas DE LA BASE DE DATOS
-  async function deleteSelectedItems() {
-    try {
-      const ids = selectedItems.map(id => parseInt(id));
-      
-      // Eliminar de Supabase
-      const { error } = await supabase
-        .from(TABLE_NAME)
-        .delete()
-        .in('idPrenda', ids);
-
-      if (error) {
-        console.error('Error eliminando prendas:', error);
-        alert('Error al eliminar prendas');
-        deleteModal.classList.remove('active');
-        return;
+      // Inicializar favoritos
+      function initializeFavorites() {
+        const favoriteItems = document.querySelectorAll('.photo-item[data-favorito="true"]');
+        favorites = Array.from(favoriteItems).map(item => ({
+          id: item.dataset.id,
+          tipo: item.dataset.tipo,
+          categoria: item.dataset.categoria,
+          imagen: item.querySelector('img').src,
+          segmentada: item.dataset.segmentada === 'true'
+        }));
+        updateFavoritesDisplay();
       }
 
-      // Eliminar del DOM solo si se eliminó de la BD
-      selectedItems.forEach(id => {
-        const prenda = document.querySelector(`.photo-item[data-id="${id}"]`);
-        if (prenda) {
-          // Eliminar de favoritos si está ahí
-          if (prenda.dataset.favorito === 'true') {
-            favorites = favorites.filter(fav => fav.id !== id);
+      // Actualizar display de favoritos
+      function updateFavoritesDisplay() {
+        favoritesCounter.textContent = `${favorites.length} prenda${favorites.length !== 1 ? 's' : ''}`;
+        favoritesCountStat.textContent = favorites.length;
+        
+        if (favorites.length === 0) {
+          favoritesGrid.innerHTML = `
+            <div class="empty-favorites">
+              <p>🌟 Aún no tienes prendas favoritas</p>
+              <small>Haz clic en el corazón de tus prendas favoritas para agregarlas aquí</small>
+            </div>
+          `;
+        } else {
+          favoritesGrid.innerHTML = favorites.map(fav => `
+            <div class="favorite-item" data-id="${fav.id}" data-segmentada="${fav.segmentada}">
+              ${fav.segmentada ? '<div class="segmentada-badge">🎯</div>' : ''}
+              <img src="${fav.imagen}" alt="${fav.tipo}" loading="lazy">
+            </div>
+          `).join('');
+        }
+      }
+
+      // Toggle favorito con animación Y BASE DE DATOS
+      async function toggleFavorite(heart) {
+        const photoItem = heart.closest('.photo-item');
+        const prendaId = parseInt(photoItem.dataset.id);
+        const prendaTipo = photoItem.querySelector('.prenda-nombre').textContent;
+        const prendaImagen = photoItem.querySelector('img').src;
+        const prendaSegmentada = photoItem.dataset.segmentada === 'true';
+        
+        const isCurrentlyFavorite = heart.classList.contains('active');
+        const nuevoEstado = !isCurrentlyFavorite;
+        
+        try {
+          // Actualizar en Supabase
+          const { error } = await supabase
+            .from(TABLE_NAME)
+            .update({ esFavorito: nuevoEstado })
+            .eq('idPrenda', prendaId);
+
+          if (error) {
+            console.error('Error actualizando favorito:', error);
+            alert('Error al actualizar favorito');
+            return;
+          }
+
+          // Animación del corazón
+          heart.style.transform = 'scale(1.3)';
+          setTimeout(() => {
+            heart.style.transform = 'scale(1)';
+          }, 300);
+          
+          if (nuevoEstado) {
+            heart.classList.add('active');
+            photoItem.dataset.favorito = 'true';
+            favorites.push({
+              id: prendaId,
+              tipo: prendaTipo,
+              categoria: photoItem.dataset.categoria,
+              imagen: prendaImagen,
+              segmentada: prendaSegmentada
+            });
+          } else {
+            heart.classList.remove('active');
+            photoItem.dataset.favorito = 'false';
+            favorites = favorites.filter(fav => fav.id !== prendaId);
           }
           
-          // Eliminar del DOM
-          prenda.remove();
+          updateFavoritesDisplay();
+          filterItems(currentFilter);
+          
+          console.log('Favorito actualizado en BD:', { prendaId, esFavorito: nuevoEstado });
+          
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error al actualizar favorito');
+        }
+      }
+
+      // Función para seleccionar/deseleccionar prendas
+      function toggleSelection(photoItem) {
+        const prendaId = photoItem.dataset.id;
+        const isSelected = photoItem.classList.contains('selected');
+        
+        if (isSelected) {
+          photoItem.classList.remove('selected');
+          selectedItems = selectedItems.filter(id => id !== prendaId);
+        } else {
+          photoItem.classList.add('selected');
+          selectedItems.push(prendaId);
+        }
+        
+        // Mostrar/ocultar botón de eliminar
+        if (selectedItems.length > 0) {
+          deleteBtn.classList.add('active');
+        } else {
+          deleteBtn.classList.remove('active');
+        }
+      }
+
+      // Filtrar prendas con búsqueda
+      function filterItems(filter) {
+        const items = document.querySelectorAll('.photo-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+          const categoria = item.dataset.categoria;
+          const tipo = item.dataset.tipo.toLowerCase();
+          const esFavorito = item.dataset.favorito === 'true';
+          let show = false;
+          
+          // Aplicar filtro principal
+          switch(filter) {
+            case 'Todo':
+              show = true;
+              break;
+            case 'Favoritos':
+              show = esFavorito;
+              break;
+            default:
+              show = categoria === filter.toLowerCase();
+          }
+          
+          // Aplicar búsqueda
+          if (show && searchTerm) {
+            show = tipo.includes(searchTerm.toLowerCase());
+          }
+          
+          item.style.display = show ? 'block' : 'none';
+          if (show) visibleCount++;
+        });
+        
+        // Mostrar/ocultar secciones
+        const favoritesSection = document.querySelector('.favorites-section');
+        if (filter === 'Favoritos') {
+          favoritesSection.style.display = 'none';
+          photoGrid.style.display = 'grid';
+        } else {
+          favoritesSection.style.display = 'block';
+          photoGrid.style.display = 'grid';
+        }
+      }
+
+      // Mostrar modal de confirmación
+      function showDeleteModal() {
+        if (selectedItems.length === 0) return;
+        
+        if (selectedItems.length === 1) {
+          const prenda = document.querySelector(`.photo-item[data-id="${selectedItems[0]}"]`);
+          const prendaTipo = prenda.querySelector('.prenda-nombre').textContent;
+          modalMessage.textContent = `¿Estás seguro de que quieres eliminar "${prendaTipo}"? Esta acción no se puede deshacer.`;
+        } else {
+          modalMessage.textContent = `¿Estás seguro de que quieres eliminar ${selectedItems.length} prendas? Esta acción no se puede deshacer.`;
+        }
+        
+        deleteModal.classList.add('active');
+      }
+
+      // Eliminar prendas seleccionadas DE LA BASE DE DATOS
+      async function deleteSelectedItems() {
+        try {
+          const ids = selectedItems.map(id => parseInt(id));
+          
+          // Eliminar de Supabase
+          const { error } = await supabase
+            .from(TABLE_NAME)
+            .delete()
+            .in('idPrenda', ids);
+
+          if (error) {
+            console.error('Error eliminando prendas:', error);
+            alert('Error al eliminar prendas');
+            deleteModal.classList.remove('active');
+            return;
+          }
+
+          // Eliminar del DOM solo si se eliminó de la BD
+          selectedItems.forEach(id => {
+            const prenda = document.querySelector(`.photo-item[data-id="${id}"]`);
+            if (prenda) {
+              // Eliminar de favoritos si está ahí
+              if (prenda.dataset.favorito === 'true') {
+                favorites = favorites.filter(fav => fav.id !== id);
+              }
+              
+              // Eliminar del DOM
+              prenda.remove();
+            }
+          });
+          
+          // Actualizar contadores
+          updateFavoritesDisplay();
+          
+          // Limpiar selección
+          selectedItems = [];
+          deleteBtn.classList.remove('active');
+          
+          // Cerrar modal
+          deleteModal.classList.remove('active');  
+          console.log('Prendas eliminadas de BD:', ids);
+          
+        } catch (error) {
+          console.error('Error general:', error);
+          alert('Error al eliminar prendas');
+          deleteModal.classList.remove('active');
+        }
+      }
+
+      // Event Listeners
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.dataset.filter;
+          filterItems(currentFilter);
+        });
+      });
+
+      hearts.forEach(heart => {
+        heart.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleFavorite(this);
+        });
+      });
+
+      // Event listener para seleccionar prendas
+      document.querySelectorAll('.photo-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          // Evitar selección al hacer clic en el corazón
+          if (!e.target.closest('.heart')) {
+            toggleSelection(this);
+          }
+        });
+      });
+
+      // Event listener para botón de eliminar
+      deleteBtn.addEventListener('click', showDeleteModal);
+
+      // Event listeners para el modal
+      cancelDeleteBtn.addEventListener('click', function() {
+        deleteModal.classList.remove('active');
+      });
+
+      confirmDeleteBtn.addEventListener('click', deleteSelectedItems);
+
+      // Cerrar modal al hacer clic fuera
+      deleteModal.addEventListener('click', function(e) {
+        if (e.target === deleteModal) {
+          deleteModal.classList.remove('active');
         }
       });
-      
-      // Actualizar contadores
-      updateFavoritesDisplay();
-      
-      // Limpiar selección
-      selectedItems = [];
-      deleteBtn.classList.remove('active');
-      
-      // Cerrar modal
-      deleteModal.classList.remove('active');  
-      console.log('Prendas eliminadas de BD:', ids);
-      
-    } catch (error) {
-      console.error('Error general:', error);
-      alert('Error al eliminar prendas');
-      deleteModal.classList.remove('active');
-    }
-  }
 
-  // Event Listeners
-  filterButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      filterButtons.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      currentFilter = this.dataset.filter;
+      // Búsqueda en tiempo real
+      searchInput.addEventListener('input', function() {
+        searchTerm = this.value.trim();
+        filterItems(currentFilter);
+      });
+
+      // Inicializar
+      initializeFavorites();
       filterItems(currentFilter);
     });
-  });
-
-  hearts.forEach(heart => {
-    heart.addEventListener('click', function(e) {
-      e.stopPropagation();
-      toggleFavorite(this);
-    });
-  });
-
-  // Event listener para seleccionar prendas
-  document.querySelectorAll('.photo-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-      // Evitar selección al hacer clic en el corazón
-      if (!e.target.closest('.heart')) {
-        toggleSelection(this);
-      }
-    });
-  });
-
-  // Event listener para botón de eliminar
-  deleteBtn.addEventListener('click', showDeleteModal);
-
-  // Event listeners para el modal
-  cancelDeleteBtn.addEventListener('click', function() {
-    deleteModal.classList.remove('active');
-  });
-
-  confirmDeleteBtn.addEventListener('click', deleteSelectedItems);
-
-  // Cerrar modal al hacer clic fuera
-  deleteModal.addEventListener('click', function(e) {
-    if (e.target === deleteModal) {
-      deleteModal.classList.remove('active');
-    }
-  });
-
-  // Búsqueda en tiempo real
-  searchInput.addEventListener('input', function() {
-    searchTerm = this.value.trim();
-    filterItems(currentFilter);
-  });
-
-  // Inicializar
-  initializeFavorites();
-  filterItems(currentFilter);
-});
   </script>
 </body>
 </html>

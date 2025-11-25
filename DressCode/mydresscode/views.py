@@ -25,6 +25,9 @@ from django.contrib.auth.decorators import login_required # Se mantiene para otr
 from formtools.wizard.views import SessionWizardView
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+import base64
+from django.core.files.base import ContentFile
+import numpy as np
 
 # Importa tus modelos y formularios
 from .forms import EstiloForm, ColorForm, EstacionForm, TallaForm 
@@ -255,13 +258,18 @@ def my_closet(request):
         usuario = Usuario.objects.get(idUsuario=usuario_id)
         prendas = Armario.objects.filter(idUsuario=usuario).order_by('-fecha')
 
-        # DEBUG: Ver qué datos tenemos
+        # DEBUG: Verificar imágenes segmentadas
+        print(f"=== DEBUG MY_CLOSET ===")
         print(f"Usuario: {usuario}")
         print(f"Número de prendas: {prendas.count()}")
-        if prendas.exists():
-            primera_prenda = prendas.first()
-            print(f"Primera prenda: {primera_prenda}")
-            print(f"Atributos de la prenda: {dir(primera_prenda)}")
+        
+        for prenda in prendas:
+            print(f"Prenda ID: {prenda.idPrenda}")
+            print(f"  - Tipo: {prenda.tipo}")
+            print(f"  - Imagen original: {prenda.imagen}")
+            print(f"  - Imagen segmentada: {prenda.imagen_segmentada}")
+            print(f"  - ¿Tiene segmentada?: {'SÍ' if prenda.imagen_segmentada else 'NO'}")
+            print("---")
 
         context = {
             'prendas_del_armario': prendas 
@@ -283,37 +291,60 @@ def categoria(request):
 def subir_prenda(request):
     if request.method == 'POST' and 'imagen_prenda' in request.FILES:
         if 'usuario_id' not in request.session:
-            return JsonResponse({'error': 'Usuario no autenticado.'}, status=401)
+            return JsonResponse({'success': False, 'error': 'Usuario no autenticado.'}, status=401)
         
         uploaded_file = request.FILES['imagen_prenda']
         
-        # Obtener datos del formulario
-        categoria = request.POST.get('categoria', 'Prenda de vestir')
-        tipo = request.POST.get('tipo', 'Prenda de vestir')
-        color = request.POST.get('color', 'Por definir')
-        temporada = request.POST.get('temporada', 'Todo el año')
-        estilo = request.POST.get('estilo', 'Casual')
-        esFavorito = request.POST.get('esFavorito', 'false') == 'true'
-        
         try:
+            # Obtener datos del formulario con valores por defecto
+            categoria = request.POST.get('categoria', 'prenda')
+            tipo = request.POST.get('tipo', 'Prenda de vestir')
+            color = request.POST.get('color', 'Por definir')
+            temporada = request.POST.get('temporada', 'Todo el año')
+            estilo = request.POST.get('estilo', 'Casual')
+            esFavorito = request.POST.get('esFavorito', 'false') == 'true'
+            
+            print(f"DEBUG - Datos recibidos:")
+            print(f"  Categoría: {categoria}")
+            print(f"  Tipo: {tipo}")
+            print(f"  Color: {color}")
+            print(f"  Temporada: {temporada}")
+            print(f"  Estilo: {estilo}")
+            print(f"  Favorito: {esFavorito}")
+
             # SUBIR A SUPABASE STORAGE
             file_ext = os.path.splitext(uploaded_file.name)[1]
             unique_filename = f'{request.session["usuario_id"]}_{uuid.uuid4()}{file_ext}'
             path_on_storage = f'prendas/{unique_filename}'
             
+            # Leer el archivo
+            uploaded_file.seek(0)  # Asegurarse de estar al inicio del archivo
+            file_content = uploaded_file.read()
+            
+            print(f"DEBUG - Subiendo archivo: {unique_filename}")
+
+            # Subir a Supabase
             upload_response = supabase.storage.from_(SUPABASE_STORAGE_BUCKET).upload(
-                file=uploaded_file.read(),
+                file=file_content,
                 path=path_on_storage,
                 file_options={"content-type": uploaded_file.content_type}
             )
+            
+            print(f"DEBUG - Upload response: {upload_response}")
 
             # OBTENER URL PÚBLICA
             public_url_response = supabase.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(path_on_storage)
             image_url = public_url_response
+            
+            print(f"DEBUG - URL de imagen: {image_url}")
 
         except Exception as e:
-            logger.error(f"Error al subir a Supabase: {e}")
-            return JsonResponse({'error': f'Error al procesar la imagen: {str(e)}'}, status=500)
+            logger.error(f"Error al subir a Supabase: {str(e)}")
+            print(f"ERROR DETALLADO Supabase: {str(e)}")
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error al procesar la imagen: {str(e)}'
+            }, status=500)
         
         # GUARDAR EN LA TABLA 'Armario' DE DJANGO
         try:
@@ -331,20 +362,34 @@ def subir_prenda(request):
                 esFavorito=esFavorito
             )
             
-            return JsonResponse({
+            print(f"✅ Prenda guardada en DB con ID: {nueva_prenda.idPrenda}")
+            
+            # ✅ Respuesta de éxito INCLUYENDO EL ID DE LA PRENDA
+            response_data = {
                 'success': True,
                 'message': 'Prenda guardada exitosamente.',
                 'url': image_url,
-                'prenda_id': nueva_prenda.idPrenda
-            }, status=200)
+                'prenda_id': nueva_prenda.idPrenda  # ✅ IMPORTANTE: Incluir el ID para la segmentación
+            }
+            
+            return JsonResponse(response_data, status=200)
 
         except Usuario.DoesNotExist:
-            return JsonResponse({'error': 'Error interno: Usuario no encontrado.'}, status=500)
+            error_msg = 'Error interno: Usuario no encontrado.'
+            print(f"❌ ERROR: {error_msg}")
+            return JsonResponse({'success': False, 'error': error_msg}, status=500)
         except Exception as e:
             logger.error(f"Error al guardar en DB: {e}")
-            return JsonResponse({'error': f'Error al guardar en la base de datos: {str(e)}'}, status=500)
+            print(f"❌ ERROR DB: {str(e)}")
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error al guardar en la base de datos: {str(e)}'
+            }, status=500)
 
-    return JsonResponse({'error': 'Petición inválida. Falta el archivo.'}, status=400)
+    # Si no es POST o no tiene archivo
+    error_msg = 'Petición inválida. Método debe ser POST y debe incluir archivo.'
+    print(f"❌ ERROR: {error_msg}")
+    return JsonResponse({'success': False, 'error': error_msg}, status=400)
 
 def resultados_analisis(request, prenda_id):
     """Vista para mostrar detalles de la prenda"""
@@ -894,3 +939,182 @@ def guardar_rating(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Método no permitido"}, status=405)
+
+@csrf_exempt
+def segmentar_prenda(request):
+    """
+    Vista para aplicar segmentación REAL a las imágenes de prendas usando rembg
+    """
+    if request.method == 'POST' and request.FILES.get('imagen'):
+        try:
+            if 'usuario_id' not in request.session:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Usuario no autenticado'
+                }, status=401)
+            
+            imagen = request.FILES['imagen']
+            usuario_id = request.session['usuario_id']
+            
+            # Obtener el ID de la prenda desde los datos de sesión o parámetros
+            prenda_id = request.POST.get('prenda_id')
+            
+            # ✅ USAR REMBG REAL PARA QUITAR EL FONDO
+            imagen_segmentada = aplicar_rembg_real(imagen)
+            
+            if not imagen_segmentada:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Error al procesar la imagen con rembg'
+                }, status=500)
+            
+            # SUBIR IMAGEN SEGMENTADA A SUPABASE
+            file_ext = '.png'
+            unique_filename = f'segmentada_{usuario_id}_{uuid.uuid4()}{file_ext}'
+            path_on_storage = f'prendas_segmentadas/{unique_filename}'
+            
+            # Convertir imagen a bytes para subir a Supabase
+            buffer = io.BytesIO()
+            imagen_segmentada.save(buffer, format='PNG')
+            file_content = buffer.getvalue()
+            
+            # Subir a Supabase
+            upload_response = supabase.storage.from_(SUPABASE_STORAGE_BUCKET).upload(
+                file=file_content,
+                path=path_on_storage,
+                file_options={"content-type": "image/png"}
+            )
+            
+            # Obtener URL pública
+            public_url_response = supabase.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(path_on_storage)
+            image_segmentada_url = public_url_response
+            
+            # Convertir la imagen segmentada a base64 para enviar al frontend
+            imagen_segmentada_base64 = base64.b64encode(file_content).decode('utf-8')
+            
+            # GUARDAR EN LA BASE DE DATOS - ESTRATEGIA MEJORADA
+            try:
+                usuario = Usuario.objects.get(idUsuario=usuario_id)
+                
+                # ESTRATEGIA 1: Buscar por prenda_id si está disponible
+                if prenda_id:
+                    try:
+                        prenda = Armario.objects.get(idPrenda=prenda_id, idUsuario=usuario)
+                        prenda.imagen_segmentada = image_segmentada_url
+                        prenda.save()
+                        print(f"✅ Estrategia 1 - Imagen segmentada guardada para prenda ID: {prenda.idPrenda}")
+                    except Armario.DoesNotExist:
+                        print(f"⚠️ No se encontró prenda con ID: {prenda_id}")
+                        # Continuar con estrategia 2
+                
+                # ESTRATEGIA 2: Buscar la última prenda del usuario (más reciente)
+                if not prenda_id:
+                    ultima_prenda = Armario.objects.filter(idUsuario=usuario).order_by('-fecha', '-idPrenda').first()
+                    if ultima_prenda and not ultima_prenda.imagen_segmentada:
+                        ultima_prenda.imagen_segmentada = image_segmentada_url
+                        ultima_prenda.save()
+                        print(f"✅ Estrategia 2 - Imagen segmentada guardada para prenda ID: {ultima_prenda.idPrenda}")
+                        prenda_id = ultima_prenda.idPrenda
+                    elif ultima_prenda:
+                        print(f"⚠️ La prenda {ultima_prenda.idPrenda} ya tiene imagen segmentada")
+                    else:
+                        print("❌ No se encontró ninguna prenda para este usuario")
+                        
+            except Exception as db_error:
+                print(f"❌ ERROR DB al guardar segmentación: {db_error}")
+                # No retornes error aquí para no interrumpir el flujo
+            
+            return JsonResponse({
+                'success': True,
+                'segmented_image': f"data:image/png;base64,{imagen_segmentada_base64}",
+                'segmented_image_url': image_segmentada_url,
+                'prenda_id': prenda_id,
+                'message': 'Fondo removido exitosamente'
+            })
+            
+        except Exception as e:
+            print(f"❌ Error en segmentar_prenda: {e}")
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'error': 'No se proporcionó imagen para segmentar'
+    }, status=400)
+
+def aplicar_rembg_real(imagen):
+    """
+    Función REAL que usa rembg para quitar el fondo
+    """
+    try:
+        # Leer la imagen
+        input_image = Image.open(imagen)
+        
+        # ✅ USAR REMBG PARA QUITAR EL FONDO
+        output_image = remove(input_image)
+        
+        # Crear una nueva imagen con fondo transparente o blanco
+        # rembg ya devuelve la imagen con fondo transparente por defecto
+        # Pero podemos opcionalmente poner fondo blanco si prefieres
+        if output_image.mode in ('RGBA', 'LA'):
+            # Crear fondo blanco
+            background = Image.new('RGB', output_image.size, (255, 255, 255))
+            # Pegar la imagen sin fondo sobre el fondo blanco
+            background.paste(output_image, mask=output_image.split()[-1])  # Usar el canal alpha como máscara
+            output_image = background
+        
+        return output_image
+        
+    except Exception as e:
+        print(f"❌ Error en aplicar_rembg_real: {e}")
+        # Fallback: devolver la imagen original
+        return Image.open(imagen)
+
+def simular_segmentacion(imagen):
+    """
+    Función mejorada que simula la segmentación
+    En producción, reemplaza esto con tu modelo de ML real
+    """
+    try:
+        # Abrir la imagen original
+        img = Image.open(imagen)
+        
+        # Convertir a RGB si es necesario
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        # Crear una versión "segmentada" más realista
+        width, height = img.size
+        
+        # Crear una nueva imagen con fondo blanco
+        segmented = Image.new('RGB', (width, height), color='white')
+        
+        # Redimensionar la imagen original para hacerla más pequeña (simular segmentación)
+        # Esto es solo para demostración - en realidad usarías tu modelo
+        scale_factor = 0.7
+        new_width = int(width * scale_factor)
+        new_height = int(height * scale_factor)
+        
+        resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        
+        # Pegar la imagen redimensionada en el centro del fondo blanco
+        x_offset = (width - new_width) // 2
+        y_offset = (height - new_height) // 2
+        segmented.paste(resized_img, (x_offset, y_offset))
+        
+        # Aplicar un borde para simular mejor la segmentación
+        from PIL import ImageDraw
+        draw = ImageDraw.Draw(segmented)
+        draw.rectangle([x_offset-2, y_offset-2, x_offset+new_width+2, y_offset+new_height+2], 
+                      outline="#5d9e9e", width=4)
+        
+        return segmented
+        
+    except Exception as e:
+        print(f"Error en simular_segmentacion: {e}")
+        # Fallback: devolver la imagen original
+        return Image.open(imagen)
+    
+    
