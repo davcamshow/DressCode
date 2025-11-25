@@ -1,4 +1,4 @@
-
+# settings.py - CORREGIR
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -51,8 +51,6 @@ TEMPLATES = [
     },
 ]
 
-
-
 WSGI_APPLICATION = 'DressCode.wsgi.application'
 
 DATABASES = {
@@ -62,7 +60,8 @@ DATABASES = {
         'USER': 'postgres.uovktvztwuzstzbzjafr', 
         'PASSWORD': 'Ghbase2121',
         'HOST': 'aws-1-us-east-2.pooler.supabase.com', 
-        'PORT': '5432',}
+        'PORT': '5432',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -86,26 +85,23 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-# Directorios donde buscar archivos estáticos
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'mydresscode/static'),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Envía al usuario a la URL de configuración (onboarding_url)
 LOGIN_REDIRECT_URL = '/configuracion-inicial/'
 
-# Configuración Supabase
-SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+# CORRECCIÓN: Configuración Supabase - usar las variables correctas
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://uovktvztwuzstzbzjafr.supabase.co')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc')
 SUPABASE_STORAGE_BUCKET = 'armario-digital'
 
 print("=== CONFIGURACIÓN COMPLETADA ===")
-print("Supabase Host:", os.getenv('SUPABASE_DB_HOST'))
+print("Supabase URL:", SUPABASE_URL)
+print("Supabase Key:", SUPABASE_KEY[:20] + "...")  # Mostrar solo parte por seguridad
 
 LOGIN_URL = '/login/'
 
-
-# Para producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

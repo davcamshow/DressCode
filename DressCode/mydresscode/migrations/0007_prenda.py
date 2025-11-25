@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('estilo', models.CharField(blank=True, max_length=60)),
                 ('esFavorito', models.BooleanField(default=False)),
                 ('fecha', models.DateTimeField(auto_now_add=True)),
-                ('idUsuario', models.ForeignKey(db_column='idUsuario', on_delete=django.db.models.deletion.CASCADE, related_name='prendas', to='mydresscode.usuario')),
+                ('idUsuario', models.ForeignKey(db_column='idUsuario', on_delete=django.db.models.deletion.CASCADE, related_name='prendas_segmentadas', to='mydresscode.usuario')),
             ],
             options={
                 'db_table': 'prenda',

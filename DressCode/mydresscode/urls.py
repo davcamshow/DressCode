@@ -32,7 +32,12 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('sideface/', views.sideface_view, name='sideface'), 
     path("guardar-rating/", views.guardar_rating, name="guardar_rating"),
+<<<<<<< HEAD
+    path('subir-prenda/', views.subir_prenda, name='subir_prenda'),
+    path('segmentar-prenda/', views.segmentar_prenda, name='segmentar-prenda'),
+=======
     path('ayuda-contacto/', views.ayuda_contacto, name='ayuda_contacto'),
+>>>>>>> 43114ededd75a80917ee2aa38933f2bb2bfcd016
 ]
 
 

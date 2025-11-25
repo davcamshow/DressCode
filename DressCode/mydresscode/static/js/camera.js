@@ -49,73 +49,183 @@ function showMessage(message, type = 'success') {
     }, type === 'success' ? 5000 : type === 'error' ? 5000 : 4000);
 }
 
-// Función para mostrar confirmación de guardado
-function showSuccessMessage() {
+// Función para aplicar segmentación a la imagen
+async function applySegmentation(blob) {
+    try {
+        showMessage(' Removiendo fondo de la imagen...', 'info');
+        
+        // Crear FormData para enviar la imagen
+        const formData = new FormData();
+        formData.append('imagen', blob, 'prenda_para_segmentar.png');
+        
+        // Enviar la imagen al servidor para segmentación
+        const response = await fetch(SEGMENTAR_URL || '/segmentar-prenda/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.segmented_image) {
+                showMessage(' Fondo removido exitosamente', 'success');
+                return result;
+            } else {
+                throw new Error(result.error || 'Error al remover el fondo');
+            }
+        } else {
+            throw new Error('Error del servidor: ' + response.statusText);
+        }
+    } catch (error) {
+        console.error('Error al remover el fondo:', error);
+        showMessage(' No se pudo remover el fondo. Mostrando imagen original.', 'error');
+        return null;
+    }
+}
+
+// Función para mostrar resultados de segmentación
+function showSegmentationResults(originalImageUrl, segmentedImageUrl, prendaData) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    `;
+
     const resultsDiv = document.createElement('div');
     resultsDiv.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         background: white;
         padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         z-index: 1001;
-        max-width: 90%;
-        max-height: 80%;
+        max-width: 95%;
+        max-height: 90vh;
         overflow-y: auto;
         text-align: center;
+        width: 100%;
+        max-width: 900px;
+        position: relative;
     `;
     
-    // Mostrar detalles de la prenda guardada
+    // Crear contenido con comparación de imágenes
     const detallesPrenda = prendaData.tipo ? `
-        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: left;">
-            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Detalles de la prenda guardada:</h3>
-            <p><strong>Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
-            <p><strong>Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
-            <p><strong>Color:</strong> ${prendaData.color || 'No especificado'}</p>
-            <p><strong>Temporada:</strong> ${prendaData.temporada || 'Todo el año'}</p>
-            <p><strong>Estilo:</strong> ${prendaData.estilo || 'Casual'}</p>
-            <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+        <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; text-align: left; border-left: 4px solid #5d9e9e;">
+            <h3 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.3em;">📋 Detalles de la prenda guardada:</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <p><strong>🏷️ Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
+                <p><strong>👕 Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
+                <p><strong>🎨 Color:</strong> ${prendaData.color || 'No especificado'}</p>
+                <p><strong>🌤️ Temporada:</strong> ${prendaData.temporada || 'Todo el año'}</p>
+                <p><strong>👔 Estilo:</strong> ${prendaData.estilo || 'Casual'}</p>
+                <p><strong>⭐ Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+            </div>
         </div>
     ` : '';
     
     resultsDiv.innerHTML = `
-        <h2 style="color: #5d9e9e; margin-bottom: 20px;">✅ Prenda Guardada</h2>
+        <h2 style="color: #5d9e9e; margin-bottom: 25px; font-size: 2em; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span>✅</span> Prenda Guardada - Fondo Removido
+        </h2>
         ${detallesPrenda}
-        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-            <p>La prenda se ha guardado exitosamente en tu armario.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 30px 0;">
+            <div style="text-align: center;">
+                <h4 style="color: #666; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🖼️</span> Imagen Original
+                </h4>
+                <div style="border: 3px solid #e0e0e0; border-radius: 12px; padding: 10px; background: #f8f9fa;">
+                    <img src="${originalImageUrl}" alt="Imagen original" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <h4 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🎯</span> Fondo Removido
+                </h4>
+                <div style="border: 3px solid #5d9e9e; border-radius: 12px; padding: 10px; background: #f0f8f8;">
+                    <img src="${segmentedImageUrl}" alt="Imagen sin fondo" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+                </div>
+            </div>
         </div>
-        <div style="text-align: center; margin-top: 25px;">
+        
+        <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #e8f4f8 0%, #d4edf2 100%); border-radius: 12px; border-left: 4px solid #e69c67;">
+            <p style="color: #2c5530; font-weight: bold; font-size: 1.1em; margin-bottom: 8px;">✅ Fondo removido exitosamente</p>
+            <p style="color: #666; font-size: 0.95em;">La prenda ha sido aislada mediante inteligencia artificial. El fondo ha sido eliminado para mejores recomendaciones de outfit.</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
             <button id="closeResults" style="
-                background: #5d9e9e;
+                background: linear-gradient(135deg, #5d9e9e 0%, #4a8a8a 100%);
                 color: white;
                 border: none;
-                padding: 12px 25px;
-                border-radius: 25px;
+                padding: 15px 35px;
+                border-radius: 30px;
                 cursor: pointer;
                 font-weight: bold;
-            ">Continuar</button>
+                font-size: 1.1em;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(93, 158, 158, 0.3);
+            ">Continuar al Armario</button>
         </div>
     `;
     
-    document.body.appendChild(resultsDiv);
+    overlay.appendChild(resultsDiv);
+    document.body.appendChild(overlay);
     
-    document.getElementById('closeResults').addEventListener('click', function() {
-        resultsDiv.remove();
+    // Agregar efecto hover al botón
+    const closeButton = document.getElementById('closeResults');
+    closeButton.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px)';
+        this.style.boxShadow = '0 6px 20px rgba(93, 158, 158, 0.4)';
+    });
+    
+    closeButton.addEventListener('mouseleave', function() {
+        this.style.transform = '';
+        this.style.boxShadow = '0 4px 15px rgba(93, 158, 158, 0.3)';
+    });
+    
+    closeButton.addEventListener('click', function() {
+        overlay.remove();
         // Limpiar datos de sessionStorage después del envío exitoso
         sessionStorage.removeItem('prendaData');
+        // Limpiar URL de la imagen original
+        if (originalImageUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(originalImageUrl);
+        }
         // Redirigir al inicio después de cerrar
         setTimeout(() => {
             window.location.href = INICIO_URL || "/inicio/";
         }, 500);
     });
+
+    // Cerrar al hacer clic fuera del modal
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+            if (originalImageUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(originalImageUrl);
+            }
+            sessionStorage.removeItem('prendaData');
+            setTimeout(() => {
+                window.location.href = INICIO_URL || "/inicio/";
+            }, 500);
+        }
+    });
 }
 
 // Función para enviar imagen al servidor
 async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
-    showMessage(' Guardando prenda...', 'info');
+    showMessage(' Procesando y guardando prenda...', 'info');
     
     const formData = new FormData();
     formData.append('imagen_prenda', blob, filename);
@@ -152,7 +262,18 @@ async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
         const data = await response.json();
 
         if (response.ok && data.success) {
-            showSuccessMessage();
+            // Aplicar segmentación después de guardar la prenda
+            showMessage(' Removiendo fondo...', 'info');
+            const segmentationResult = await applySegmentation(blob, data.prenda_id);
+            
+            if (segmentationResult && segmentationResult.segmented_image) {
+                // Mostrar resultados con ambas imágenes
+                const originalImageUrl = URL.createObjectURL(blob);
+                showSegmentationResults(originalImageUrl, segmentationResult.segmented_image, prendaData);
+            } else {
+                // Fallback: mostrar mensaje normal si falla la segmentación
+                showSuccessMessage(blob);
+            }
             return true;
         } else {
             console.error('Error del servidor:', data.error || response.statusText);
@@ -164,6 +285,143 @@ async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
         showMessage(' Error de conexión. Inténtalo de nuevo.', 'error');
         return false;
     }
+}
+
+// Función para aplicar segmentación a la imagen
+async function applySegmentation(blob, prendaId = null) {
+    try {
+        showMessage(' Removiendo fondo de la imagen...', 'info');
+        
+        // Crear FormData para enviar la imagen
+        const formData = new FormData();
+        formData.append('imagen', blob, 'prenda_para_segmentar.png');
+        
+        // ✅ ENVIAR EL ID DE LA PRENDA SI ESTÁ DISPONIBLE
+        if (prendaId) {
+            formData.append('prenda_id', prendaId);
+        }
+        
+        // Enviar la imagen al servidor para segmentación
+        const response = await fetch(SEGMENTAR_URL || '/segmentar-prenda/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.segmented_image) {
+                showMessage(' Fondo removido exitosamente', 'success');
+                return result;
+            } else {
+                throw new Error(result.error || 'Error al remover el fondo');
+            }
+        } else {
+            throw new Error('Error del servidor: ' + response.statusText);
+        }
+    } catch (error) {
+        console.error('Error al remover el fondo:', error);
+        showMessage(' No se pudo remover el fondo. Mostrando imagen original.', 'error');
+        return null;
+    }
+}
+
+// Función de fallback si la segmentación no está disponible
+function showSuccessMessage(blob) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    `;
+
+    const resultsDiv = document.createElement('div');
+    resultsDiv.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        z-index: 1001;
+        max-width: 500px;
+        text-align: center;
+        position: relative;
+    `;
+    
+    const originalImageUrl = blob ? URL.createObjectURL(blob) : '';
+    const imagePreview = originalImageUrl ? `
+        <div style="margin: 20px 0;">
+            <img src="${originalImageUrl}" alt="Prenda guardada" style="width: 100%; max-width: 300px; height: auto; border-radius: 12px; border: 3px solid #5d9e9e;">
+        </div>
+    ` : '';
+    
+    const detallesPrenda = prendaData.tipo ? `
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: left;">
+            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Detalles de la prenda guardada:</h3>
+            <p><strong>Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
+            <p><strong>Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
+            <p><strong>Color:</strong> ${prendaData.color || 'No especificado'}</p>
+            <p><strong>Temporada:</strong> ${prendaData.temporada || 'Todo el año'}</p>
+            <p><strong>Estilo:</strong> ${prendaData.estilo || 'Casual'}</p>
+            <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+        </div>
+    ` : '';
+    
+    resultsDiv.innerHTML = `
+        <h2 style="color: #5d9e9e; margin-bottom: 20px;">✅ Prenda Guardada</h2>
+        ${imagePreview}
+        ${detallesPrenda}
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <p>La prenda se ha guardado exitosamente en tu armario.</p>
+        </div>
+        <div style="text-align: center; margin-top: 25px;">
+            <button id="closeResults" style="
+                background: #5d9e9e;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: bold;
+            ">Continuar</button>
+        </div>
+    `;
+    
+    overlay.appendChild(resultsDiv);
+    document.body.appendChild(overlay);
+    
+    document.getElementById('closeResults').addEventListener('click', function() {
+        overlay.remove();
+        if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(originalImageUrl);
+        }
+        sessionStorage.removeItem('prendaData');
+        setTimeout(() => {
+            window.location.href = INICIO_URL || "/inicio/";
+        }, 500);
+    });
+
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+            if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(originalImageUrl);
+            }
+            sessionStorage.removeItem('prendaData');
+            setTimeout(() => {
+                window.location.href = INICIO_URL || "/inicio/";
+            }, 500);
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -212,6 +470,8 @@ document.addEventListener('DOMContentLoaded', function() {
             padding: 15px;
             margin-bottom: 20px;
             text-align: left;
+            width: 90%;
+            max-width: 500px;
         `;
         infoDiv.innerHTML = `
             <h3 style="color: #5d9e9e; margin-bottom: 10px;">Información de la prenda:</h3>
