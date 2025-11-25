@@ -894,3 +894,6 @@ def guardar_rating(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Método no permitido"}, status=405)
+
+def ayuda_contacto(request):
+    return render(request, 'help.html')

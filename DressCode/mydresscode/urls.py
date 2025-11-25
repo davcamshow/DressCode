@@ -32,7 +32,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('sideface/', views.sideface_view, name='sideface'), 
     path("guardar-rating/", views.guardar_rating, name="guardar_rating"),
-
+    path('ayuda-contacto/', views.ayuda_contacto, name='ayuda_contacto'),
 ]
 
 
