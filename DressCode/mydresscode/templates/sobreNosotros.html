@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sobre Nosotros - DressCode Fashion</title>
+  <link rel="stylesheet" href="{% static 'css/welcome.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/sobreNosotros.css' %}" />
+</head>
+<body>
+  <!-- Canvas para el fondo dinámico -->
+  <canvas id="dynamic-bg"></canvas>
+
+  <div class="container">
+    <!-- Barra superior -->
+    <nav class="topbar" aria-label="Main navigation">
+      <div class="menu-item" onclick="window.location.href='{% url 'home' %}'">Inicio</div>
+      <div class="menu-item active" onclick="window.location.href='{% url 'sobre_nosotros' %}'">Sobre Nosotros</div>
+      <div class="menu-item" onclick="window.location.href='{% url 'contacto' %}'">Contacto</div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="about-container">
+      <header class="about-header">
+        <h1>Sobre DressCode</h1>
+        <p>Somos más que una aplicación de moda. Creamos experiencias únicas que transforman la manera en que te vistes y expresas tu identidad.</p>
+      </header>
+
+      <section class="about-section">
+        <div class="about-content">
+          <h2>Nuestra Misión</h2>
+          <p>Revolucionar la forma en que las personas interactúan con su guardarropa, facilitando la creación de outfits perfectos que reflejen su personalidad y estilo único.</p>
+          <p>Buscamos empoderar a nuestros usuarios para que tomen decisiones de moda informadas, sostenibles y que realmente los representen en cada ocasión.</p>
+        </div>
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Nuestra misión">
+        </div>
+      </section>
+
+      <section class="about-section reverse">
+        <div class="about-content">
+          <h2>Nuestra Visión</h2>
+          <p>Ser la plataforma líder mundial en gestión de estilo personal, reconocida por nuestra innovación tecnológica y nuestro compromiso con la expresión individual a través de la moda.</p>
+          <p>Aspiramos a crear una comunidad global donde la moda sea accesible, personalizada y sostenible para todos.</p>
+        </div>
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Nuestra visión">
+        </div>
+      </section>
+
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <h3>50K+</h3>
+            <p>Usuarios Satisfechos</p>
+          </div>
+          <div class="stat-item">
+            <h3>10K+</h3>
+            <p>Outfit Creados Diariamente</p>
+          </div>
+          <div class="stat-item">
+            <h3>95%</h3>
+            <p>Clientes Recomiendan DressCode</p>
+          </div>
+          <div class="stat-item">
+            <h3>24/7</h3>
+            <p>Soporte Personalizado</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="about-content" style="text-align: center; margin-bottom: 40px;">
+          <h2>¿Por Qué Elegir DressCode?</h2>
+          <p>Descubre las características que nos hacen únicos en el mundo de la moda digital</p>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">👕</div>
+            <h3>Guardarropa Virtual</h3>
+            <p>Digitaliza tu guardarropa físico y organiza todas tus prendas de forma intuitiva. Nunca más olvidarás qué ropa tienes.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3>Moda Sostenible</h3>
+            <p>Promovemos el uso consciente de la ropa que ya tienes, reduciendo el consumo excesivo y fomentando la economía circular.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🎉</div>
+            <h3>Outfits para Eventos</h3>
+            <p>Encuentra el outfit perfecto para cualquier ocasión: trabajo, citas, eventos formales o casual.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Experiencia Personalizada</h3>
+            <p>Cada recomendación se adapta a tu estilo único, cuerpo, clima local y ocasiones específicas.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <h2>¿Listo para Transformar tu Estilo?</h2>
+        <p>Únete a la comunidad DressCode y descubre una nueva forma de experimentar la moda. Personal, intuitiva y diseñada exclusivamente para ti.</p>
+        <div class="cta-buttons">
+          <button class="login-btn" onclick="window.location.href='/register'">CREAR CUENTA GRATIS</button>
+          <button class="secondary" onclick="window.location.href='/login'">INICIAR SESIÓN</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="{% static 'js/welcome.js' %}"></script>
+  <script src="{% static 'js/sobreNosotros.js' %}"></script>
+</body>
+</html>

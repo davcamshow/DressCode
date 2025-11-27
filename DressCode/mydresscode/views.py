@@ -292,6 +292,12 @@ def my_closet(request):
 def categoria(request):
     return render(request, 'category.html')
 
+def sobre_nosotros(request):
+    return render(request, 'sobreNosotros.html')
+
+def contacto(request):
+    return render(request, 'contacto.html')
+
 @csrf_exempt
 def subir_prenda(request):
     if request.method == 'POST' and 'imagen_prenda' in request.FILES:
