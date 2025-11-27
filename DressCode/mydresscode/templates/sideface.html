@@ -65,12 +65,19 @@
       border-right: 1px solid rgba(0,0,0,0.05);
     }
 
-    .profile-pic {
+    /* --- Foto de Perfil --- */
+    .profile-pic-container {
+      position: relative;
       width: 120px;
       height: 120px;
+      margin: 0 auto 20px;
+    }
+
+    .profile-pic {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       background: linear-gradient(135deg, #dea583 0%, #cf8e71 100%);
-      margin: 0 auto 20px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,6 +85,94 @@
       font-size: 48px;
       font-weight: bold;
       box-shadow: var(--sombra-media);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .profile-pic:hover {
+      transform: scale(1.05);
+    }
+
+    /* Menú de tres puntos */
+    .profile-menu {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 30px;
+      height: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--sombra-suave);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .profile-menu:hover {
+      background-color: white;
+      transform: scale(1.1);
+    }
+
+    .profile-menu-dots {
+      font-size: 18px;
+      color: var(--color-primary);
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    /* Menú desplegable */
+    .dropdown-menu {
+      position: absolute;
+      top: 35px;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--sombra-media);
+      padding: 8px 0;
+      min-width: 150px;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .dropdown-menu.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--color-light);
+    }
+
+    .dropdown-item.delete {
+      color: #e74c3c;
+    }
+
+    .dropdown-item.delete:hover {
+      background-color: #ffeaea;
     }
 
     .profile-name {
@@ -274,6 +369,192 @@
       box-shadow: var(--sombra-suave);
     }
 
+    /* --- Modal para subir foto --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--sombra-media);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: var(--color-primary);
+    }
+
+    .modal-message {
+      font-size: 16px;
+      color: var(--color-neutral2);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .preview-container {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      border: 3px solid var(--color-light);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      background-color: var(--color-secondary);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .file-label:hover {
+      background-color: var(--color-warm2);
+      transform: translateY(-2px);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      padding: 12px 25px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 16px;
+    }
+
+    .modal-btn.cancel {
+      background: var(--color-light);
+      color: var(--color-dark);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--color-warm1);
+    }
+
+    .modal-btn.save {
+      background: var(--color-secondary);
+      color: white;
+    }
+
+    .modal-btn.save:hover {
+      background: var(--color-warm2);
+      transform: translateY(-2px);
+    }
+
+    /* --- Modal de confirmación para eliminar --- */
+    .confirm-modal .modal-content {
+      max-width: 400px;
+    }
+
+    .confirm-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: #e74c3c;
+    }
+
+    .confirm-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--color-primary);
+    }
+
+    .confirm-message {
+      font-size: 16px;
+      color: var(--color-neutral2);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .confirm-btn {
+      padding: 12px 25px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 16px;
+      min-width: 100px;
+    }
+
+    .confirm-btn.cancel {
+      background: var(--color-light);
+      color: var(--color-dark);
+    }
+
+    .confirm-btn.cancel:hover {
+      background: var(--color-warm1);
+    }
+
+    .confirm-btn.delete {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .confirm-btn.delete:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+    }
+
     /* --- Responsive --- */
     @media (max-width: 768px) {
       .profile-container {
@@ -304,18 +585,34 @@
   <div class="profile-container">
     <!-- Panel Izquierdo - Perfil -->
     <div class="profile-panel">
-      <div class="profile-pic">{{ iniciales }}</div>
-      <div class="profile-name">{{ nombre_completo }}</div>
-      <div class="profile-email">{{ email }}</div>
+      <div class="profile-pic-container">
+        <div class="profile-pic" id="profilePic">
+          <!-- Aquí se mostrará la imagen o las iniciales -->
+          <span id="profileInitials">AT</span>
+        </div>
+        <div class="profile-menu" id="profileMenu">
+          <div class="profile-menu-dots">⋯</div>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-item" id="editPhoto">
+            <span>Cambiar foto</span>
+          </div>
+          <div class="dropdown-item delete" id="deletePhoto">
+            <span>Eliminar foto</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-name">Abel Tanez</div>
+      <div class="profile-email">abel@gmail.com</div>
       
       <div class="preferences">
         <div class="pref-item">
           <div class="pref-title">Color favorito</div>
-          <div class="color-circle" style="background-color: {{ colores_fav.0 }};"></div>
+          <div class="color-circle" style="background-color: #a47968;"></div>
         </div>
         <div class="pref-item">
           <div class="pref-title">Estilo frecuente</div>
-          <div class="style-badge">{{ estilos_fav.0 }}</div>
+          <div class="style-badge">ELEGANTE</div>
         </div>
       </div>
     </div>
@@ -335,15 +632,15 @@
       <div class="sizes">
         <div class="size-item">
           <div class="size-type">Superior</div>
-          <div class="size-value">{{ talla_superior }}</div>
+          <div class="size-value">XL</div>
         </div>
         <div class="size-item">
           <div class="size-type">Inferior</div>
-          <div class="size-value">{{ talla_inferior }}</div>
+          <div class="size-value">L</div>
         </div>
         <div class="size-item">
           <div class="size-type">Calzado</div>
-          <div class="size-value">{{ talla_calzado }}</div>
+          <div class="size-value">39</div>
         </div>
       </div>
       
@@ -352,30 +649,243 @@
         <div class="event">
           <div class="event-date">ESTILOS FAVORITOS</div>
           <div class="event-title">
-            {% for estilo in estilos_fav %}
-              <span class="style-badge">{{ estilo }}</span>
-            {% endfor %}
+            <span class="style-badge">ELEGANTE</span>
           </div>
           <div class="event-style">
             COLORES FAVORITOS: 
-            {% for color in colores_fav %}
-              <span class="color-dot" style="background-color: {{ color }};" title="{{ color }}"></span>
-            {% endfor %}
-            {% if not colores_fav %}
-              <span>No hay colores definidos</span>
-            {% endif %}
+            <span class="color-dot" style="background-color: #a47968;" title="#a47968"></span>
+            <span class="color-dot" style="background-color: #cf8e71;" title="#cf8e71"></span>
+            <span class="color-dot" style="background-color: #dea583;" title="#dea583"></span>
           </div>
-          <button class="btn" onclick="location.href='{% url 'configuracion_inicial' %}'">Editar Preferencias</button>
+          <button class="btn">Editar Preferencias</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para subir/editar foto de perfil -->
+  <div class="modal-overlay" id="profilePicModal">
+    <div class="modal-content">
+      <h2 class="modal-title">Cambiar foto de perfil</h2>
+      <p class="modal-message">Selecciona una nueva imagen para tu perfil.</p>
+      
+      <div class="preview-container">
+        <img id="imagePreview" class="preview-image" src="" alt="Vista previa">
+      </div>
+      
+      <input type="file" id="fileInput" class="file-input" accept="image/*">
+      <label for="fileInput" class="file-label">Seleccionar imagen</label>
+      
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="cancelUpload">Cancelar</button>
+        <button class="modal-btn save" id="saveProfilePic">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación para eliminar foto -->
+  <div class="modal-overlay confirm-modal" id="confirmDeleteModal">
+    <div class="modal-content">
+      <h2 class="confirm-title">Eliminar foto de perfil</h2>
+      <p class="confirm-message">¿Estás seguro de que quieres eliminar tu foto de perfil? Se restaurarán las iniciales.</p>
+      <div class="confirm-actions">
+        <button class="confirm-btn cancel" id="cancelDelete">Cancelar</button>
+        <button class="confirm-btn delete" id="confirmDelete">Eliminar</button>
       </div>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Perfil cargado correctamente');
-      // Debug: mostrar colores en consola
-      console.log('Colores disponibles:', {{ colores_fav|safe }});
+      // Elementos del DOM
+      const profilePic = document.getElementById('profilePic');
+      const profileMenu = document.getElementById('profileMenu');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      const editPhoto = document.getElementById('editPhoto');
+      const deletePhoto = document.getElementById('deletePhoto');
+      const profilePicModal = document.getElementById('profilePicModal');
+      const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+      const fileInput = document.getElementById('fileInput');
+      const imagePreview = document.getElementById('imagePreview');
+      const cancelUpload = document.getElementById('cancelUpload');
+      const saveProfilePic = document.getElementById('saveProfilePic');
+      const cancelDelete = document.getElementById('cancelDelete');
+      const confirmDelete = document.getElementById('confirmDelete');
+      const profileInitials = document.getElementById('profileInitials');
+      
+      // Variables de estado
+      let currentProfileImage = null;
+      
+      // Cargar imagen guardada al iniciar
+      loadSavedProfileImage();
+      
+      // Abrir menú desplegable
+      profileMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+      });
+      
+      // Cerrar menú al hacer clic fuera
+      document.addEventListener('click', function() {
+        dropdownMenu.classList.remove('active');
+      });
+      
+      // Prevenir que el menú se cierre al hacer clic dentro
+      dropdownMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      // Abrir modal para editar foto
+      editPhoto.addEventListener('click', openProfilePicModal);
+      
+      // Abrir modal para eliminar foto
+      deletePhoto.addEventListener('click', function() {
+        dropdownMenu.classList.remove('active');
+        confirmDeleteModal.classList.add('active');
+      });
+      
+      // Cerrar modales
+      cancelUpload.addEventListener('click', closeProfilePicModal);
+      cancelDelete.addEventListener('click', closeConfirmDeleteModal);
+      
+      // Guardar foto de perfil
+      saveProfilePic.addEventListener('click', saveProfilePicture);
+      
+      // Eliminar foto de perfil
+      confirmDelete.addEventListener('click', deleteProfilePicture);
+      
+      // Mostrar vista previa de la imagen seleccionada
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          
+          reader.onload = function(event) {
+            imagePreview.src = event.target.result;
+            currentProfileImage = event.target.result;
+          };
+          
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Funciones
+      function openProfilePicModal() {
+        dropdownMenu.classList.remove('active');
+        profilePicModal.classList.add('active');
+      }
+      
+      function closeProfilePicModal() {
+        profilePicModal.classList.remove('active');
+        // Limpiar selección
+        fileInput.value = '';
+        imagePreview.src = '';
+        currentProfileImage = null;
+      }
+      
+      function closeConfirmDeleteModal() {
+        confirmDeleteModal.classList.remove('active');
+      }
+      
+      function saveProfilePicture() {
+        if (currentProfileImage) {
+          // Actualizar la foto de perfil
+          updateProfileImage(currentProfileImage);
+          
+          // Guardar en localStorage
+          localStorage.setItem('profileImage', currentProfileImage);
+          localStorage.setItem('hasProfileImage', 'true');
+          
+          // Cerrar modal
+          closeProfilePicModal();
+          
+          // Mostrar mensaje de éxito
+          showMessage('¡Foto de perfil actualizada con éxito!');
+        } else {
+          showMessage('Por favor, selecciona una imagen primero.');
+        }
+      }
+      
+      function deleteProfilePicture() {
+        // Restaurar iniciales
+        restoreInitials();
+        
+        // Limpiar localStorage
+        localStorage.removeItem('profileImage');
+        localStorage.setItem('hasProfileImage', 'false');
+        
+        // Cerrar modal
+        closeConfirmDeleteModal();
+        
+        // Mostrar mensaje
+        showMessage('Foto de perfil eliminada.');
+      }
+      
+      function updateProfileImage(imageData) {
+        profilePic.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = imageData;
+        img.alt = 'Foto de perfil';
+        profilePic.appendChild(img);
+        
+        // Ocultar las iniciales
+        profileInitials.style.display = 'none';
+      }
+      
+      function restoreInitials() {
+        profilePic.innerHTML = '';
+        profilePic.appendChild(profileInitials);
+        profileInitials.style.display = 'flex';
+      }
+      
+      function loadSavedProfileImage() {
+        const savedImage = localStorage.getItem('profileImage');
+        const hasProfileImage = localStorage.getItem('hasProfileImage');
+        
+        if (hasProfileImage === 'true' && savedImage) {
+          updateProfileImage(savedImage);
+        } else {
+          restoreInitials();
+        }
+      }
+      
+      function showMessage(message) {
+        // Crear elemento de mensaje
+        const messageEl = document.createElement('div');
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: var(--color-primary);
+          color: white;
+          padding: 12px 20px;
+          border-radius: 10px;
+          box-shadow: var(--sombra-media);
+          z-index: 1000;
+          animation: slideIn 0.3s ease;
+        `;
+        
+        document.body.appendChild(messageEl);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+          messageEl.remove();
+        }, 3000);
+      }
+      
+      // Cerrar modales al hacer clic fuera del contenido
+      profilePicModal.addEventListener('click', function(e) {
+        if (e.target === profilePicModal) {
+          closeProfilePicModal();
+        }
+      });
+      
+      confirmDeleteModal.addEventListener('click', function(e) {
+        if (e.target === confirmDeleteModal) {
+          closeConfirmDeleteModal();
+        }
+      });
     });
   </script>
 </body>
