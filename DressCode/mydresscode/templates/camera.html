@@ -5,19 +5,567 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dresscode - Camera</title>
-    <link rel="stylesheet" href="{% static 'css/camera.css' %}">
-    <!-- Agregar Font Awesome para el icono de usuario -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#5B9B9D',
+                        'primary-accent': '#e91e63',
+                        'secondary-btn': '#ff9800',
+                        'bg-light': '#f0f2f5',
+                        'border-subtle': 'rgba(0, 0, 0, 0.1)',
+                        'muted-text': '#717182',
+                        'card-bg': '#ffffff',
+                        'btn-generate': '#f9a86e', 
+                        'btn-capture': '#e96d74',
+                        'bone-white': '#f5f1e8',
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        /* Estilos adicionales para la foto de perfil */
-        .profile-container {
-            position: relative;
-            display: inline-block;
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Times New Roman', serif;
+            background-color: #e7e1d9;
+            color: #1c1c1c;
+            overflow-x: hidden;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
         }
         
-        .profile-icon {
+        /* Side Menu Styles - MEJORADO CON BLUR HUESO */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: rgba(245, 241, 232, 0.85); /* Color hueso con transparencia */
+            backdrop-filter: blur(20px); /* Más blur */
+            -webkit-backdrop-filter: blur(20px);
+            color: #1c1c1c;
+            z-index: 1000;
+            transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            padding: 80px 30px 40px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15);
+            border-right: 1px solid rgba(189, 161, 110, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .side-menu.active {
+            left: 0;
+        }
+        
+        .menu-toggle {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 1001;
+            cursor: pointer;
+            background: none; /* Sin fondo */
+            border: none; /* Sin borde */
+            color: #1c1c1c; /* Color del texto */
+            font-size: 24px; /* Tamaño de las barras */
+            width: auto; /* Ancho automático */
+            height: auto; /* Alto automático */
+            border-radius: 0; /* Sin bordes redondeados */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: none; /* Sin sombra */
+            backdrop-filter: none; /* Sin blur */
+            -webkit-backdrop-filter: none;
+            padding: 8px; /* Un poco de padding para mejor click */
+        }
+        
+        .menu-toggle:hover {
+            background: none; /* Sin fondo al hover */
+            transform: scale(1.1); /* Solo escala ligeramente */
+            border-color: transparent; /* Sin borde */
+            color: #5B9B9D; /* Cambio de color al hover */
+        }
+        
+        .side-menu nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .side-menu a {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(189, 161, 110, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 400;
+        }
+        
+        .side-menu a i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: #5B9B9D;
+            transition: all 0.3s ease;
+        }
+        
+        .side-menu a:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #5B9B9D;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .side-menu a:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(8px);
+            border-color: rgba(189, 161, 110, 0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .side-menu a:hover:before {
+            transform: scaleY(1);
+        }
+        
+        .side-menu a:hover i {
+            color: #e91e63;
+            transform: scale(1.1);
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Header centrado */
+        header {
+            display: flex;
+            justify-content: center;
+            padding: 30px 40px 0 40px;
+            align-items: center;
+            font-size: 14px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 40px;
+            font-weight: 400;
+        }
+        
+        .header-nav a {
+            text-transform: uppercase;
+            font-weight: 300;
+            padding: 10px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .header-nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #1c1c1c;
+            transition: width 0.3s ease;
+        }
+        
+        .header-nav a:hover {
+            color: #837560;
+        }
+        
+        .header-nav a:hover:after {
+            width: 100%;
+        }
+        
+        .logo {
+            position: absolute;
+            right: 40px;
+            height: 80px; /* Duplicado: de 40px a 80px */
+            width: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            max-width: 160px; /* Duplicado: de 80px a 160px */
+        }
+        
+        main {
+            display: flex;
+            padding: 40px 60px;
+            gap: 40px;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .left-text {
+            flex: 1;
+            max-width: 480px;
+            font-weight: 300;
+        }
+        
+        .left-text h1 {
+            font-weight: 300;
+            font-size: 28px;
+            line-height: 1.4;
+            letter-spacing: 4px;
+            margin: 0 0 24px 0;
+        }
+        
+        .left-text p {
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+            max-width: 320px;
+            font-weight: 300;
+        }
+        
+        /* Estilos para los dos botones */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background-color: #1c1c1c;
+            color: #e7e1d9;
+            border: none;
+            padding: 12px 28px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            font-weight: 300;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        button:hover {
+            background-color: #4a4a4a;
+            transform: translateY(-2px);
+        }
+        
+        /* Segundo botón con estilo diferente */
+        .btn-secondary {
+            background-color: transparent;
+            color: #1c1c1c;
+            border: 1px solid #1c1c1c;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #1c1c1c;
+            color: #e7e1d9;
+        }
+        
+        .right-image-container {
+            flex: 1;
+            position: relative;
+            max-width: 480px;
+            min-height: 420px;
+        }
+        
+        /* Abstract shapes from the design */
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #bda16e;
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .shape1 {
+            width: 76px;
+            height: 76px;
+            top: 35%;
+            right: 28%;
+        }
+        
+        .shape2 {
+            width: 78px;
+            height: 78px;
+            background-color: #837560;
+            opacity: 0.6;
+            bottom: 5%;
+            left: 36%;
+            border-radius: 50%;
+        }
+        
+        .shape3 {
+            width: 50px;
+            height: 25px;
+            background-color: #837560;
+            border-radius: 50% / 100%;
+            top: 18%;
+            left: 10%;
+        }
+        
+        .shape4 {
+            width: 70px;
+            height: 35px;
+            border-radius: 50% / 100%;
+            background-color: #bda16e;
+            bottom: 35%;
+            right: 3%;
+        }
+        
+        .shape5 {
+            width: 140px;
+            height: 140px;
+            border-radius: 70px 70px 0 0;
+            border: 1.5px solid #837560;
+            opacity: 0.35;
+            bottom: 0;
+            right: 18%;
+        }
+        
+        .shape6 {
+            width: 80px;
+            height: 40px;
+            background-color: #bda16e;
+            border-radius: 50% / 100%;
+            top: 35%;
+            left: 40%;
+            opacity: 0.25;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .left-text {
+                max-width: 100%;
+            }
+            
+            .right-image-container {
+                max-width: 100%;
+            }
+            
+            .header-nav {
+                gap: 20px;
+                font-size: 12px;
+            }
+            
+            header {
+                padding: 20px 20px 0 20px;
+            }
+            
+            .logo {
+                right: 20px;
+                height: 70px; /* Duplicado: de 35px a 70px */
+            }
+            
+            .side-menu {
+                width: 280px;
+                padding: 70px 25px 30px;
+            }
+            
+            .side-menu a {
+                font-size: 15px;
+                padding: 14px 18px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .menu-toggle {
+                top: 20px;
+                left: 20px;
+                font-size: 22px;
+            }
+        }
+
+        /* Estilos adicionales para el contenido de Dresscode */
+        .content-wrapper {
+            padding: 40px 60px;
+        }
+        
+        .recommendation-box {
+            background-color: rgba(245, 245, 245, 0.7);
+            border: 1px solid rgba(200, 200, 200, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-generate {
+            background-color: #f9a86e;
+            color: white;
+        }
+        
+        .btn-capture {
+            background-color: #e96d74;
+            color: white;
+        }
+        
+        .mobile-menu {
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .mobile-menu h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1c1c1c;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-icon {
+            background-color: #5B9B9D;
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            margin-right: 15px;
             width: 40px;
             height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-content p {
+            font-weight: 500;
+            color: #1c1c1c;
+            margin: 0;
+        }
+        
+        .menu-content span {
+            font-size: 12px;
+            color: #717182;
+        }
+        
+        .weather-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1c1c1c;
+            font-weight: 600;
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .weather-display:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* NUEVO: Estilos para el icono de usuario y dropdown */
+        .user-profile {
+            position: absolute;
+            right: 180px; /* Ajustado para no solaparse con el logo */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-icon {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(135deg, #5B9B9D 0%, #e91e63 100%);
             display: flex;
@@ -31,34 +579,39 @@
             position: relative;
         }
         
-        .profile-icon img {
+        .user-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
         }
         
-        .profile-icon .default-icon {
+        .user-icon .default-icon {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 16px;
+            font-size: 18px;
         }
         
-        .profile-icon:hover {
+        .user-icon:hover {
             transform: scale(1.1);
             border-color: #5B9B9D;
             box-shadow: 0 4px 12px rgba(91, 155, 157, 0.3);
         }
         
         .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-dropdown-content {
             display: none;
             position: absolute;
             right: 0;
             top: 100%;
             margin-top: 10px;
-            width: 160px;
+            width: 200px;
             background-color: white;
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 12px;
@@ -79,115 +632,1273 @@
             }
         }
         
-        .profile-container.active .profile-dropdown {
+        .profile-dropdown.active .profile-dropdown-content {
             display: block;
         }
         
-        .profile-dropdown a {
-            display: block;
+        .profile-dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             padding: 12px 16px;
             font-size: 14px;
             color: #1c1c1c;
             transition: all 0.3s ease;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            text-decoration: none;
         }
         
-        .profile-dropdown a:last-child {
+        .profile-dropdown-content a:last-child {
             border-bottom: none;
         }
         
-        .profile-dropdown a:hover {
+        .profile-dropdown-content a i {
+            width: 16px;
+            text-align: center;
+            color: #5B9B9D;
+        }
+        
+        .profile-dropdown-content a:hover {
             background-color: rgba(91, 155, 157, 0.1);
             color: #5B9B9D;
         }
         
-        .profile-dropdown a:last-child:hover {
+        .profile-dropdown-content a:hover i {
+            color: #e91e63;
+        }
+        
+        .profile-dropdown-content a:last-child:hover {
             background-color: rgba(233, 30, 99, 0.1);
             color: #e91e63;
+        }
+        
+        .profile-dropdown-content a:last-child:hover i {
+            color: #e91e63;
+        }
+        
+        @media (max-width: 768px) {
+            .user-profile {
+                right: 120px;
+            }
+            
+            .profile-dropdown-content {
+                width: 180px;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu {
+                display: none;
+            }
+        }
+
+        /* ========== ESTILOS ESPECÍFICOS DE LA CÁMARA ========== */
+        .camera-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .camera-title {
+            font-weight: 300;
+            font-size: 28px;
+            line-height: 1.4;
+            letter-spacing: 4px;
+            margin: 0 0 24px 0;
+            text-align: center;
+        }
+        
+        .upload-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .option-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        
+        .option-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .option-button.active {
+            border-color: #5d9e9e;
+            background: #f8fdff;
+            box-shadow: 0 4px 12px rgba(93, 158, 158, 0.2);
+        }
+        
+        .option-icon {
+            font-size: 1.8em;
+        }
+        
+        .camera-container, .upload-container {
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 15px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 3px solid white;
+        }
+        
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+        }
+        
+        .upload-area:hover {
+            border-color: #5d9e9e;
+            background-color: #f8fdff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #5d9e9e;
+            background-color: #e8f4f8;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #5d9e9e;
+        }
+        
+        .upload-area h3 {
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .upload-area p {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .file-preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .file-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        #video, #canvas, .photo-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .capture-button, .upload-button, .retake-button, .change-file-button, .save-button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1em;
+            min-width: 160px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .capture-button:hover, .upload-button:hover, .retake-button:hover, .change-file-button:hover, .save-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        
+        .capture-button:active, .upload-button:active, .retake-button:active, .change-file-button:active, .save-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .capture-button, .upload-button {
+            background: linear-gradient(135deg, #e06e78 0%, #d45965 100%);
+        }
+        
+        .retake-button, .change-file-button {
+            background: linear-gradient(135deg, #5d9e9e 0%, #4a8a8a 100%);
+        }
+        
+        .save-button {
+            background: linear-gradient(135deg, #e69c67 0%, #df8a50 100%);
+        }
+        
+        .camera-instructions {
+            color: #666;
+            font-size: 1em;
+            text-align: center;
+            max-width: 80%;
+            margin: 10px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            backdrop-filter: blur(5px);
+            line-height: 1.8;
+        }
+        
+        .temperature-display {
+            background-color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            font-weight: bold;
+            color: #e06e78;
+        }
+        
+        @media (max-width: 768px) {
+            .upload-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .option-button {
+                min-width: 200px;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .capture-button, .upload-button, .retake-button, .change-file-button, .save-button {
+                width: 220px;
+            }
+            
+            .camera-title {
+                font-size: 1.8em;
+            }
+            
+            .camera-container, .upload-container {
+                height: 250px;
+            }
+            
+            .camera-instructions {
+                max-width: 95%;
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="background-elements">
-        <div class="floating-element element-1"></div>
-        <div class="floating-element element-2"></div>
-        <div class="floating-element element-3"></div>
-        <div class="floating-element element-4"></div>
+    <!-- Side Menu MEJORADO -->
+    <button class="menu-toggle">☰</button>
+    <div class="side-menu">
+        <nav>
+            <a href="{% url 'inicio' %}">
+                <i class="fas fa-home"></i>
+                Inicio
+            </a>
+            <a href="{% url 'visioncomputer' %}">
+                <i class="fas fa-user"></i>
+                Reconocimiento de corporalidad
+            </a>
+            <a href="#">
+                <i class="fas fa-tshirt"></i>
+                Mis outfits
+            </a>
+            <a href="#">
+                <i class="fas fa-palette"></i>
+                Maquillaje
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                Configuración
+            </a>
+            <a href="{% url 'ayuda_contacto' %}">
+                <i class="fas fa-question-circle"></i>
+                Contacto y ayuda
+            </a>
+        </nav>
     </div>
-    
-    <header class="header">
-        <div class="header-icons-left">
-            <a href="{% url 'inicio' %}" class="back-button">← Volver</a>
-            <div class="temperature-display">37°C</div>
-        </div>
-        
-        <div class="header-logo-main">
-            <img src="{% static 'img/logo.png' %}" alt="Logo Dresscode" class="logo-main">
-        </div>
+    <div class="menu-overlay"></div>
 
-        <div class="header-icons-right">
-            <div class="profile-container">
-                <div class="profile-icon">
+    <!-- Header centrado -->
+    <header>
+        <nav class="header-nav">
+            <a href="{% url 'my_closet' %}">Armario</a>
+            <div id="weather-display" class="weather-display">
+                <i class="fas fa-cloud-sun text-yellow-500"></i>
+                <span>22°C</span>
+            </div>
+            <a href="javascript:void(0)" class="favorites-trigger">Favoritos</a>
+        </nav>
+        
+        <!-- NUEVO: Icono de usuario con dropdown -->
+        <div class="user-profile">
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="user-icon" id="userIcon">
                     <!-- La foto de perfil se cargará aquí dinámicamente -->
                     <i class="fas fa-user default-icon"></i>
                 </div>
-                <div class="profile-dropdown">
-                    <a href="{% url 'sideface' %}">Ver perfil</a>
-                    <a href="{% url 'logout' %}">Cerrar sesión</a>
+                <div class="profile-dropdown-content">
+                    <a href="{% url 'sideface' %}">
+                        <i class="fas fa-user-circle"></i>
+                        Mi Perfil
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        Configuración
+                    </a>
+                    <a href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar Sesión
+                    </a>
                 </div>
             </div>
         </div>
+        
+        <div class="logo" aria-label="logo">
+            <img src="{% static 'img/logo.png' %}" alt="DressCode Logo">
+        </div>
     </header>
 
-    <main class="main-content">
-        <h1 class="title">Agregar Prenda</h1>
-        
-        <div class="upload-options">
-            <button id="camera-option" class="option-button active">
-                <span class="option-icon">📷</span>
-                <span>Usar Cámara</span>
-            </button>
-            <button id="upload-option" class="option-button">
-                <span class="option-icon">📁</span>
-                <span>Subir Archivo</span>
-            </button>
-        </div>
-        
-        <div class="camera-container" id="camera-container">
-            <video id="video" autoplay playsinline></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <div id="photo-preview" class="photo-preview" style="display:none;"></div>
-        </div>
-        
-        <div class="upload-container" id="upload-container" style="display:none;">
-            <div class="upload-area" id="upload-area">
-                <div class="upload-icon">📁</div>
-                <h3>Arrastra tu imagen aquí</h3>
-                <p>o haz clic para seleccionar</p>
-                <input type="file" id="file-input" accept="image/*" style="display:none;">
+    <main>
+        <section class="left-text">
+            <h1>CAPTURA TUS PRENDAS</h1>
+            <p>Agrega nuevas prendas a tu armario digital tomando fotos o subiendo imágenes existentes.</p>
+            
+            <!-- Información de la prenda si existe -->
+            <div id="prenda-info" style="display: none;">
+                <!-- Se llenará dinámicamente con JavaScript -->
             </div>
-            <div id="file-preview" class="file-preview" style="display:none;"></div>
-        </div>
+        </section>
         
-        <div class="controls">
-            <button id="capture-btn" class="capture-button">Tomar Foto</button>
-            <button id="upload-btn" class="upload-button" style="display:none;">Seleccionar Imagen</button>
-            <button id="retake-btn" class="retake-button" style="display:none;">Volver a Tomar</button>
-            <button id="change-file-btn" class="change-file-button" style="display:none;">Cambiar Archivo</button>
-            <button id="save-btn" class="save-button" style="display:none;">Guardar Prenda</button>
-        </div>
-        
-        <div class="instructions">
-            <p id="camera-instructions">Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada para obtener los mejores resultados.</p>
-            <p id="upload-instructions" style="display:none;">Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 10MB</p>
-        </div>
+        <section class="camera-section">
+            <h2 class="camera-title">Agregar Prenda</h2>
+            
+            <div class="upload-options">
+                <button id="camera-option" class="option-button active">
+                    <span class="option-icon">📷</span>
+                    <span>Usar Cámara</span>
+                </button>
+                <button id="upload-option" class="option-button">
+                    <span class="option-icon">📁</span>
+                    <span>Subir Archivo</span>
+                </button>
+            </div>
+            
+            <div class="camera-container" id="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <div id="photo-preview" class="photo-preview" style="display:none;"></div>
+            </div>
+            
+            <div class="upload-container" id="upload-container" style="display:none;">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <h3>Arrastra tu imagen aquí</h3>
+                    <p>o haz clic para seleccionar</p>
+                    <input type="file" id="file-input" accept="image/*" style="display:none;">
+                </div>
+                <div id="file-preview" class="file-preview" style="display:none;"></div>
+            </div>
+            
+            <div class="camera-controls">
+                <button id="capture-btn" class="capture-button">Tomar Foto</button>
+                <button id="upload-btn" class="upload-button" style="display:none;">Seleccionar Imagen</button>
+                <button id="retake-btn" class="retake-button" style="display:none;">Volver a Tomar</button>
+                <button id="change-file-btn" class="change-file-button" style="display:none;">Cambiar Archivo</button>
+                <button id="save-btn" class="save-button" style="display:none;">Guardar Prenda</button>
+            </div>
+            
+            <div class="camera-instructions">
+                <p id="camera-instructions">Coloca la prenda frente a la cámara y asegúrate de que esté bien iluminada para obtener los mejores resultados.</p>
+                <p id="upload-instructions" style="display:none;">Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 10MB</p>
+            </div>
+        </section>
     </main>
-    <script>
-        const INICIO_URL = "{% url 'inicio' %}";
-        const SEGMENTAR_URL = "{% url 'segmentar-prenda' %}";
-    </script>
 
-    <script src="{% static 'js/camera.js' %}"></script>
+    <!-- Menú móvil -->
+    <div class="mobile-menu">
+        <h2>Menú</h2>
+        
+        <div class="menu-items">
+            <a href="{% url 'visioncomputer' %}" class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="menu-content">
+                    <p>Reconocimiento de corporalidad</p>
+                    <span>Capturate</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="menu-content">
+                    <p>Mis outfits</p>
+                    <span>Sigue recordando</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="menu-content">
+                    <p>Maquillaje</p>
+                    <span>Combina con belleza</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="menu-content">
+                    <p>Configuración</p>
+                    <span>Ajustes de la app</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="menu-content">
+                    <p>Ayuda</p>
+                    <span>Soporte</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Shapes decorativas -->
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+    <div class="shape shape4"></div>
+    <div class="shape shape5"></div>
+    <div class="shape shape6"></div>
+
+    <script>
+        // Definir URLs importantes
+        const SEGMENTAR_URL = "{% url 'segmentar-prenda' %}";
+        const INICIO_URL = "{% url 'inicio' %}";
+        const WEATHER_API_KEY = '8a33fa8635d6adf10672a0fa18b68316';
+        const WEATHER_CITY = 'Morelia'; 
+        const WEATHER_UNITS = 'metric';
+
+        // ========== FUNCIONALIDAD DE LA CÁMARA ==========
+        let stream = null;
+        let currentMode = 'camera';
+        let selectedFile = null;
+
+        // Elementos de la cámara
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const photoPreview = document.getElementById('photo-preview');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const filePreview = document.getElementById('file-preview');
+        const cameraContainer = document.getElementById('camera-container');
+        const uploadContainer = document.getElementById('upload-container');
+        const cameraOption = document.getElementById('camera-option');
+        const uploadOption = document.getElementById('upload-option');
+        const captureBtn = document.getElementById('capture-btn');
+        const uploadBtn = document.getElementById('upload-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const changeFileBtn = document.getElementById('change-file-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const cameraInstructions = document.getElementById('camera-instructions');
+        const uploadInstructions = document.getElementById('upload-instructions');
+
+        // ========== FUNCIONES DE SEGMENTACIÓN Y ENVÍO ==========
+
+        // Función para obtener el token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Función para mostrar mensajes
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.createElement('div');
+            const backgroundColor = type === 'success' ? '#5d9e9e' : 
+                                   type === 'error' ? '#e06e78' : 
+                                   type === 'info' ? '#e69c67' : '#5d9e9e';
+            
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${backgroundColor};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: bold;
+                text-align: center;
+                max-width: 80%;
+                white-space: pre-line;
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, type === 'success' ? 5000 : type === 'error' ? 5000 : 4000);
+        }
+
+        // Función para aplicar segmentación
+        async function applySegmentation(blob, prendaId = null) {
+            try {
+                showMessage(' 🎯 Removiendo fondo de la imagen...', 'info');
+                
+                const formData = new FormData();
+                formData.append('imagen', blob, 'prenda_para_segmentar.png');
+                
+                if (prendaId) {
+                    formData.append('prenda_id', prendaId);
+                }
+                
+                const response = await fetch('/segmentar-prenda/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.segmented_image) {
+                        showMessage(' ✅ Fondo removido exitosamente', 'success');
+                        return result;
+                    } else {
+                        throw new Error(result.error || 'Error al remover el fondo');
+                    }
+                } else {
+                    throw new Error('Error del servidor: ' + response.statusText);
+                }
+            } catch (error) {
+                console.error('Error al remover el fondo:', error);
+                showMessage(' ⚠️ No se pudo remover el fondo. Mostrando imagen original.', 'error');
+                return null;
+            }
+        }
+
+        // Función para mostrar resultados de segmentación
+        function showSegmentationResults(originalImageUrl, segmentedImageUrl, prendaData) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            `;
+
+            const resultsDiv = document.createElement('div');
+            resultsDiv.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                z-index: 10001;
+                max-width: 95%;
+                max-height: 90vh;
+                overflow-y: auto;
+                text-align: center;
+                width: 100%;
+                max-width: 900px;
+                position: relative;
+            `;
+            
+            const detallesPrenda = prendaData.tipo ? `
+                <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; text-align: left; border-left: 4px solid #5d9e9e;">
+                    <h3 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.3em;">📋 Detalles de la prenda guardada:</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <p><strong>🏷️ Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
+                        <p><strong>👕 Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
+                        <p><strong>🎨 Color:</strong> ${prendaData.color || 'No especificado'}</p>
+                        <p><strong>🌤️ Temporada:</strong> ${prendaData.temporada || 'Todo el año'}</p>
+                        <p><strong>👔 Estilo:</strong> ${prendaData.estilo || 'Casual'}</p>
+                        <p><strong>⭐ Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+                    </div>
+                </div>
+            ` : '';
+            
+            resultsDiv.innerHTML = `
+                <h2 style="color: #5d9e9e; margin-bottom: 25px; font-size: 2em; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <span>✅</span> ¡Éxito! Prenda Guardada y Fondo Removido
+                </h2>
+                ${detallesPrenda}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 30px 0;">
+                    <div style="text-align: center;">
+                        <h4 style="color: #666; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🖼️</span> Imagen Original
+                        </h4>
+                        <div style="border: 3px solid #e0e0e0; border-radius: 12px; padding: 10px; background: #f8f9fa;">
+                            <img src="${originalImageUrl}" alt="Imagen original" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <h4 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🎯</span> Fondo Removido
+                        </h4>
+                        <div style="border: 3px solid #5d9e9e; border-radius: 12px; padding: 10px; background: #f0f8f8;">
+                            <img src="${segmentedImageUrl}" alt="Imagen sin fondo" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #e8f4f8 0%, #d4edf2 100%); border-radius: 12px; border-left: 4px solid #e69c67;">
+                    <p style="color: #2c5530; font-weight: bold; font-size: 1.1em; margin-bottom: 8px;">✅ Proceso completado exitosamente</p>
+                    <p style="color: #666; font-size: 0.95em;">La prenda ha sido guardada en tu armario y el fondo ha sido removido mediante inteligencia artificial para mejores recomendaciones de outfit.</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button id="closeResults" style="
+                        background: linear-gradient(135deg, #5d9e9e 0%, #4a8a8a 100%);
+                        color: white;
+                        border: none;
+                        padding: 15px 35px;
+                        border-radius: 30px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1.1em;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(93, 158, 158, 0.3);
+                    ">Continuar al Armario</button>
+                </div>
+            `;
+            
+            overlay.appendChild(resultsDiv);
+            document.body.appendChild(overlay);
+            
+            // Agregar efecto hover al botón
+            const closeButton = document.getElementById('closeResults');
+            closeButton.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 6px 20px rgba(93, 158, 158, 0.4)';
+            });
+            
+            closeButton.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '0 4px 15px rgba(93, 158, 158, 0.3)';
+            });
+            
+            closeButton.addEventListener('click', function() {
+                overlay.remove();
+                // Limpiar datos de sessionStorage
+                sessionStorage.removeItem('prendaData');
+                // Limpiar URL de la imagen original
+                if (originalImageUrl.startsWith('blob:')) {
+                    URL.revokeObjectURL(originalImageUrl);
+                }
+                // Redirigir al armario
+                setTimeout(() => {
+                    window.location.href = '/closet/';
+                }, 500);
+            });
+
+            // Cerrar al hacer clic fuera del modal
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                    if (originalImageUrl.startsWith('blob:')) {
+                        URL.revokeObjectURL(originalImageUrl);
+                    }
+                    sessionStorage.removeItem('prendaData');
+                    setTimeout(() => {
+                        window.location.href = '/closet/';
+                    }, 500);
+                }
+            });
+        }
+
+        // Función de fallback
+        function showSuccessMessage(blob) {
+            showMessage('✅ Prenda guardada exitosamente en tu armario', 'success');
+            setTimeout(() => {
+                window.location.href = '/closet/';
+            }, 2000);
+        }
+
+        // Función para enviar imagen al servidor
+        async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
+            showMessage(' 📤 Procesando y guardando prenda...', 'info');
+            
+            const formData = new FormData();
+            formData.append('imagen_prenda', blob, filename);
+            
+            // Agregar datos del formulario si existen
+            const prendaData = JSON.parse(sessionStorage.getItem('prendaData') || '{}');
+            if (prendaData.categoria) formData.append('categoria', prendaData.categoria);
+            if (prendaData.tipo) formData.append('tipo', prendaData.tipo);
+            if (prendaData.color) formData.append('color', prendaData.color);
+            if (prendaData.temporada) formData.append('temporada', prendaData.temporada);
+            if (prendaData.estilo) formData.append('estilo', prendaData.estilo);
+            if (prendaData.esFavorito !== undefined) formData.append('esFavorito', prendaData.esFavorito);
+
+            try {
+                const response = await fetch('/subir-prenda/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showMessage(' ✅ Prenda guardada. Removiendo fondo...', 'success');
+                    
+                    // ✅ APLICAR SEGMENTACIÓN DESPUÉS DE GUARDAR
+                    const segmentationResult = await applySegmentation(blob, data.prenda_id);
+                    
+                    if (segmentationResult && segmentationResult.segmented_image) {
+                        // Mostrar resultados con ambas imágenes
+                        const originalImageUrl = URL.createObjectURL(blob);
+                        showSegmentationResults(originalImageUrl, segmentationResult.segmented_image, prendaData);
+                    } else {
+                        // Fallback si falla la segmentación
+                        showSuccessMessage(blob);
+                    }
+                    return true;
+                } else {
+                    console.error('Error del servidor:', data.error || response.statusText);
+                    showMessage(` ❌ Error: ${data.error || 'Inténtalo de nuevo.'}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error de red/conexión:', error);
+                showMessage(' ❌ Error de conexión. Inténtalo de nuevo.', 'error');
+                return false;
+            }
+        }
+
+        // ========== FUNCIONALIDAD BÁSICA DE LA CÁMARA ==========
+
+        // Inicializar cámara
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                video.srcObject = stream;
+                
+                video.addEventListener('loadedmetadata', function() {
+                    video.style.opacity = '1';
+                });
+                
+            } catch (err) {
+                console.error('Error al acceder a la cámara:', err);
+                showMessage('No se pudo acceder a la cámara. Por favor, asegúrate de haber otorgado los permisos necesarios.', 'error');
+            }
+        }
+
+        // Cambiar entre modos
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Actualizar botones activos
+            cameraOption.classList.toggle('active', mode === 'camera');
+            uploadOption.classList.toggle('active', mode === 'upload');
+            
+            // Mostrar/ocultar contenedores
+            cameraContainer.style.display = mode === 'camera' ? 'flex' : 'none';
+            uploadContainer.style.display = mode === 'upload' ? 'flex' : 'none';
+            
+            // Mostrar/ocultar instrucciones
+            cameraInstructions.style.display = mode === 'camera' ? 'block' : 'none';
+            uploadInstructions.style.display = mode === 'upload' ? 'block' : 'none';
+            
+            // Resetear estados
+            resetCameraState();
+            resetUploadState();
+            
+            // Actualizar botones de control
+            updateControlButtons();
+            
+            // Inicializar cámara si es necesario
+            if (mode === 'camera' && !stream) {
+                initCamera();
+            }
+        }
+
+        function resetCameraState() {
+            photoPreview.style.display = 'none';
+            video.style.display = 'block';
+            if (stream) {
+                video.style.opacity = '1';
+            }
+        }
+
+        function resetUploadState() {
+            filePreview.style.display = 'none';
+            uploadArea.style.display = 'flex';
+            selectedFile = null;
+        }
+
+        function updateControlButtons() {
+            if (currentMode === 'camera') {
+                captureBtn.style.display = 'inline-block';
+                uploadBtn.style.display = 'none';
+                
+                if (photoPreview.style.display === 'block') {
+                    retakeBtn.style.display = 'inline-block';
+                    saveBtn.style.display = 'inline-block';
+                    captureBtn.style.display = 'none';
+                } else {
+                    retakeBtn.style.display = 'none';
+                    saveBtn.style.display = 'none';
+                }
+                changeFileBtn.style.display = 'none';
+            } else {
+                captureBtn.style.display = 'none';
+                uploadBtn.style.display = 'inline-block';
+                
+                if (selectedFile) {
+                    changeFileBtn.style.display = 'inline-block';
+                    saveBtn.style.display = 'inline-block';
+                    uploadBtn.style.display = 'none';
+                } else {
+                    changeFileBtn.style.display = 'none';
+                    saveBtn.style.display = 'none';
+                }
+                retakeBtn.style.display = 'none';
+            }
+        }
+
+        // Capturar foto
+        function capturePhoto() {
+            captureBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                captureBtn.style.transform = '';
+            }, 150);
+            
+            const actualVideoWidth = video.videoWidth;
+            const actualVideoHeight = video.videoHeight;
+            
+            canvas.width = actualVideoWidth;
+            canvas.height = actualVideoHeight;
+            
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, actualVideoWidth, actualVideoHeight);
+            
+            const dataURL = canvas.toDataURL('image/png');
+            photoPreview.innerHTML = `<img src="${dataURL}" alt="Foto capturada" style="width: 100%; height: 100%; object-fit: contain;">`;
+            photoPreview.style.display = 'block';
+            photoPreview.style.opacity = '0';
+            
+            setTimeout(() => {
+                photoPreview.style.opacity = '1';
+                video.style.display = 'none';
+            }, 10);
+            
+            setTimeout(() => {
+                updateControlButtons();
+            }, 300);
+        }
+
+        // Volver a tomar foto
+        function retakePhoto() {
+            retakeBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                retakeBtn.style.transform = '';
+            }, 150);
+            
+            photoPreview.style.opacity = '0';
+            
+            setTimeout(() => {
+                photoPreview.style.display = 'none';
+                video.style.display = 'block';
+                
+                setTimeout(() => {
+                    video.style.opacity = '1';
+                }, 50);
+                
+                updateControlButtons();
+            }, 300);
+        }
+
+        // Manejar selección de archivo
+        function handleFileSelect(file) {
+            // Validar tipo de archivo
+            if (!file.type.match('image.*')) {
+                showMessage('Por favor, selecciona un archivo de imagen válido.', 'error');
+                return;
+            }
+            
+            // Validar tamaño (10MB máximo)
+            if (file.size > 10 * 1024 * 1024) {
+                showMessage('El archivo es demasiado grande. Máximo 10MB.', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            
+            // Mostrar previsualización
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                filePreview.innerHTML = `<img src="${e.target.result}" alt="Previsualización" style="width: 100%; height: 100%; object-fit: contain;">`;
+                filePreview.style.display = 'flex';
+                uploadArea.style.display = 'none';
+                updateControlButtons();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Guardar prenda
+        async function savePrenda() {
+            saveBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                saveBtn.style.transform = '';
+            }, 150);
+            
+            // Deshabilitar botones durante el procesamiento
+            saveBtn.disabled = true;
+            if (currentMode === 'camera') {
+                retakeBtn.disabled = true;
+                saveBtn.textContent = 'Guardando...';
+            } else {
+                changeFileBtn.disabled = true;
+                saveBtn.textContent = 'Subiendo...';
+            }
+            
+            let blob;
+            
+            if (currentMode === 'camera') {
+                // Guardar desde cámara
+                blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/png');
+                });
+            } else {
+                // Guardar desde archivo
+                blob = selectedFile;
+            }
+
+            if (!blob) {
+                showMessage('Error: No se pudo generar el archivo de imagen.', 'error');
+                resetSaveButton();
+                return;
+            }
+
+            // ✅ USAR LA FUNCIÓN REAL DE ENVÍO
+            const success = await sendImageToDjango(blob);
+            
+            if (!success) {
+                resetSaveButton();
+            }
+        }
+
+        function resetSaveButton() {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Guardar Prenda';
+            if (currentMode === 'camera') {
+                retakeBtn.disabled = false;
+            } else {
+                changeFileBtn.disabled = false;
+            }
+        }
+
+        // ========== FUNCIONALIDAD DEL CLIMA ==========
+        async function loadWeather() {
+            const weatherElement = document.getElementById('weather-display');
+            
+            if (!weatherElement) return;
+
+            try {
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold">
+                        <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+                        <span>Cargando clima...</span>
+                    </div>
+                `;
+
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${WEATHER_CITY}&units=${WEATHER_UNITS}&appid=${WEATHER_API_KEY}&lang=es`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener datos del clima');
+                }
+
+                const data = await response.json();
+                
+                const temperature = Math.round(data.main.temp);
+                const description = data.weather[0].description;
+                const iconCode = data.weather[0].icon;
+                
+                // Mapear iconos de OpenWeatherMap a Font Awesome
+                const iconMap = {
+                    '01d': 'fa-sun',           
+                    '01n': 'fa-moon',          
+                    '02d': 'fa-cloud-sun',    
+                    '02n': 'fa-cloud-moon',    
+                    '03d': 'fa-cloud',         
+                    '03n': 'fa-cloud',
+                    '04d': 'fa-cloud',         
+                    '04n': 'fa-cloud',
+                    '09d': 'fa-cloud-rain',    
+                    '09n': 'fa-cloud-rain',
+                    '10d': 'fa-cloud-sun-rain',
+                    '10n': 'fa-cloud-moon-rain',
+                    '11d': 'fa-bolt',          
+                    '11n': 'fa-bolt',
+                    '13d': 'fa-snowflake',     
+                    '13n': 'fa-snowflake',
+                    '50d': 'fa-smog',          
+                    '50n': 'fa-smog'
+                };
+
+                const weatherIconClass = iconMap[iconCode] || 'fa-cloud-sun';
+                const iconColor = getIconColor(iconCode);
+
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold" title="${description}">
+                        <i class="fas ${weatherIconClass} ${iconColor}"></i>
+                        <span>${temperature}°C</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                // por si falla la API mostrar eso
+                weatherElement.innerHTML = `
+                    <div class="flex items-center gap-2 text-gray-700 font-semibold">
+                        <i class="fas fa-cloud-sun text-yellow-500"></i>
+                        <span>22°C</span>
+                    </div>
+                `;
+            }
+        }
+
+        function getIconColor(iconCode) {
+            const colorMap = {
+                '01d': 'text-yellow-500',    
+                '01n': 'text-blue-300',      
+                '02d': 'text-orange-400',      
+                '02n': 'text-blue-400',        
+                '03d': 'text-gray-400',     
+                '03n': 'text-gray-400',
+                '04d': 'text-gray-500',       
+                '04n': 'text-gray-500',
+                '09d': 'text-blue-500',       
+                '09n': 'text-blue-500',
+                '10d': 'text-blue-600',       
+                '10n': 'text-blue-600',
+                '11d': 'text-purple-500',   
+                '11n': 'text-purple-500',
+                '13d': 'text-blue-200',      
+                '13n': 'text-blue-200',
+                '50d': 'text-gray-300',       
+                '50n': 'text-gray-300'
+            };
+            return colorMap[iconCode] || 'text-yellow-500';
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menú lateral
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sideMenu = document.querySelector('.side-menu');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            
+            menuToggle.addEventListener('click', () => {
+                sideMenu.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+            });
+            
+            menuOverlay.addEventListener('click', () => {
+                sideMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+            });
+            
+            // Dropdown de usuario
+            const profileDropdown = document.getElementById('profileDropdown');
+            const userIcon = document.getElementById('userIcon');
+            
+            userIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+            
+            // Cargar foto de perfil
+            function loadProfilePhoto() {
+                const savedImage = localStorage.getItem('profileImage');
+                const hasProfileImage = localStorage.getItem('hasProfileImage');
+                
+                if (hasProfileImage === 'true' && savedImage) {
+                    userIcon.innerHTML = `<img src="${savedImage}" alt="Foto de perfil">`;
+                } else {
+                    userIcon.innerHTML = '<i class="fas fa-user default-icon"></i>';
+                }
+            }
+            loadProfilePhoto();
+            
+            // Clima
+            loadWeather();
+            
+            // Mostrar información de la prenda si existe
+            const prendaData = JSON.parse(sessionStorage.getItem('prendaData') || '{}');
+            if (prendaData.tipo) {
+                const infoDiv = document.getElementById('prenda-info');
+                infoDiv.style.display = 'block';
+                infoDiv.innerHTML = `
+                    <div style="background: #f8fdff; border: 1px solid #5d9e9e; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left;">
+                        <h3 style="color: #5d9e9e; margin-bottom: 10px;">Información de la prenda:</h3>
+                        <p><strong>Categoría:</strong> ${prendaData.categoria}</p>
+                        <p><strong>Tipo:</strong> ${prendaData.tipo}</p>
+                        <p><strong>Color:</strong> ${prendaData.color}</p>
+                        <p><strong>Temporada:</strong> ${prendaData.temporada}</p>
+                        <p><strong>Estilo:</strong> ${prendaData.estilo}</p>
+                        <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
+                    </div>
+                `;
+            }
+
+            // ========== EVENT LISTENERS DE LA CÁMARA ==========
+            
+            // Cambiar entre modos
+            cameraOption.addEventListener('click', () => switchMode('camera'));
+            uploadOption.addEventListener('click', () => switchMode('upload'));
+
+            // Capturar foto
+            captureBtn.addEventListener('click', capturePhoto);
+            
+            // Volver a tomar foto
+            retakeBtn.addEventListener('click', retakePhoto);
+            
+            // Subir archivo
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            
+            // Cambiar archivo
+            changeFileBtn.addEventListener('click', () => {
+                resetUploadState();
+                updateControlButtons();
+            });
+            
+            // Manejar selección de archivo
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // Guardar prenda
+            saveBtn.addEventListener('click', savePrenda);
+            
+            // Botón de favoritos
+            document.querySelectorAll('.favorites-trigger').forEach(trigger => {
+                trigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    sessionStorage.setItem('defaultFilter', 'Favoritos');
+                    window.location.href = "{% url 'my_closet' %}";
+                });
+            });
+
+            // Inicializar la cámara
+            initCamera();
+            
+            // Detener la cámara cuando se abandona la página
+            window.addEventListener('beforeunload', () => {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            });
+        });
+    </script>
 </body>
 </html>
