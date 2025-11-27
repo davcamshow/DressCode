@@ -539,13 +539,17 @@
         
         <!-- Información del usuario -->
         <div class="user-info">
-            {% if user.is_authenticated %}
-                <small>Conectado como: {{ user.email }}</small>
-            {% else %}
-                <small class="warning-text">⚠️ Inicia sesión para usar el calendario</small>
-            {% endif %}
-        </div>
-    </div>
+    {% if user.is_authenticated %}
+        <small>Conectado como: {{ user.email }}</small>
+    {% else %}
+        <small class="warning-text">⚠️ Inicia sesión para usar el calendario</small>
+    {% endif %}
+    
+    <!-- DEBUG: Verificar estado real -->
+    <small style="display: none; color: blue;" id="debugAuth">
+        DEBUG: user.is_authenticated = {{ user.is_authenticated|yesno:"True,False" }}
+    </small>
+</div>
 
     <div class="calendar-container">
         <!-- Vista de calendario mensual -->
@@ -575,9 +579,9 @@
                              data-date="{{ day.date|date:'Y-m-d' }}">
                             {% if day.in_month %}
                                 <span class="day-number">{{ day.date.day }}</span>
-                                {% if user.is_authenticated %}
-                                    <button class="add-event-btn" data-date="{{ day.date|date:'Y-m-d' }}">+</button>
-                                {% endif %}
+                               {% if user.is_authenticated %}
+                                <button class="add-event-btn" data-date="{{ day.date|date:'Y-m-d' }}">+</button>
+                            {% endif %}
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -601,12 +605,6 @@
             </div>
         </div>
     </div>
-    
-    {% if user.is_authenticated %}
-    <div class="floating-add-btn" id="addEventBtn">
-        <span>+</span>
-    </div>
-    {% endif %}
 
     <!-- Modal para agregar/editar eventos -->
     <div class="modal-overlay" id="eventModal">

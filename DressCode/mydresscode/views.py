@@ -1237,11 +1237,17 @@ def calendar_view(request, year=None, month=None):
         prev_month = date(year, month-1, 1)
         next_month = date(year, month+1, 1)
 
-    # Obtener eventos del usuario actual si está autenticado
+    # ✅ CORREGIDO: Obtener usuario usando tu sistema de sesión personalizado
+    user_authenticated = False
+    user_email = ""
     user_events = []
-    if request.user.is_authenticated:
+    
+    if 'usuario_id' in request.session:
         try:
-            usuario = Usuario.objects.get(idUsuario=request.user.id)
+            usuario_id = request.session['usuario_id']
+            usuario = Usuario.objects.get(idUsuario=usuario_id)
+            user_authenticated = True
+            user_email = usuario.email
             user_events = CalendarEventos.objects.filter(id_usuario=usuario)
         except Usuario.DoesNotExist:
             pass
@@ -1257,19 +1263,25 @@ def calendar_view(request, year=None, month=None):
         "next_month": next_month.month,
         "today": today,
         "user_events": user_events,
+        # ✅ Añadir estas variables para el template
+        "user": {
+            "is_authenticated": user_authenticated,
+            "email": user_email
+        }
     }
 
     return render(request, "calendar.html", context)
 
-
 @csrf_exempt
 @require_http_methods(["GET", "POST", "PUT", "DELETE"])
 def calendar_events_api(request):
-    if not request.user.is_authenticated:
+    # ✅ CORREGIDO: Usar tu sistema de autenticación personalizado
+    if 'usuario_id' not in request.session:
         return JsonResponse({'error': 'Authentication required'}, status=401)
     
     try:
-        usuario = Usuario.objects.get(idUsuario=request.user.id)
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
     except Usuario.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
     
@@ -1337,7 +1349,6 @@ def calendar_events_api(request):
             return JsonResponse({'message': 'Event deleted successfully'})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
-
 
 # Vista para el calendario sin parámetros (mes actual)
 def calendar_current(request):
