@@ -330,6 +330,33 @@
       letter-spacing: 0.5px;
     }
 
+    /* --- Botón de calendario para eventos --- */
+    .events-calendar-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      background: var(--color-secundario);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(164, 121, 104, 0.3);
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .events-calendar-btn:hover {
+      transform: scale(1.15);
+      background: var(--color-favorito);
+      box-shadow: 0 4px 12px rgba(164, 121, 104, 0.5);
+    }
+
     /* --- Sección de Favoritos Mejorada --- */
     .favorites-section {
       margin: 25px 15px;
@@ -1078,10 +1105,11 @@
         <span class="stat-number" id="favorites-count">0</span>
         <span class="stat-label">Favoritos</span>
       </div>
-      <div class="stat-box">
-        <span class="stat-number">89%</span>
-        <span class="stat-label">Uso</span>
-      </div>
+     <div class="stat-box">
+    <span class="stat-number">10</span>
+    <span class="stat-label">Eventos</span>
+    <a href="{% url 'calendar' %}" class="events-calendar-btn" title="Ver calendario de eventos">📅</a>
+     </div>
       <div class="stat-box">
         <span class="stat-number">42</span>
         <span class="stat-label">Outfits</span>
@@ -1203,6 +1231,7 @@
       const cancelDeleteBtn = document.getElementById('cancelDelete');
       const confirmDeleteBtn = document.getElementById('confirmDelete');
       const modalMessage = document.getElementById('modalMessage');
+      const eventsCalendarBtn = document.querySelector('.events-calendar-btn');
       
       // Estado de la aplicación
       let currentFilter = 'Todo';
@@ -1491,6 +1520,13 @@
         }
       }
 
+      // Función para manejar el botón de calendario de eventos
+      // Función para manejar el botón de calendario de eventos
+       function handleEventsCalendar() {
+    // Redirigir a la página del calendario
+    window.location.href = "{% url 'calendar' %}";
+       }
+
       // Event Listeners
       filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1527,6 +1563,9 @@
       });
 
       confirmDeleteBtn.addEventListener('click', deleteSelectedItems);
+
+      // Event listener para el botón de calendario de eventos
+      eventsCalendarBtn.addEventListener('click', handleEventsCalendar);
 
       // Cerrar modal al hacer clic fuera
       deleteModal.addEventListener('click', function(e) {

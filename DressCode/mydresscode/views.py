@@ -28,11 +28,16 @@ from django.utils.decorators import method_decorator
 import base64
 from django.core.files.base import ContentFile
 import numpy as np
-
+from django.views.decorators.http import require_http_methods 
 # Importa tus modelos y formularios
 from .forms import EstiloForm, ColorForm, EstacionForm, TallaForm 
 from .models import Profile, Usuario 
-
+from datetime import date, datetime, timedelta
+import calendar
+from django.utils import timezone
+from datetime import datetime, timedelta
+from .models import CalendarEventos, Usuario
+from calendar import monthrange, HTMLCalendar
 logger = logging.getLogger(__name__)
 
 try:
@@ -1186,3 +1191,148 @@ def configuration_system(request):
         'active_tab': 'general'
     }
     return render(request, 'configurationsystem.html', context)
+
+def calendar_view(request, year=None, month=None):
+    # Si no se especifica mes/año, usar el actual
+    today = date.today()
+    if year is None or month is None:
+        year = today.year
+        month = today.month
+
+    year = int(year)
+    month = int(month)
+
+    # Nombre del mes
+    month_name = calendar.month_name[month]
+
+    # Crear matriz del calendario
+    cal = calendar.Calendar(firstweekday=6)  # 6 = domingo como primer día
+    month_days = cal.monthdatescalendar(year, month)
+
+    # Crear estructura para enviarla al template
+    weeks = []
+    for week in month_days:
+        week_data = []
+        for day in week:
+            week_data.append({
+                "date": day,
+                "in_month": day.month == month
+            })
+        weeks.append(week_data)
+
+    # Calcular mes anterior y siguiente
+    if month == 1:
+        prev_month = date(year-1, 12, 1)
+        next_month = date(year, 2, 1)
+    elif month == 12:
+        prev_month = date(year, 11, 1)
+        next_month = date(year+1, 1, 1)
+    else:
+        prev_month = date(year, month-1, 1)
+        next_month = date(year, month+1, 1)
+
+    # Obtener eventos del usuario actual si está autenticado
+    user_events = []
+    if request.user.is_authenticated:
+        try:
+            usuario = Usuario.objects.get(idUsuario=request.user.id)
+            user_events = CalendarEventos.objects.filter(id_usuario=usuario)
+        except Usuario.DoesNotExist:
+            pass
+
+    context = {
+        "year": year,
+        "month": month,
+        "month_name": month_name,
+        "weeks": weeks,
+        "prev_year": prev_month.year,
+        "prev_month": prev_month.month,
+        "next_year": next_month.year,
+        "next_month": next_month.month,
+        "today": today,
+        "user_events": user_events,
+    }
+
+    return render(request, "calendar.html", context)
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST", "PUT", "DELETE"])
+def calendar_events_api(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        usuario = Usuario.objects.get(idUsuario=request.user.id)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    
+    if request.method == 'GET':
+        # Obtener eventos del usuario
+        events = CalendarEventos.objects.filter(id_usuario=usuario)
+        events_data = []
+        for event in events:
+            events_data.append({
+                'id': event.id,
+                'event_date': event.event_date.isoformat() if event.event_date else None,
+                'event_title': event.event_title,
+                'event_outfit': event.event_outfit,
+                'event_location': event.event_location,
+                'event_description': event.event_description,
+                'created_at': event.created_at.isoformat() if event.created_at else None,
+                'updated_at': event.updated_at.isoformat() if event.updated_at else None,
+            })
+        return JsonResponse(events_data, safe=False)
+    
+    elif request.method == 'POST':
+        # Crear nuevo evento
+        try:
+            data = json.loads(request.body)
+            event = CalendarEventos.objects.create(
+                id_usuario=usuario,
+                event_date=data.get('event_date'),
+                event_title=data.get('event_title', ''),
+                event_outfit=data.get('event_outfit'),
+                event_location=data.get('event_location'),
+                event_description=data.get('event_description'),
+            )
+            return JsonResponse({
+                'id': event.id,
+                'message': 'Event created successfully'
+            }, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    elif request.method == 'PUT':
+        # Actualizar evento
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('id')
+            event = get_object_or_404(CalendarEventos, id=event_id, id_usuario=usuario)
+            
+            event.event_date = data.get('event_date', event.event_date)
+            event.event_title = data.get('event_title', event.event_title)
+            event.event_outfit = data.get('event_outfit', event.event_outfit)
+            event.event_location = data.get('event_location', event.event_location)
+            event.event_description = data.get('event_description', event.event_description)
+            event.save()
+            
+            return JsonResponse({'message': 'Event updated successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    elif request.method == 'DELETE':
+        # Eliminar evento
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('id')
+            event = get_object_or_404(CalendarEventos, id=event_id, id_usuario=usuario)
+            event.delete()
+            return JsonResponse({'message': 'Event deleted successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+
+# Vista para el calendario sin parámetros (mes actual)
+def calendar_current(request):
+    return calendar_view(request)

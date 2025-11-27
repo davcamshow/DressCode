@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Outfits | DressCode</title>
+    {% load static %}
+    <style>
+        :root {
+            --color-fondo-principal: #fbfbe9;
+            --color-primario: #3a3021;
+            --color-secundario: #a47968;
+            --color-acento-claro: #f3d09f;
+            --color-favorito: #cf8e71;
+            --color-texto-claro: #605b57;
+            --color-blanco: #ffffff;
+            --sombra-suave: 0 4px 20px rgba(58, 48, 33, 0.08);
+            --sombra-media: 0 8px 30px rgba(58, 48, 33, 0.12);
+            --gradiente-primario: linear-gradient(135deg, #f3d09f 0%, #fbefbc 100%);
+            --gradiente-secundario: linear-gradient(135deg, #a47968 0%, #cf8e71 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fbfbe9 0%, #fbefbc 50%, #f3d09f 100%);
+            color: var(--color-primario);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .main-header-container {
+            padding: 1.5rem 1rem 1rem;
+            background: var(--color-blanco);
+            box-shadow: var(--sombra-media);
+            border-radius: 0 0 25px 25px;
+            margin-bottom: 20px;
+        }
+
+        .top-nav-icons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            background: var(--color-fondo-principal);
+            padding: 12px;
+            border-radius: 20px;
+        }
+
+        .nav-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-texto-claro);
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon.primary-icon {
+            background: var(--gradiente-primario);
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--color-texto-claro);
+            margin-bottom: 10px;
+        }
+
+        .calendar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .calendar-container {
+                flex-direction: row;
+            }
+        }
+
+        .calendar-month, .calendar-details {
+            background: var(--color-blanco);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--sombra-media);
+            border: 1px solid var(--color-acento-claro);
+        }
+
+        .calendar-month { flex: 1; }
+        .calendar-details { flex: 1; }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--color-fondo-principal);
+        }
+
+        .month-year {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: var(--color-fondo-principal);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--color-primario);
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: var(--color-acento-claro);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            color: var(--color-secundario);
+            padding: 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            position: relative;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--color-fondo-principal);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 5px;
+            min-height: 50px;
+        }
+
+        .calendar-day:hover {
+            background: var(--color-acento-claro);
+            transform: translateY(-3px);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .calendar-day.empty:hover {
+            background: transparent;
+            transform: none;
+        }
+
+        .day-number {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .add-event-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--color-secundario);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            z-index: 10;
+            border: none;
+            font-weight: bold;
+        }
+
+        .calendar-day:hover .add-event-btn {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-secundario);
+        }
+
+        .calendar-day.today {
+            background: var(--gradiente-primario);
+            border: 2px solid var(--color-acento-claro);
+        }
+
+        .calendar-day.selected {
+            background: var(--gradiente-secundario);
+            color: white;
+        }
+
+        .calendar-day.selected .day-number {
+            color: white;
+        }
+
+        .calendar-day.selected.has-event::after {
+            background: white;
+        }
+
+        .details-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--color-fondo-principal);
+        }
+
+        .details-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .event-date {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-secundario);
+            margin-bottom: 20px;
+            padding: 10px;
+            background: var(--color-fondo-principal);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .event-card {
+            background: var(--color-fondo-principal);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-secundario);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-media);
+        }
+
+        .event-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .event-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .event-action-btn:hover {
+            background: var(--color-acento-claro);
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--color-primario);
+        }
+
+        .event-outfit, .event-location, .event-description {
+            margin-bottom: 5px;
+            color: var(--color-texto-claro);
+        }
+
+        .event-outfit {
+            font-weight: 600;
+            color: var(--color-secundario);
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-texto-claro);
+        }
+
+        .no-events p {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .no-events small {
+            font-size: 14px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(58, 48, 33, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--color-blanco);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--sombra-media);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-primario);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--color-acento-claro);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-secundario);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .form-btn {
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-btn.cancel {
+            background: var(--color-fondo-principal);
+            color: var(--color-texto-claro);
+        }
+
+        .form-btn.cancel:hover {
+            background: var(--color-acento-claro);
+        }
+
+        .form-btn.save {
+            background: var(--gradiente-secundario);
+            color: var(--color-blanco);
+        }
+
+        .form-btn.save:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-suave);
+        }
+
+        /* BOTÓN FLOTANTE MEJORADO */
+        .floating-add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: var(--gradiente-secundario);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            border: 3px solid var(--color-blanco);
+            box-shadow: var(--sombra-media);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-add-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(164, 121, 104, 0.4);
+        }
+
+        .floating-add-btn.disabled {
+            background: var(--color-texto-claro);
+            cursor: not-allowed;
+            transform: scale(0.9);
+        }
+
+        .floating-add-btn.disabled:hover {
+            transform: scale(0.9);
+        }
+
+        @media (max-width: 768px) {
+            .floating-add-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+        }
+
+        .user-info {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .user-info small {
+            color: var(--color-texto-claro);
+        }
+
+        .warning-text {
+            color: var(--color-secundario) !important;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-header-container">
+        <div class="top-nav-icons">
+            <a href="{% url 'inicio' %}" class="nav-icon">
+                <span>Inicio</span>
+            </a>
+            <a href="#" class="nav-icon">
+                <span>Outfits</span>
+            </a>
+            <a href="#" class="nav-icon">
+                <span>Armario</span>
+            </a>
+            <a href="{% url 'calendar' %}" class="nav-icon primary-icon">
+                <span>Calendario</span>
+            </a>
+            <a href="#" class="nav-icon">
+                <span>Perfil</span>
+            </a>
+        </div>
+
+        <h1>Calendario de Outfits</h1>
+        <p class="page-subtitle">Planifica tus outfits para eventos especiales</p>
+        
+        <!-- Información del usuario -->
+        <div class="user-info">
+            {% if user.is_authenticated %}
+                <small>Conectado como: {{ user.email }}</small>
+            {% else %}
+                <small class="warning-text">⚠️ Inicia sesión para usar el calendario</small>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="calendar-container">
+        <!-- Vista de calendario mensual -->
+        <div class="calendar-month">
+            <div class="calendar-header">
+                <div class="month-year">{{ month_name }} {{ year }}</div>
+                <div class="calendar-nav">
+                    <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-btn">&lt;</a>
+                    <a href="{% url 'calendar_month' next_year next_month %}" class="nav-btn">&gt;</a>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- Encabezados de días -->
+                <div class="calendar-day-header">Dom</div>
+                <div class="calendar-day-header">Lun</div>
+                <div class="calendar-day-header">Mar</div>
+                <div class="calendar-day-header">Mié</div>
+                <div class="calendar-day-header">Jue</div>
+                <div class="calendar-day-header">Vie</div>
+                <div class="calendar-day-header">Sáb</div>
+                
+                <!-- Días del mes generados por Django -->
+                {% for week in weeks %}
+                    {% for day in week %}
+                        <div class="calendar-day {% if not day.in_month %}empty{% endif %} {% if day.date == today %}today{% endif %}" 
+                             data-date="{{ day.date|date:'Y-m-d' }}">
+                            {% if day.in_month %}
+                                <span class="day-number">{{ day.date.day }}</span>
+                                {% if user.is_authenticated %}
+                                    <button class="add-event-btn" data-date="{{ day.date|date:'Y-m-d' }}">+</button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Panel de detalles -->
+        <div class="calendar-details">
+            <div class="details-header">
+                <h2 class="details-title" id="detailsTitle">Próximos Outfits Planificados</h2>
+            </div>
+            
+            <div class="event-date" id="selectedDate">Selecciona una fecha</div>
+            
+            <div class="events-list" id="eventsList">
+                <div class="no-events">
+                    <p>No hay eventos programados</p>
+                    <small>Selecciona una fecha para agregar un evento</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.is_authenticated %}
+    <div class="floating-add-btn" id="addEventBtn">
+        <span>+</span>
+    </div>
+    {% endif %}
+
+    <!-- Modal para agregar/editar eventos -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Agregar Evento</h2>
+            <form id="eventForm">
+                <input type="hidden" id="eventId">
+                <input type="hidden" id="eventDate">
+                
+                <div class="form-group">
+                    <label class="form-label" for="eventTitle">Título del Evento *</label>
+                    <input type="text" id="eventTitle" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="eventOutfit">Outfit Planeado</label>
+                    <input type="text" id="eventOutfit" class="form-input" placeholder="Ej: Vestido Floral + Zapatos Negros">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="eventLocation">Ubicación</label>
+                    <input type="text" id="eventLocation" class="form-input" placeholder="Ej: Restaurante elegante">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="eventDescription">Descripción</label>
+                    <textarea id="eventDescription" class="form-textarea" placeholder="Detalles adicionales del evento..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="form-btn cancel" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="form-btn save">Guardar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✨ Calendario de Outfits Cargado');
+
+            // Elementos del DOM
+            const calendarDays = document.querySelectorAll('.calendar-day:not(.empty)');
+            const selectedDateElement = document.getElementById('selectedDate');
+            const eventsList = document.getElementById('eventsList');
+            const addEventBtn = document.getElementById('addEventBtn');
+            const eventModal = document.getElementById('eventModal');
+            const eventForm = document.getElementById('eventForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const eventIdInput = document.getElementById('eventId');
+            const eventDateInput = document.getElementById('eventDate');
+
+            // Estado de la aplicación
+            let selectedDate = null;
+            let events = [];
+
+            // Inicializar la aplicación
+            initializeCalendar();
+
+            function initializeCalendar() {
+                setupEventListeners();
+                updateFloatingButton();
+            }
+
+            // Configurar event listeners
+            function setupEventListeners() {
+                // Selección de días
+                calendarDays.forEach(day => {
+                    day.addEventListener('click', function() {
+                        selectDate(this.dataset.date);
+                    });
+                });
+
+                // Botones de agregar evento en los días
+                document.querySelectorAll('.add-event-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openAddEventModal(this.dataset.date);
+                    });
+                });
+
+                // Botón flotante
+                if (addEventBtn) {
+                    addEventBtn.addEventListener('click', function() {
+                        if (!selectedDate) {
+                            alert('Por favor, selecciona una fecha primero');
+                            return;
+                        }
+                        openAddEventModal();
+                    });
+                }
+
+                eventForm.addEventListener('submit', handleEventSubmit);
+                cancelBtn.addEventListener('click', closeEventModal);
+                
+                // Cerrar modal al hacer clic fuera
+                eventModal.addEventListener('click', function(e) {
+                    if (e.target === eventModal) {
+                        closeEventModal();
+                    }
+                });
+            }
+
+            // Seleccionar fecha
+            function selectDate(dateString) {
+                selectedDate = new Date(dateString);
+                selectedDateElement.textContent = formatDateLong(selectedDate);
+                renderEventsForDate(dateString);
+                
+                // Actualizar clases de selección
+                calendarDays.forEach(day => {
+                    day.classList.remove('selected');
+                    if (day.dataset.date === dateString) {
+                        day.classList.add('selected');
+                    }
+                });
+
+                // Actualizar botón flotante
+                updateFloatingButton();
+            }
+
+            // Actualizar estado del botón flotante
+            function updateFloatingButton() {
+                if (!addEventBtn) return;
+
+                if (selectedDate) {
+                    // Fecha seleccionada - botón activo
+                    addEventBtn.classList.remove('disabled');
+                } else {
+                    // Sin fecha seleccionada - botón desactivado
+                    addEventBtn.classList.add('disabled');
+                }
+            }
+
+            // Renderizar eventos para una fecha específica
+            function renderEventsForDate(dateString) {
+                const dateEvents = events.filter(event => event.event_date === dateString);
+                
+                if (dateEvents.length === 0) {
+                    eventsList.innerHTML = `
+                        <div class="no-events">
+                            <p>No hay eventos programados para esta fecha</p>
+                            <small>Haz clic en el botón "+" para agregar un evento</small>
+                        </div>
+                    `;
+                } else {
+                    eventsList.innerHTML = dateEvents.map(event => `
+                        <div class="event-card">
+                            <div class="event-actions">
+                                <button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>
+                                <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
+                            </div>
+                            <h3 class="event-title">${event.event_title}</h3>
+                            ${event.event_outfit ? `<p class="event-outfit">🏷️ ${event.event_outfit}</p>` : ''}
+                            ${event.event_location ? `<p class="event-location">📍 ${event.event_location}</p>` : ''}
+                            ${event.event_description ? `<p class="event-description">📝 ${event.event_description}</p>` : ''}
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Abrir modal para agregar evento
+            function openAddEventModal(dateString = null) {
+                const targetDate = dateString || formatDate(selectedDate);
+                eventDateInput.value = targetDate;
+                eventIdInput.value = '';
+                eventForm.reset();
+                modalTitle.textContent = 'Agregar Evento';
+                eventModal.classList.add('active');
+            }
+
+            // Editar evento
+            window.editEvent = async function(eventId) {
+                const event = events.find(e => e.id === eventId);
+                if (!event) return;
+
+                eventIdInput.value = event.id;
+                eventDateInput.value = event.event_date;
+                document.getElementById('eventTitle').value = event.event_title;
+                document.getElementById('eventOutfit').value = event.event_outfit || '';
+                document.getElementById('eventLocation').value = event.event_location || '';
+                document.getElementById('eventDescription').value = event.event_description || '';
+                
+                modalTitle.textContent = 'Editar Evento';
+                eventModal.classList.add('active');
+            }
+
+            // Manejar envío del formulario
+            async function handleEventSubmit(e) {
+                e.preventDefault();
+                
+                const eventData = {
+                    event_date: eventDateInput.value,
+                    event_title: document.getElementById('eventTitle').value.trim(),
+                    event_outfit: document.getElementById('eventOutfit').value.trim() || null,
+                    event_location: document.getElementById('eventLocation').value.trim() || null,
+                    event_description: document.getElementById('eventDescription').value.trim() || null
+                };
+
+                if (!eventData.event_title) {
+                    alert('El título del evento es obligatorio');
+                    return;
+                }
+
+                try {
+                    let url = '/calendar/events/';
+                    let method = 'POST';
+                    
+                    if (eventIdInput.value) {
+                        eventData.id = eventIdInput.value;
+                        method = 'PUT';
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCSRFToken()
+                        },
+                        body: JSON.stringify(eventData)
+                    });
+
+                    if (response.ok) {
+                        await loadEvents();
+                        if (selectedDate) {
+                            renderEventsForDate(formatDate(selectedDate));
+                        }
+                        closeEventModal();
+                        alert('Evento guardado exitosamente');
+                    } else {
+                        throw new Error('Error al guardar el evento');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al guardar el evento');
+                }
+            }
+
+            // Eliminar evento
+            window.deleteEvent = async function(eventId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este evento?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/calendar/events/', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCSRFToken()
+                        },
+                        body: JSON.stringify({ id: eventId })
+                    });
+
+                    if (response.ok) {
+                        await loadEvents();
+                        if (selectedDate) {
+                            renderEventsForDate(formatDate(selectedDate));
+                        }
+                        alert('Evento eliminado exitosamente');
+                    } else {
+                        throw new Error('Error al eliminar el evento');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el evento');
+                }
+            }
+
+            // Cargar eventos
+            async function loadEvents() {
+                try {
+                    const response = await fetch('/calendar/events/');
+                    if (response.ok) {
+                        events = await response.json();
+                        console.log('Eventos cargados:', events);
+                    }
+                } catch (error) {
+                    console.error('Error cargando eventos:', error);
+                }
+            }
+
+            // Cerrar modal
+            function closeEventModal() {
+                eventModal.classList.remove('active');
+            }
+
+            // Funciones de utilidad
+            function formatDate(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            function formatDateLong(date) {
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                return date.toLocaleDateString('es-ES', options);
+            }
+
+            function getCSRFToken() {
+                const name = 'csrftoken';
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Cargar eventos al inicio
+            loadEvents();
+        });
+    </script>
+</body>
+</html>
