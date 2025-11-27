@@ -957,7 +957,6 @@
                         
                         renderAllEvents(); // Actualizar lista de todos los eventos
                         closeEventModal();
-                        alert('Evento guardado exitosamente');
                     } else {
                         throw new Error('Error al guardar el evento');
                     }
@@ -995,14 +994,12 @@
                             renderEventsForDate(formatDate(selectedDate));
                         }
                         renderAllEvents(); // Actualizar lista de todos los eventos
-                        alert('Evento eliminado exitosamente');
                     } else {
                         throw new Error('Error al eliminar el evento');
                     }
                     
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error al eliminar el evento');
                 }
             }
 
