@@ -14,8 +14,9 @@
   <div class="container">
     <!-- Barra superior -->
     <nav class="topbar" aria-label="Main navigation">
-      <div class="menu-item active">Sobre Nosotros</div>
-      <div class="menu-item">Contacto</div>
+      <div class="menu-item active" onclick="window.location.href='{% url 'home' %}'">Inicio</div>
+      <div class="menu-item" onclick="window.location.href='{% url 'sobre_nosotros' %}'">Sobre Nosotros</div>
+      <div class="menu-item" onclick="window.location.href='{% url 'contacto' %}'">Contacto</div>
     </nav>
 
     <!-- Contenido principal -->

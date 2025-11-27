@@ -32,6 +32,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('sideface/', views.sideface_view, name='sideface'), 
     path("guardar-rating/", views.guardar_rating, name="guardar_rating"),
+    path('sobre-nosotros/', views.sobre_nosotros, name='sobre_nosotros'),
+    path('contacto/', views.contacto, name='contacto'),
 
     path('subir-prenda/', views.subir_prenda, name='subir_prenda'),
     path('segmentar-prenda/', views.segmentar_prenda, name='segmentar-prenda'),
