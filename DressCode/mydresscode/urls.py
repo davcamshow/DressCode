@@ -37,6 +37,7 @@ urlpatterns = [
     path('segmentar-prenda/', views.segmentar_prenda, name='segmentar-prenda'),
 
     path('ayuda-contacto/', views.ayuda_contacto, name='ayuda_contacto'),
+     path('configurationsystem/', views.configuration_system, name='configurationsystem'),
 ]
 
 

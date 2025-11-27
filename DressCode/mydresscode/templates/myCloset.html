@@ -1323,14 +1323,13 @@
         }
       }
 
-      // Filtrar prendas con búsqueda
+      // Filtrar prendas con búsqueda - CORREGIDO
       function filterItems(filter) {
         const items = document.querySelectorAll('.photo-item');
         let visibleCount = 0;
         
         items.forEach(item => {
-          const categoria = item.dataset.categoria;
-          const tipo = item.dataset.tipo.toLowerCase();
+          const tipoPrenda = item.dataset.tipo.toLowerCase();
           const esFavorito = item.dataset.favorito === 'true';
           let show = false;
           
@@ -1342,13 +1341,57 @@
             case 'Favoritos':
               show = esFavorito;
               break;
+            case 'Vestidos':
+              show = tipoPrenda.includes('vestido') || 
+                     tipoPrenda.includes('vestidos') ||
+                     tipoPrenda.includes('dress');
+              break;
+            case 'Blazers':
+              show = tipoPrenda.includes('blazer') || 
+                     tipoPrenda.includes('chaqueta') ||
+                     tipoPrenda.includes('saco') ||
+                     tipoPrenda.includes('americana');
+              break;
+            case 'Zapatos':
+              show = tipoPrenda.includes('zapato') || 
+                     tipoPrenda.includes('zapatos') ||
+                     tipoPrenda.includes('shoe') ||
+                     tipoPrenda.includes('sneaker') ||
+                     tipoPrenda.includes('tacón') ||
+                     tipoPrenda.includes('bota');
+              break;
+            case 'Bolsas':
+              show = tipoPrenda.includes('bolsa') || 
+                     tipoPrenda.includes('bolso') ||
+                     tipoPrenda.includes('bag') ||
+                     tipoPrenda.includes('mochila');
+              break;
+            case 'Cinturones':
+              show = tipoPrenda.includes('cinturón') || 
+                     tipoPrenda.includes('cinturones') ||
+                     tipoPrenda.includes('belt');
+              break;
+            case 'Accesorios':
+              show = tipoPrenda.includes('accesorio') || 
+                     tipoPrenda.includes('accesorios') ||
+                     tipoPrenda.includes('joya') ||
+                     tipoPrenda.includes('collar') ||
+                     tipoPrenda.includes('arete') ||
+                     tipoPrenda.includes('anillo') ||
+                     tipoPrenda.includes('bufanda') ||
+                     tipoPrenda.includes('gorra') ||
+                     tipoPrenda.includes('sombrero');
+              break;
             default:
-              show = categoria === filter.toLowerCase();
+              // Para otros filtros, buscar coincidencias en el tipo
+              show = tipoPrenda.includes(filter.toLowerCase());
           }
           
           // Aplicar búsqueda
           if (show && searchTerm) {
-            show = tipo.includes(searchTerm.toLowerCase());
+            show = tipoPrenda.includes(searchTerm.toLowerCase()) ||
+                   item.querySelector('.prenda-color').textContent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                   item.querySelector('.prenda-temporada').textContent.toLowerCase().includes(searchTerm.toLowerCase());
           }
           
           item.style.display = show ? 'block' : 'none';
@@ -1363,6 +1406,23 @@
         } else {
           favoritesSection.style.display = 'block';
           photoGrid.style.display = 'grid';
+        }
+
+        // Mostrar mensaje si no hay resultados
+        const noItemsMessage = document.querySelector('.no-items-message');
+        if (visibleCount === 0 && items.length > 0) {
+          if (!noItemsMessage) {
+            const message = document.createElement('p');
+            message.className = 'no-items-message';
+            message.innerHTML = `
+              <div>🔍</div>
+              <p>No se encontraron prendas para "${filter}"</p>
+              <small>Intenta con otro filtro o término de búsqueda</small>
+            `;
+            photoGrid.appendChild(message);
+          }
+        } else if (noItemsMessage && visibleCount > 0) {
+          noItemsMessage.remove();
         }
       }
 

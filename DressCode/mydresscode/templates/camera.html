@@ -6,6 +6,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dresscode - Camera</title>
     <link rel="stylesheet" href="{% static 'css/camera.css' %}">
+    <!-- Agregar Font Awesome para el icono de usuario -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos adicionales para la foto de perfil */
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5B9B9D 0%, #e91e63 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .profile-icon .default-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+        
+        .profile-icon:hover {
+            transform: scale(1.1);
+            border-color: #5B9B9D;
+            box-shadow: 0 4px 12px rgba(91, 155, 157, 0.3);
+        }
+        
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 10px;
+            width: 160px;
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            overflow: hidden;
+            animation: dropdownFade 0.3s ease;
+        }
+        
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .profile-container.active .profile-dropdown {
+            display: block;
+        }
+        
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #1c1c1c;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+        }
+        
+        .profile-dropdown a:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-dropdown a:hover {
+            background-color: rgba(91, 155, 157, 0.1);
+            color: #5B9B9D;
+        }
+        
+        .profile-dropdown a:last-child:hover {
+            background-color: rgba(233, 30, 99, 0.1);
+            color: #e91e63;
+        }
+    </style>
 </head>
 <body>
     <div class="background-elements">
@@ -27,11 +128,12 @@
 
         <div class="header-icons-right">
             <div class="profile-container">
-                <button class="icon-button">
-                    <img src="{% static 'img/foto-de-perfil.png' %}" alt="perfil" class="logo-small">
-                </button>
+                <div class="profile-icon">
+                    <!-- La foto de perfil se cargará aquí dinámicamente -->
+                    <i class="fas fa-user default-icon"></i>
+                </div>
                 <div class="profile-dropdown">
-                    <a href="#">Ver perfil</a>
+                    <a href="{% url 'sideface' %}">Ver perfil</a>
                     <a href="{% url 'logout' %}">Cerrar sesión</a>
                 </div>
             </div>

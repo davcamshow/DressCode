@@ -1,4 +1,64 @@
 // [file name]: camera.js
+
+// =============================================
+// FUNCIÓN PARA CARGAR FOTO DE PERFIL
+// =============================================
+function loadProfilePhoto() {
+    const profileIcon = document.querySelector('.profile-icon');
+    if (!profileIcon) {
+        console.log('No se encontró el elemento profile-icon');
+        return;
+    }
+    
+    const savedImage = localStorage.getItem('profileImage');
+    const hasProfileImage = localStorage.getItem('hasProfileImage');
+    
+    console.log('Cargando foto de perfil:', { savedImage: !!savedImage, hasProfileImage });
+    
+    if (hasProfileImage === 'true' && savedImage) {
+        // Si hay foto guardada, mostrarla
+        profileIcon.innerHTML = `<img src="${savedImage}" alt="Foto de perfil">`;
+        console.log('Foto de perfil cargada desde localStorage');
+    } else {
+        // Si no hay foto, mostrar el icono por defecto
+        profileIcon.innerHTML = '<i class="fas fa-user default-icon"></i>';
+        console.log('Usando icono por defecto para perfil');
+    }
+}
+
+// =============================================
+// FUNCIONALIDAD DEL DROPDOWN DE PERFIL
+// =============================================
+function initProfileDropdown() {
+    const profileContainer = document.querySelector('.profile-container');
+    const profileIcon = document.querySelector('.profile-icon');
+    
+    if (!profileContainer || !profileIcon) {
+        console.log('No se encontraron elementos del dropdown de perfil');
+        return;
+    }
+    
+    console.log('Inicializando dropdown de perfil');
+    
+    // Abrir/cerrar dropdown
+    profileIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileContainer.classList.toggle('active');
+        console.log('Dropdown de perfil toggled');
+    });
+    
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (profileContainer && !profileContainer.contains(e.target)) {
+            profileContainer.classList.remove('active');
+        }
+    });
+}
+
+// =============================================
+// CÓDIGO ORIGINAL DE LA CÁMARA
+// =============================================
+
 // Función auxiliar para obtener el token CSRF de las cookies
 function getCookie(name) {
     let cookieValue = null;
@@ -50,13 +110,18 @@ function showMessage(message, type = 'success') {
 }
 
 // Función para aplicar segmentación a la imagen
-async function applySegmentation(blob) {
+async function applySegmentation(blob, prendaId = null) {
     try {
         showMessage(' Removiendo fondo de la imagen...', 'info');
         
         // Crear FormData para enviar la imagen
         const formData = new FormData();
         formData.append('imagen', blob, 'prenda_para_segmentar.png');
+        
+        // ✅ ENVIAR EL ID DE LA PRENDA SI ESTÁ DISPONIBLE
+        if (prendaId) {
+            formData.append('prenda_id', prendaId);
+        }
         
         // Enviar la imagen al servidor para segmentación
         const response = await fetch(SEGMENTAR_URL || '/segmentar-prenda/', {
@@ -287,47 +352,6 @@ async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
     }
 }
 
-// Función para aplicar segmentación a la imagen
-async function applySegmentation(blob, prendaId = null) {
-    try {
-        showMessage(' Removiendo fondo de la imagen...', 'info');
-        
-        // Crear FormData para enviar la imagen
-        const formData = new FormData();
-        formData.append('imagen', blob, 'prenda_para_segmentar.png');
-        
-        // ✅ ENVIAR EL ID DE LA PRENDA SI ESTÁ DISPONIBLE
-        if (prendaId) {
-            formData.append('prenda_id', prendaId);
-        }
-        
-        // Enviar la imagen al servidor para segmentación
-        const response = await fetch(SEGMENTAR_URL || '/segmentar-prenda/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            }
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.segmented_image) {
-                showMessage(' Fondo removido exitosamente', 'success');
-                return result;
-            } else {
-                throw new Error(result.error || 'Error al remover el fondo');
-            }
-        } else {
-            throw new Error('Error del servidor: ' + response.statusText);
-        }
-    } catch (error) {
-        console.error('Error al remover el fondo:', error);
-        showMessage(' No se pudo remover el fondo. Mostrando imagen original.', 'error');
-        return null;
-    }
-}
-
 // Función de fallback si la segmentación no está disponible
 function showSuccessMessage(blob) {
     const overlay = document.createElement('div');
@@ -424,7 +448,22 @@ function showSuccessMessage(blob) {
     });
 }
 
+// =============================================
+// INICIALIZACIÓN PRINCIPAL
+// =============================================
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado - Inicializando cámara y perfil');
+    
+    // =============================================
+    // INICIALIZAR FOTO DE PERFIL (NUEVO)
+    // =============================================
+    loadProfilePhoto();
+    initProfileDropdown();
+    
+    // =============================================
+    // CÓDIGO ORIGINAL DE LA CÁMARA
+    // =============================================
+    
     // Elementos de la cámara
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');

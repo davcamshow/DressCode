@@ -695,8 +695,8 @@
         }
         
         .user-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(135deg, #5B9B9D 0%, #e91e63 100%);
             display: flex;
@@ -706,6 +706,23 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .user-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .user-icon .default-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
         }
         
         .user-icon:hover {
@@ -854,7 +871,8 @@
         <div class="user-profile">
             <div class="profile-dropdown" id="profileDropdown">
                 <div class="user-icon" id="userIcon">
-                    <i class="fas fa-user"></i>
+                    <!-- La foto de perfil se cargará aquí dinámicamente -->
+                    <i class="fas fa-user default-icon"></i>
                 </div>
                 <div class="profile-dropdown-content">
                     <a href="{% url 'sideface' %}">
@@ -1073,6 +1091,21 @@
             }
         }
 
+        // Función para cargar la foto de perfil desde localStorage
+        function loadProfilePhoto() {
+            const userIcon = document.getElementById('userIcon');
+            const savedImage = localStorage.getItem('profileImage');
+            const hasProfileImage = localStorage.getItem('hasProfileImage');
+            
+            if (hasProfileImage === 'true' && savedImage) {
+                // Si hay foto guardada, mostrarla
+                userIcon.innerHTML = `<img src="${savedImage}" alt="Foto de perfil">`;
+            } else {
+                // Si no hay foto, mostrar el icono por defecto
+                userIcon.innerHTML = '<i class="fas fa-user default-icon"></i>';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const menuToggle = document.querySelector('.menu-toggle');
             const sideMenu = document.querySelector('.side-menu');
@@ -1103,6 +1136,9 @@
                     profileDropdown.classList.remove('active');
                 }
             });
+            
+            // Cargar foto de perfil
+            loadProfilePhoto();
             
             loadWeather();
             

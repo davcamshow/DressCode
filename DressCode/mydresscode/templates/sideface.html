@@ -588,7 +588,7 @@
       <div class="profile-pic-container">
         <div class="profile-pic" id="profilePic">
           <!-- Aquí se mostrará la imagen o las iniciales -->
-          <span id="profileInitials">AT</span>
+          <span id="profileInitials">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</span>
         </div>
         <div class="profile-menu" id="profileMenu">
           <div class="profile-menu-dots">⋯</div>
@@ -602,17 +602,17 @@
           </div>
         </div>
       </div>
-      <div class="profile-name">Abel Tanez</div>
-      <div class="profile-email">abel@gmail.com</div>
+      <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+      <div class="profile-email">{{ user.email }}</div>
       
       <div class="preferences">
         <div class="pref-item">
           <div class="pref-title">Color favorito</div>
-          <div class="color-circle" style="background-color: #a47968;"></div>
+          <div class="color-circle" style="background-color: {{ user_preferences.color_favorito }};"></div>
         </div>
         <div class="pref-item">
           <div class="pref-title">Estilo frecuente</div>
-          <div class="style-badge">ELEGANTE</div>
+          <div class="style-badge">{{ user_preferences.estilo_frecuente }}</div>
         </div>
       </div>
     </div>
@@ -624,7 +624,7 @@
         <div class="page-title">Mi Perfil</div>
         <div class="header-buttons">
           <a href="{% url 'inicio' %}" class="header-btn" title="Inicio">🏠</a>
-          <a href="#" class="header-btn" title="Configuración">⚙️</a>
+          <a href="{% url 'configurationsystem' %}" class="header-btn" title="Configuración">⚙️</a>
         </div>
       </div>
       
@@ -632,15 +632,15 @@
       <div class="sizes">
         <div class="size-item">
           <div class="size-type">Superior</div>
-          <div class="size-value">XL</div>
+          <div class="size-value">{{ user_preferences.talla_superior|default:'XL' }}</div>
         </div>
         <div class="size-item">
           <div class="size-type">Inferior</div>
-          <div class="size-value">L</div>
+          <div class="size-value">{{ user_preferences.talla_inferior|default:'L' }}</div>
         </div>
         <div class="size-item">
           <div class="size-type">Calzado</div>
-          <div class="size-value">39</div>
+          <div class="size-value">{{ user_preferences.talla_calzado|default:'39' }}</div>
         </div>
       </div>
       
@@ -649,15 +649,23 @@
         <div class="event">
           <div class="event-date">ESTILOS FAVORITOS</div>
           <div class="event-title">
-            <span class="style-badge">ELEGANTE</span>
+            {% for estilo in user_preferences.estilos_favoritos %}
+              <span class="style-badge">{{ estilo }}</span>
+            {% empty %}
+              <span class="style-badge">ELEGANTE</span>
+            {% endfor %}
           </div>
           <div class="event-style">
             COLORES FAVORITOS: 
-            <span class="color-dot" style="background-color: #a47968;" title="#a47968"></span>
-            <span class="color-dot" style="background-color: #cf8e71;" title="#cf8e71"></span>
-            <span class="color-dot" style="background-color: #dea583;" title="#dea583"></span>
+            {% for color in user_preferences.colores_favoritos %}
+              <span class="color-dot" style="background-color: {{ color }};" title="{{ color }}"></span>
+            {% empty %}
+              <span class="color-dot" style="background-color: #a47968;" title="#a47968"></span>
+              <span class="color-dot" style="background-color: #cf8e71;" title="#cf8e71"></span>
+              <span class="color-dot" style="background-color: #dea583;" title="#dea583"></span>
+            {% endfor %}
           </div>
-          <button class="btn">Editar Preferencias</button>
+          <button class="btn" onclick="location.href='{% url 'configurationsystem' %}'">Editar Preferencias</button>
         </div>
       </div>
     </div>
@@ -687,7 +695,7 @@
   <div class="modal-overlay confirm-modal" id="confirmDeleteModal">
     <div class="modal-content">
       <h2 class="confirm-title">Eliminar foto de perfil</h2>
-      <p class="confirm-message">¿Estás seguro de que quieres eliminar tu foto de perfil? Se restaurarán las iniciales.</p>
+      <p class="confirm-message">¿Estás seguro de que quieres eliminar tu foto de perfil? </p>
       <div class="confirm-actions">
         <button class="confirm-btn cancel" id="cancelDelete">Cancelar</button>
         <button class="confirm-btn delete" id="confirmDelete">Eliminar</button>

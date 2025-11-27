@@ -497,9 +497,8 @@ def outfit(request):
 def vision_computer(request):
     return render(request, 'visioncomputer.html')
 
-# En views.py - modifica la vista sideface_view para asegurar formatos de color
 def sideface_view(request):
-    """Vista para mostrar el perfil del usuario con datos reales"""
+    """Vista para mostrar el perfil del usuario con datos reales desde la BD"""
     if 'usuario_id' not in request.session:
         messages.error(request, "Debes iniciar sesión para ver tu perfil.")
         return redirect('login')
@@ -510,7 +509,7 @@ def sideface_view(request):
         # Obtener datos del usuario desde la tabla Usuario
         usuario = Usuario.objects.get(idUsuario=usuario_id)
         
-        # Obtener perfil del usuario desde la tabla perfil_usuario
+        # Obtener perfil del usuario desde la tabla Profile
         profile = Profile.objects.get(user=usuario_id)
         
         # Obtener iniciales para el avatar
@@ -542,14 +541,26 @@ def sideface_view(request):
             'gris': '#808080',
             'marron': '#8b4513',
             'beige': '#f5f5dc',
+            'cafe': '#8b4513',
+            'azul marino': '#000080',
+            'verde oscuro': '#006400',
+            'turquesa': '#40e0d0',
+            'lila': '#c8a2c8',
+            'dorado': '#ffd700',
+            'plateado': '#c0c0c0',
         }
         
         colores_procesados = []
         for color in colores_fav:
-            if color.lower() in color_map:
-                colores_procesados.append(color_map[color.lower()])
-            elif color.startswith('#'):
-                colores_procesados.append(color)
+            color_lower = str(color).lower().strip()
+            if color_lower in color_map:
+                colores_procesados.append(color_map[color_lower])
+            elif color_lower.startswith('#'):
+                # Validar formato HEX
+                if len(color_lower) in [4, 7]:  # #fff o #ffffff
+                    colores_procesados.append(color_lower)
+                else:
+                    colores_procesados.append('#a47968')
             else:
                 # Si no es un color reconocido, usar el por defecto
                 colores_procesados.append('#a47968')
@@ -558,21 +569,54 @@ def sideface_view(request):
         if not colores_procesados:
             colores_procesados = ['#a47968']
         
+        # Procesar estilos favoritos
+        estilos_fav = profile.estilos or ['Casual']
+        if isinstance(estilos_fav, str):
+            # Si es string, convertirlo a lista
+            estilos_fav = [estilo.strip() for estilo in estilos_fav.split(',')]
+        
+        # Obtener color favorito principal (primer color de la lista)
+        color_favorito_principal = colores_procesados[0] if colores_procesados else '#a47968'
+        
+        # Obtener estilo frecuente (primer estilo de la lista)
+        estilo_frecuente = estilos_fav[0] if estilos_fav else 'Casual'
+        
         # Preparar datos para el template
         context = {
+            'user': usuario,  # Para compatibilidad con el template
             'nombre_completo': usuario.nombre,
             'email': usuario.email,
             'iniciales': get_iniciales(usuario.nombre),
-            'talla_superior': profile.talla_superior or 'No definida',
-            'talla_inferior': profile.talla_inferior or 'No definida', 
-            'talla_calzado': profile.talla_calzado or 'No definida',
-            'estilos_fav': profile.estilos or ['Casual'],
-            'colores_fav': colores_procesados,  # Usar colores procesados
+            'talla_superior': profile.talla_superior or 'XL',
+            'talla_inferior': profile.talla_inferior or 'L', 
+            'talla_calzado': profile.talla_calzado or '39',
+            'estilos_fav': estilos_fav,
+            'colores_fav': colores_procesados,
+            'color_favorito_principal': color_favorito_principal,
+            'estilo_frecuente': estilo_frecuente,
+            'user_preferences': {  # Estructura adicional para compatibilidad
+                'color_favorito': color_favorito_principal,
+                'estilo_frecuente': estilo_frecuente,
+                'talla_superior': profile.talla_superior or 'XL',
+                'talla_inferior': profile.talla_inferior or 'L',
+                'talla_calzado': profile.talla_calzado or '39',
+                'estilos_favoritos': estilos_fav,
+                'colores_favoritos': colores_procesados,
+            }
         }
         
         # DEBUG: Ver qué datos se están enviando
-        print(f"DEBUG - Colores favoritos: {colores_procesados}")
-        print(f"DEBUG - Estilos favoritos: {profile.estilos}")
+        print(f"=== DEBUG SIDEFACE ===")
+        print(f"Usuario: {usuario.nombre}")
+        print(f"Email: {usuario.email}")
+        print(f"Talla superior: {context['talla_superior']}")
+        print(f"Talla inferior: {context['talla_inferior']}")
+        print(f"Talla calzado: {context['talla_calzado']}")
+        print(f"Estilos favoritos: {estilos_fav}")
+        print(f"Colores favoritos: {colores_procesados}")
+        print(f"Color favorito principal: {color_favorito_principal}")
+        print(f"Estilo frecuente: {estilo_frecuente}")
+        print("=====================")
         
         return render(request, 'sideface.html', context)
         
@@ -590,13 +634,24 @@ def sideface_view(request):
             'nombre_completo': 'Usuario',
             'email': 'email@ejemplo.com',
             'iniciales': 'US',
-            'talla_superior': 'No definida',
-            'talla_inferior': 'No definida',
-            'talla_calzado': 'No definida',
+            'talla_superior': 'XL',
+            'talla_inferior': 'L',
+            'talla_calzado': '39',
             'estilos_fav': ['Casual'],
             'colores_fav': ['#a47968'],
+            'color_favorito_principal': '#a47968',
+            'estilo_frecuente': 'Casual',
+            'user_preferences': {
+                'color_favorito': '#a47968',
+                'estilo_frecuente': 'Casual',
+                'talla_superior': 'XL',
+                'talla_inferior': 'L',
+                'talla_calzado': '39',
+                'estilos_favoritos': ['Casual'],
+                'colores_favoritos': ['#a47968'],
+            }
         }
-        return render(request, 'sideface.html', context) 
+        return render(request, 'sideface.html', context)
 
 def recomendar_outfit(request):
     ciudad = request.GET.get('ciudad', 'Morelia')
@@ -1122,3 +1177,12 @@ def simular_segmentacion(imagen):
 
 def ayuda_contacto(request):
     return render(request, 'help.html')
+
+@login_required
+def configuration_system(request):
+    """Vista principal del sistema de configuración"""
+    context = {
+        'user': request.user,
+        'active_tab': 'general'
+    }
+    return render(request, 'configurationsystem.html', context)
