@@ -192,6 +192,27 @@
             transform: none;
         }
 
+        /* DÍOS PASADOS - ESTILOS DESHABILITADOS */
+        .calendar-day.past-day {
+            background: #f8f8f8;
+            color: var(--color-texto-claro);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .calendar-day.past-day:hover {
+            background: #f8f8f8;
+            transform: none;
+        }
+
+        .calendar-day.past-day .add-event-btn {
+            display: none !important;
+        }
+
+        .calendar-day.past-day .day-number {
+            color: #aaa;
+        }
+
         .day-number {
             font-size: 16px;
             font-weight: 600;
@@ -298,6 +319,7 @@
             gap: 8px;
         }
 
+        /* ICONOS SIN COLOR - SOLO CONTORNO */
         .event-action-btn {
             background: none;
             border: none;
@@ -306,10 +328,12 @@
             padding: 4px;
             border-radius: 4px;
             transition: all 0.3s ease;
+            color: var(--color-texto-claro);
         }
 
         .event-action-btn:hover {
             background: var(--color-acento-claro);
+            color: var(--color-primario);
         }
 
         .event-title {
@@ -512,44 +536,47 @@
             color: var(--color-secundario) !important;
             font-weight: 600;
         }
+
+        /* LISTA DE EVENTOS EN PANEL DERECHO */
+        .events-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .events-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .events-list::-webkit-scrollbar-track {
+            background: var(--color-fondo-principal);
+            border-radius: 10px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb {
+            background: var(--color-secundario);
+            border-radius: 10px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb:hover {
+            background: var(--color-favorito);
+        }
+
+        .event-date-past {
+            color: #888;
+            font-style: italic;
+        }
+
+        .event-date-future {
+            color: var(--color-secundario);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <div class="main-header-container">
-        <div class="top-nav-icons">
-            <a href="{% url 'inicio' %}" class="nav-icon">
-                <span>Inicio</span>
-            </a>
-            <a href="#" class="nav-icon">
-                <span>Outfits</span>
-            </a>
-            <a href="#" class="nav-icon">
-                <span>Armario</span>
-            </a>
-            <a href="{% url 'calendar' %}" class="nav-icon primary-icon">
-                <span>Calendario</span>
-            </a>
-            <a href="#" class="nav-icon">
-                <span>Perfil</span>
-            </a>
-        </div>
 
         <h1>Calendario de Outfits</h1>
         <p class="page-subtitle">Planifica tus outfits para eventos especiales</p>
-        
-        <!-- Información del usuario -->
-        <div class="user-info">
-    {% if user.is_authenticated %}
-        <small>Conectado como: {{ user.email }}</small>
-    {% else %}
-        <small class="warning-text">⚠️ Inicia sesión para usar el calendario</small>
-    {% endif %}
-    
-    <!-- DEBUG: Verificar estado real -->
-    <small style="display: none; color: blue;" id="debugAuth">
-        DEBUG: user.is_authenticated = {{ user.is_authenticated|yesno:"True,False" }}
-    </small>
-</div>
 
     <div class="calendar-container">
         <!-- Vista de calendario mensual -->
@@ -575,13 +602,17 @@
                 <!-- Días del mes generados por Django -->
                 {% for week in weeks %}
                     {% for day in week %}
-                        <div class="calendar-day {% if not day.in_month %}empty{% endif %} {% if day.date == today %}today{% endif %}" 
-                             data-date="{{ day.date|date:'Y-m-d' }}">
+                        <div class="calendar-day 
+                                    {% if not day.in_month %}empty{% endif %} 
+                                    {% if day.date == today %}today{% endif %}
+                                    {% if day.date < today %}past-day{% endif %}" 
+                             data-date="{{ day.date|date:'Y-m-d' }}"
+                             {% if day.date < today %}title="No puedes agregar eventos a fechas pasadas"{% endif %}>
                             {% if day.in_month %}
                                 <span class="day-number">{{ day.date.day }}</span>
-                               {% if user.is_authenticated %}
-                                <button class="add-event-btn" data-date="{{ day.date|date:'Y-m-d' }}">+</button>
-                            {% endif %}
+                                {% if user.is_authenticated and day.date >= today %}
+                                    <button class="add-event-btn" data-date="{{ day.date|date:'Y-m-d' }}">+</button>
+                                {% endif %}
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -600,7 +631,17 @@
             <div class="events-list" id="eventsList">
                 <div class="no-events">
                     <p>No hay eventos programados</p>
-                    <small>Selecciona una fecha para agregar un evento</small>
+                    <small>Selecciona una fecha para ver o agregar eventos</small>
+                </div>
+            </div>
+
+            <!-- LISTA DE TODOS LOS EVENTOS (NUEVA SECCIÓN) -->
+            <div class="all-events-section" style="margin-top: 30px; border-top: 2px solid var(--color-fondo-principal); padding-top: 20px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: var(--color-primario); margin-bottom: 15px;">
+                    * Todos mis eventos
+                </h3>
+                <div id="allEventsList">
+                    <!-- Los eventos se cargarán aquí con JavaScript -->
                 </div>
             </div>
         </div>
@@ -644,12 +685,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('✨ Calendario de Outfits Cargado');
+            console.log(' Calendario de Outfits Cargado');
 
             // Elementos del DOM
             const calendarDays = document.querySelectorAll('.calendar-day:not(.empty)');
             const selectedDateElement = document.getElementById('selectedDate');
             const eventsList = document.getElementById('eventsList');
+            const allEventsList = document.getElementById('allEventsList');
             const addEventBtn = document.getElementById('addEventBtn');
             const eventModal = document.getElementById('eventModal');
             const eventForm = document.getElementById('eventForm');
@@ -661,6 +703,7 @@
             // Estado de la aplicación
             let selectedDate = null;
             let events = [];
+            let isSubmitting = false; // 🔒 VARIABLE PARA EVITAR DOBLE ENVÍO
 
             // Inicializar la aplicación
             initializeCalendar();
@@ -668,18 +711,21 @@
             function initializeCalendar() {
                 setupEventListeners();
                 updateFloatingButton();
+                loadAllEvents(); // Cargar todos los eventos al inicio
             }
 
             // Configurar event listeners
             function setupEventListeners() {
-                // Selección de días
+                // Selección de días - SOLO DÍAS FUTUROS
                 calendarDays.forEach(day => {
-                    day.addEventListener('click', function() {
-                        selectDate(this.dataset.date);
-                    });
+                    if (!day.classList.contains('past-day')) {
+                        day.addEventListener('click', function() {
+                            selectDate(this.dataset.date);
+                        });
+                    }
                 });
 
-                // Botones de agregar evento en los días
+                // Botones de agregar evento en los días - SOLO DÍAS FUTUROS
                 document.querySelectorAll('.add-event-btn').forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -711,7 +757,17 @@
 
             // Seleccionar fecha
             function selectDate(dateString) {
-                selectedDate = new Date(dateString);
+                const selectedDay = new Date(dateString);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                // Verificar si es una fecha pasada
+                if (selectedDay < today) {
+                    alert('No puedes seleccionar fechas pasadas');
+                    return;
+                }
+
+                selectedDate = selectedDay;
                 selectedDateElement.textContent = formatDateLong(selectedDate);
                 renderEventsForDate(dateString);
                 
@@ -759,17 +815,61 @@
                                 <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
                             </div>
                             <h3 class="event-title">${event.event_title}</h3>
-                            ${event.event_outfit ? `<p class="event-outfit">🏷️ ${event.event_outfit}</p>` : ''}
-                            ${event.event_location ? `<p class="event-location">📍 ${event.event_location}</p>` : ''}
-                            ${event.event_description ? `<p class="event-description">📝 ${event.event_description}</p>` : ''}
+                            ${event.event_outfit ? `<p class="event-outfit"> ${event.event_outfit}</p>` : ''}
+                            ${event.event_location ? `<p class="event-location"> ${event.event_location}</p>` : ''}
+                            ${event.event_description ? `<p class="event-description"> ${event.event_description}</p>` : ''}
                         </div>
                     `).join('');
+                }
+            }
+
+            // Renderizar TODOS los eventos en el panel derecho
+            function renderAllEvents() {
+                if (events.length === 0) {
+                    allEventsList.innerHTML = `
+                        <div class="no-events">
+                            <p>No tienes eventos programados</p>
+                            <small>Agrega eventos usando los botones "+" en el calendario</small>
+                        </div>
+                    `;
+                } else {
+                    // Ordenar eventos por fecha (más recientes primero)
+                    const sortedEvents = [...events].sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    allEventsList.innerHTML = sortedEvents.map(event => {
+                        const isPast = event.event_date < today;
+                        const dateClass = isPast ? 'event-date-past' : 'event-date-future';
+                        
+                        return `
+                        <div class="event-card" style="margin-bottom: 15px; ${isPast ? 'opacity: 0.8;' : ''}">
+                            <div class="event-actions">
+                                ${!isPast ? `<button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>` : ''}
+                                <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
+                            </div>
+                            <div class="${dateClass}" style="font-size: 14px; margin-bottom: 5px;">
+                                📅 ${formatDateDisplay(event.event_date)}
+                            </div>
+                            <h3 class="event-title" style="font-size: 16px;">${event.event_title}</h3>
+                            ${event.event_outfit ? `<p class="event-outfit" style="font-size: 14px;"> ${event.event_outfit}</p>` : ''}
+                            ${event.event_location ? `<p class="event-location" style="font-size: 14px;"> ${event.event_location}</p>` : ''}
+                        </div>
+                    `}).join('');
                 }
             }
 
             // Abrir modal para agregar evento
             function openAddEventModal(dateString = null) {
                 const targetDate = dateString || formatDate(selectedDate);
+                
+                // Verificar que no sea fecha pasada
+                const today = new Date().toISOString().split('T')[0];
+                if (targetDate < today) {
+                    alert('No puedes agregar eventos a fechas pasadas');
+                    return;
+                }
+                
                 eventDateInput.value = targetDate;
                 eventIdInput.value = '';
                 eventForm.reset();
@@ -793,10 +893,24 @@
                 eventModal.classList.add('active');
             }
 
-            // Manejar envío del formulario
+            // Manejar envío del formulario - CORREGIDO PARA EVITAR DOBLE GUARDADO
             async function handleEventSubmit(e) {
                 e.preventDefault();
                 
+                // 🔒 EVITAR DOBLE ENVÍO
+                if (isSubmitting) {
+                    console.log(' Ya se está enviando el formulario...');
+                    return;
+                }
+                
+                isSubmitting = true;
+                
+                // Deshabilitar botón para evitar múltiples clics
+                const submitBtn = eventForm.querySelector('.save');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Guardando...';
+                submitBtn.disabled = true;
+
                 const eventData = {
                     event_date: eventDateInput.value,
                     event_title: document.getElementById('eventTitle').value.trim(),
@@ -807,6 +921,9 @@
 
                 if (!eventData.event_title) {
                     alert('El título del evento es obligatorio');
+                    isSubmitting = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                     return;
                 }
 
@@ -819,6 +936,8 @@
                         method = 'PUT';
                     }
 
+                    console.log(`Enviando evento: ${method}`, eventData);
+
                     const response = await fetch(url, {
                         method: method,
                         headers: {
@@ -829,10 +948,14 @@
                     });
 
                     if (response.ok) {
-                        await loadEvents();
+                        console.log('Evento guardado correctamente');
+                        await loadEvents(); //  Solo una llamada a loadEvents
+                        
                         if (selectedDate) {
                             renderEventsForDate(formatDate(selectedDate));
                         }
+                        
+                        renderAllEvents(); // Actualizar lista de todos los eventos
                         closeEventModal();
                         alert('Evento guardado exitosamente');
                     } else {
@@ -842,6 +965,11 @@
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Error al guardar el evento');
+                } finally {
+                    // Rehabilitar botón
+                    isSubmitting = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
             }
 
@@ -866,6 +994,7 @@
                         if (selectedDate) {
                             renderEventsForDate(formatDate(selectedDate));
                         }
+                        renderAllEvents(); // Actualizar lista de todos los eventos
                         alert('Evento eliminado exitosamente');
                     } else {
                         throw new Error('Error al eliminar el evento');
@@ -877,17 +1006,28 @@
                 }
             }
 
-            // Cargar eventos
+            // Cargar eventos - OPTIMIZADO
             async function loadEvents() {
                 try {
+                    console.log('Cargando eventos...');
                     const response = await fetch('/calendar/events/');
                     if (response.ok) {
                         events = await response.json();
-                        console.log('Eventos cargados:', events);
+                        console.log(` ${events.length} eventos cargados`);
+                    } else {
+                        console.error('Error cargando eventos');
+                    events = [];
                     }
                 } catch (error) {
                     console.error('Error cargando eventos:', error);
+                    events = [];
                 }
+            }
+
+            // Cargar y mostrar todos los eventos
+            async function loadAllEvents() {
+                await loadEvents();
+                renderAllEvents();
             }
 
             // Cerrar modal
@@ -906,6 +1046,16 @@
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
+                };
+                return date.toLocaleDateString('es-ES', options);
+            }
+
+            function formatDateDisplay(dateString) {
+                const date = new Date(dateString);
+                const options = { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric'
                 };
                 return date.toLocaleDateString('es-ES', options);
             }
