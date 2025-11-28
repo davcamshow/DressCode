@@ -53,7 +53,6 @@ except AttributeError:
 # ---------------------------------------------------------------------------------
 # 1. DECORADOR DE REDIRECCIÓN (Control de Acceso y Onboarding)
 # ---------------------------------------------------------------------------------
-
 def configuracion_requerida(view_func):
     """
     Verifica que el usuario tenga una sesión activa ('usuario_id')
@@ -69,14 +68,24 @@ def configuracion_requerida(view_func):
         # 2. VERIFICACIÓN DE CONFIGURACIÓN
         try:
             user_instance = Usuario.objects.get(idUsuario=usuario_id)
-            profile = Profile.objects.get(user=user_instance)
-        except (Usuario.DoesNotExist, Profile.DoesNotExist):
-            # Si el usuario o perfil no existen, forzamos login
+            
+            # ✅ CORRECCIÓN: Manejar tanto perfiles únicos como múltiples
+            try:
+                profile = Profile.objects.get(user=user_instance)
+            except Profile.MultipleObjectsReturned:
+                # Si hay múltiples, usar el más reciente
+                profile = Profile.objects.filter(user=user_instance).latest('creado_en')
+                print(f"⚠️ Advertencia: Múltiples perfiles para usuario {user_instance.idUsuario}. Usando el más reciente.")
+                
+        except Usuario.DoesNotExist:
+            # Si el usuario no existe, forzamos login
             return redirect('login') 
+        except Profile.DoesNotExist:
+            # Si no hay perfil, forzamos el asistente
+            return redirect(reverse('configuracion_inicial'))
 
         # Si la configuración NO está completa, forzamos el asistente
         if not profile.config_completada:
-            # Nota: usamos reverse() aquí porque configuracion_inicial es un nombre de URL
             return redirect(reverse('configuracion_inicial'))
                 
         # Si todo está OK, procede a la vista
@@ -143,11 +152,10 @@ def register_password_view(request):
         nombre = request.session.get('nombre')
         email = request.session.get('email')
 
-        # Validar que las contraseñas coincidan
+        # Validaciones de contraseña...
         if contrasena != confirmar_contrasena:
             return render(request, 'Password.html', {'error': 'Las contraseñas no coinciden'})
         
-        # Validar requisitos de contraseña
         if (len(contrasena) < 8 or 
             not any(c.isupper() for c in contrasena) or 
             not any(c.isdigit() for c in contrasena) or 
@@ -155,16 +163,24 @@ def register_password_view(request):
             return render(request, 'Password.html', {'error': 'La contraseña no cumple los requisitos'})
 
         if nombre and email and contrasena:
-            usuario = Usuario(
-                nombre=nombre,
+            # ✅ USAR get_or_create PARA EVITAR DUPLICADOS
+            usuario, created = Usuario.objects.get_or_create(
                 email=email,
-                contrasena=make_password(contrasena)
+                defaults={
+                    'nombre': nombre,
+                    'contrasena': make_password(contrasena)
+                }
             )
-            usuario.save()
-
-            # --- CREAR PERFIL INCOMPLETO INMEDIATAMENTE DESPUÉS DEL REGISTRO ---
-            # Esto es necesario para que configuracion_requerida funcione sin error
-            Profile.objects.create(user=usuario, config_completada=False)
+            
+            if created:
+                # El signal @receiver(post_save, sender=Usuario) ya creará el perfil automáticamente
+                print(f"✅ Usuario creado: {usuario.email}")
+            else:
+                # Si el usuario ya existe, actualizar contraseña
+                usuario.contrasena = make_password(contrasena)
+                usuario.save()
+            
+            # ✅ NO crear perfil manualmente aquí - el signal se encarga
             
             # Limpiar session
             if 'nombre' in request.session:
@@ -172,7 +188,6 @@ def register_password_view(request):
             if 'email' in request.session:
                 del request.session['email']
             
-            # Agregar mensaje de éxito y redirigir al login
             messages.success(request, "¡Cuenta creada con éxito! ¡Bienvenido fashionista!")
             return redirect('login')
     

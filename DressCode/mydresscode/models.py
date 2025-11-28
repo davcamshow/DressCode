@@ -87,7 +87,7 @@ class Profile(models.Model):
         'Usuario', 
         on_delete=models.CASCADE,
         primary_key=True,
-        db_column='id_Usuario'  # ✅ CORREGIDO: con guión bajo para coincidir con la BD
+        db_column='id_Usuario'
     )
     nombre_completo = models.CharField(max_length=100, blank=True, null=True, db_column='nombre_completo')
     talla_superior = models.CharField(max_length=20, blank=True, null=True)
@@ -104,6 +104,12 @@ class Profile(models.Model):
         db_table = 'perfil_usuario'
         verbose_name = 'Perfil de usuario'
         verbose_name_plural = 'Perfiles de usuarios'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user'],
+                name='unique_user_profile'
+            )
+        ]
     
     def __str__(self):
         return f"Perfil de {self.user.nombre}"
@@ -152,12 +158,19 @@ class CalendarEventos(models.Model):
         super().save(*args, **kwargs)
 
 
-# Signal para crear perfil automáticamente cuando se crea un usuario
+# En tu models.py, asegúrate de que el signal use get_or_create
 @receiver(post_save, sender=Usuario)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
-
+        # ✅ USAR get_or_create PARA EVITAR DUPLICADOS
+        Profile.objects.get_or_create(
+            user=instance,
+            defaults={
+                'config_completada': False,
+                'nombre_completo': instance.nombre
+            }
+        )
+        print(f"✅ Perfil creado/verificado para usuario: {instance.email}")
 
 @receiver(post_save, sender=Usuario)
 def guardar_perfil_usuario(sender, instance, **kwargs):
