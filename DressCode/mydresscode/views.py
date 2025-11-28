@@ -28,11 +28,16 @@ from django.utils.decorators import method_decorator
 import base64
 from django.core.files.base import ContentFile
 import numpy as np
-
+from django.views.decorators.http import require_http_methods 
 # Importa tus modelos y formularios
 from .forms import EstiloForm, ColorForm, EstacionForm, TallaForm 
 from .models import Profile, Usuario 
-
+from datetime import date, datetime, timedelta
+import calendar
+from django.utils import timezone
+from datetime import datetime, timedelta
+from .models import CalendarEventos, Usuario
+from calendar import monthrange, HTMLCalendar
 logger = logging.getLogger(__name__)
 
 try:
@@ -48,7 +53,6 @@ except AttributeError:
 # ---------------------------------------------------------------------------------
 # 1. DECORADOR DE REDIRECCIÓN (Control de Acceso y Onboarding)
 # ---------------------------------------------------------------------------------
-
 def configuracion_requerida(view_func):
     """
     Verifica que el usuario tenga una sesión activa ('usuario_id')
@@ -64,14 +68,24 @@ def configuracion_requerida(view_func):
         # 2. VERIFICACIÓN DE CONFIGURACIÓN
         try:
             user_instance = Usuario.objects.get(idUsuario=usuario_id)
-            profile = Profile.objects.get(user=user_instance)
-        except (Usuario.DoesNotExist, Profile.DoesNotExist):
-            # Si el usuario o perfil no existen, forzamos login
+            
+            # ✅ CORRECCIÓN: Manejar tanto perfiles únicos como múltiples
+            try:
+                profile = Profile.objects.get(user=user_instance)
+            except Profile.MultipleObjectsReturned:
+                # Si hay múltiples, usar el más reciente
+                profile = Profile.objects.filter(user=user_instance).latest('creado_en')
+                print(f"⚠️ Advertencia: Múltiples perfiles para usuario {user_instance.idUsuario}. Usando el más reciente.")
+                
+        except Usuario.DoesNotExist:
+            # Si el usuario no existe, forzamos login
             return redirect('login') 
+        except Profile.DoesNotExist:
+            # Si no hay perfil, forzamos el asistente
+            return redirect(reverse('configuracion_inicial'))
 
         # Si la configuración NO está completa, forzamos el asistente
         if not profile.config_completada:
-            # Nota: usamos reverse() aquí porque configuracion_inicial es un nombre de URL
             return redirect(reverse('configuracion_inicial'))
                 
         # Si todo está OK, procede a la vista
@@ -138,11 +152,10 @@ def register_password_view(request):
         nombre = request.session.get('nombre')
         email = request.session.get('email')
 
-        # Validar que las contraseñas coincidan
+        # Validaciones de contraseña...
         if contrasena != confirmar_contrasena:
             return render(request, 'Password.html', {'error': 'Las contraseñas no coinciden'})
         
-        # Validar requisitos de contraseña
         if (len(contrasena) < 8 or 
             not any(c.isupper() for c in contrasena) or 
             not any(c.isdigit() for c in contrasena) or 
@@ -150,16 +163,24 @@ def register_password_view(request):
             return render(request, 'Password.html', {'error': 'La contraseña no cumple los requisitos'})
 
         if nombre and email and contrasena:
-            usuario = Usuario(
-                nombre=nombre,
+            # ✅ USAR get_or_create PARA EVITAR DUPLICADOS
+            usuario, created = Usuario.objects.get_or_create(
                 email=email,
-                contrasena=make_password(contrasena)
+                defaults={
+                    'nombre': nombre,
+                    'contrasena': make_password(contrasena)
+                }
             )
-            usuario.save()
-
-            # --- CREAR PERFIL INCOMPLETO INMEDIATAMENTE DESPUÉS DEL REGISTRO ---
-            # Esto es necesario para que configuracion_requerida funcione sin error
-            Profile.objects.create(user=usuario, config_completada=False)
+            
+            if created:
+                # El signal @receiver(post_save, sender=Usuario) ya creará el perfil automáticamente
+                print(f"✅ Usuario creado: {usuario.email}")
+            else:
+                # Si el usuario ya existe, actualizar contraseña
+                usuario.contrasena = make_password(contrasena)
+                usuario.save()
+            
+            # ✅ NO crear perfil manualmente aquí - el signal se encarga
             
             # Limpiar session
             if 'nombre' in request.session:
@@ -167,7 +188,6 @@ def register_password_view(request):
             if 'email' in request.session:
                 del request.session['email']
             
-            # Agregar mensaje de éxito y redirigir al login
             messages.success(request, "¡Cuenta creada con éxito! ¡Bienvenido fashionista!")
             return redirect('login')
     
@@ -1192,3 +1212,159 @@ def configuration_system(request):
         'active_tab': 'general'
     }
     return render(request, 'configurationsystem.html', context)
+
+def calendar_view(request, year=None, month=None):
+    # Si no se especifica mes/año, usar el actual
+    today = date.today()
+    if year is None or month is None:
+        year = today.year
+        month = today.month
+
+    year = int(year)
+    month = int(month)
+
+    # Nombre del mes
+    month_name = calendar.month_name[month]
+
+    # Crear matriz del calendario
+    cal = calendar.Calendar(firstweekday=6)  # 6 = domingo como primer día
+    month_days = cal.monthdatescalendar(year, month)
+
+    # Crear estructura para enviarla al template
+    weeks = []
+    for week in month_days:
+        week_data = []
+        for day in week:
+            week_data.append({
+                "date": day,
+                "in_month": day.month == month
+            })
+        weeks.append(week_data)
+
+    # Calcular mes anterior y siguiente
+    if month == 1:
+        prev_month = date(year-1, 12, 1)
+        next_month = date(year, 2, 1)
+    elif month == 12:
+        prev_month = date(year, 11, 1)
+        next_month = date(year+1, 1, 1)
+    else:
+        prev_month = date(year, month-1, 1)
+        next_month = date(year, month+1, 1)
+
+    # ✅ CORREGIDO: Obtener usuario usando tu sistema de sesión personalizado
+    user_authenticated = False
+    user_email = ""
+    user_events = []
+    
+    if 'usuario_id' in request.session:
+        try:
+            usuario_id = request.session['usuario_id']
+            usuario = Usuario.objects.get(idUsuario=usuario_id)
+            user_authenticated = True
+            user_email = usuario.email
+            user_events = CalendarEventos.objects.filter(id_usuario=usuario)
+        except Usuario.DoesNotExist:
+            pass
+
+    context = {
+        "year": year,
+        "month": month,
+        "month_name": month_name,
+        "weeks": weeks,
+        "prev_year": prev_month.year,
+        "prev_month": prev_month.month,
+        "next_year": next_month.year,
+        "next_month": next_month.month,
+        "today": today,
+        "user_events": user_events,
+        # ✅ Añadir estas variables para el template
+        "user": {
+            "is_authenticated": user_authenticated,
+            "email": user_email
+        }
+    }
+
+    return render(request, "calendar.html", context)
+
+@csrf_exempt
+@require_http_methods(["GET", "POST", "PUT", "DELETE"])
+def calendar_events_api(request):
+    # ✅ CORREGIDO: Usar tu sistema de autenticación personalizado
+    if 'usuario_id' not in request.session:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    
+    if request.method == 'GET':
+        # Obtener eventos del usuario
+        events = CalendarEventos.objects.filter(id_usuario=usuario)
+        events_data = []
+        for event in events:
+            events_data.append({
+                'id': event.id,
+                'event_date': event.event_date.isoformat() if event.event_date else None,
+                'event_title': event.event_title,
+                'event_outfit': event.event_outfit,
+                'event_location': event.event_location,
+                'event_description': event.event_description,
+                'created_at': event.created_at.isoformat() if event.created_at else None,
+                'updated_at': event.updated_at.isoformat() if event.updated_at else None,
+            })
+        return JsonResponse(events_data, safe=False)
+    
+    elif request.method == 'POST':
+        # Crear nuevo evento
+        try:
+            data = json.loads(request.body)
+            event = CalendarEventos.objects.create(
+                id_usuario=usuario,
+                event_date=data.get('event_date'),
+                event_title=data.get('event_title', ''),
+                event_outfit=data.get('event_outfit'),
+                event_location=data.get('event_location'),
+                event_description=data.get('event_description'),
+            )
+            return JsonResponse({
+                'id': event.id,
+                'message': 'Event created successfully'
+            }, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    elif request.method == 'PUT':
+        # Actualizar evento
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('id')
+            event = get_object_or_404(CalendarEventos, id=event_id, id_usuario=usuario)
+            
+            event.event_date = data.get('event_date', event.event_date)
+            event.event_title = data.get('event_title', event.event_title)
+            event.event_outfit = data.get('event_outfit', event.event_outfit)
+            event.event_location = data.get('event_location', event.event_location)
+            event.event_description = data.get('event_description', event.event_description)
+            event.save()
+            
+            return JsonResponse({'message': 'Event updated successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    elif request.method == 'DELETE':
+        # Eliminar evento
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('id')
+            event = get_object_or_404(CalendarEventos, id=event_id, id_usuario=usuario)
+            event.delete()
+            return JsonResponse({'message': 'Event deleted successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+# Vista para el calendario sin parámetros (mes actual)
+def calendar_current(request):
+    return calendar_view(request)

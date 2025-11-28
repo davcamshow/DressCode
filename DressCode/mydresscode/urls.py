@@ -39,7 +39,10 @@ urlpatterns = [
     path('segmentar-prenda/', views.segmentar_prenda, name='segmentar-prenda'),
 
     path('ayuda-contacto/', views.ayuda_contacto, name='ayuda_contacto'),
-     path('configurationsystem/', views.configuration_system, name='configurationsystem'),
+    path('configurationsystem/', views.configuration_system, name='configurationsystem'),
+    path("calendario/", views.calendar_view, name="calendar"),
+    path("calendario/<int:year>/<int:month>/", views.calendar_view, name="calendar_month"),
+    path('calendar/events/', views.calendar_events_api, name='calendar_events_api'),
 ]
 
 
