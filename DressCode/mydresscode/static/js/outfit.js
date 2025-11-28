@@ -1,3 +1,14 @@
+
+// Toggle de modo oscuro/claro
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("theme-toggle");
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  }
+});
+
 function descartarOutfit() {
   if (confirm("¿Seguro que quieres descartar este outfit?")) {
     document.getElementById("outfitGrid").innerHTML = "";

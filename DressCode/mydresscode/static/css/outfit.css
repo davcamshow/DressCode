@@ -373,3 +373,163 @@ body {
 }
 
 
+/* ===== MODO OSCURO GLOBAL ===== */
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1002; /* más alto para que no lo tape nada */
+}
+
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Hover sobre cada círculo */
+.theme-button span:hover {
+  background: #ffffff2b;
+  transform: scale(1.1);
+}
+
+/* Colores base */
+.icon-moon {
+  background-color: #0f1010;
+  color: #F5F5DC;
+}
+
+.icon-sun {
+  background-color: #f9fafa;
+  color: #1C1A17;
+}
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #1C1A17, #2A2A2A);
+  color: #F5F5DC; /* texto beige claro */
+}
+
+/* ===== Encabezado ===== */
+body.dark-mode .top-bar {
+  background-color: #2A2A2A;
+  border-bottom: 1px solid #3B2F2F;
+}
+
+body.dark-mode .titulo {
+  color: #F5F5DC;
+}
+
+body.dark-mode .header-center img {
+  filter: brightness(0.9) contrast(1.1);
+}
+
+body.dark-mode .salir-btn {
+  background: #df8a50;
+  color: #1C1A17;
+}
+
+/* ===== Nav principal ===== */
+body.dark-mode .main-nav {
+  background: #2A2A2A;
+}
+
+body.dark-mode .main-nav a {
+  color: #F5F5DC;
+}
+
+body.dark-mode .main-nav a:hover {
+  color: #df8a50;
+}
+
+body.dark-mode .dropdown-list {
+  background: #2A2A2A;
+  border: 1px solid #3B2F2F;
+}
+
+body.dark-mode .dropdown-list li {
+  color: #F5F5DC;
+}
+
+body.dark-mode .dropdown-list li:hover {
+  background: rgba(223, 138, 80, 0.1);
+  color: #df8a50;
+}
+
+/* ===== Carrusel ===== */
+body.dark-mode .outfit-card {
+  background: rgba(42,42,42,0.8);
+  border: 1px solid #3B2F2F;
+  color: #F5F5DC;
+}
+
+body.dark-mode .outfit-card span {
+  color: #c9b09a;
+}
+
+body.dark-mode .outfit-vacio {
+  color: #999;
+}
+
+/* ===== Footer ===== */
+body.dark-mode .footer-actions {
+  background: #2A2A2A;
+  border-top: 1px solid #3B2F2F;
+}
+
+body.dark-mode .save-btn {
+  background: linear-gradient(135deg, #df8a50 0%, #b76a3a 100%);
+  color: #1C1A17;
+}
+
+body.dark-mode .generate-btn {
+  background: #5B9B9D;
+  color: #F5F5DC;
+}
+
+/* ===== Toast ===== */
+body.dark-mode .toast-guardado {
+  background: #5B9B9D;
+  color: #F5F5DC;
+}
+
+/* ===== Modal rating ===== */
+body.dark-mode .rating-modal {
+  background: rgba(0,0,0,0.7);
+}
+
+body.dark-mode .rating-content {
+  background: #2A2A2A;
+  border: 1px solid #3B2F2F;
+  color: #F5F5DC;
+}
+
+body.dark-mode .stars .star {
+  color: #c9b09a;
+}
+
+body.dark-mode .stars .star.selected {
+  color: #df8a50;
+}
+
+body.dark-mode .rating-btn {
+  background: #df8a50;
+  color: #1C1A17;
+}
+
