@@ -1,3 +1,12 @@
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  // Reiniciar partículas con paleta correcta
+  document.getElementById('particles-js').innerHTML = '';
+  initParticles();
+  loadWeather(); // recargar widget clima con colores correctos
+});
+
 // Variables globales
 const CAMERA_URL = "{% url 'camera' %}";
 const CATEGORIA_DATA = {

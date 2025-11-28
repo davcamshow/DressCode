@@ -79,35 +79,35 @@ function getCookie(name) {
 const prendaData = JSON.parse(sessionStorage.getItem('prendaData') || '{}');
 
 // Función para mostrar mensajes al usuario
+// showMessage -> usa clases en lugar de estilos inline
 function showMessage(message, type = 'success') {
     const messageDiv = document.createElement('div');
-    const backgroundColor = type === 'success' ? '#5d9e9e' : 
-                           type === 'error' ? '#e06e78' : 
-                           type === 'info' ? '#e69c67' : '#5d9e9e';
-    
-    messageDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${backgroundColor};
-        color: white;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 1000;
-        font-weight: bold;
-        text-align: center;
-        max-width: 80%;
-        white-space: pre-line;
-    `;
+    messageDiv.classList.add('toast');
+    // clase por tipo
+    if (type === 'success') messageDiv.classList.add('toast--success');
+    else if (type === 'error') messageDiv.classList.add('toast--error');
+    else messageDiv.classList.add('toast--info');
+
     messageDiv.textContent = message;
     document.body.appendChild(messageDiv);
-    
+
+    // animación de entrada (opcional)
+    messageDiv.style.opacity = '0';
+    messageDiv.style.transform = 'translateY(-6px)';
+    requestAnimationFrame(() => {
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transform = 'translateY(0)';
+    });
+
+    const timeout = (type === 'success' || type === 'error') ? 5000 : 4000;
     setTimeout(() => {
-        messageDiv.remove();
-    }, type === 'success' ? 5000 : type === 'error' ? 5000 : 4000);
+        // animación de salida
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(-8px)';
+        setTimeout(() => messageDiv.remove(), 250);
+    }, timeout);
 }
+
 
 // Función para aplicar segmentación a la imagen
 async function applySegmentation(blob, prendaId = null) {
@@ -153,41 +153,16 @@ async function applySegmentation(blob, prendaId = null) {
 // Función para mostrar resultados de segmentación
 function showSegmentationResults(originalImageUrl, segmentedImageUrl, prendaData) {
     const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 1000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    `;
+    overlay.classList.add('modal-overlay');
 
     const resultsDiv = document.createElement('div');
-    resultsDiv.style.cssText = `
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        z-index: 1001;
-        max-width: 95%;
-        max-height: 90vh;
-        overflow-y: auto;
-        text-align: center;
-        width: 100%;
-        max-width: 900px;
-        position: relative;
-    `;
-    
-    // Crear contenido con comparación de imágenes
+    resultsDiv.classList.add('modal-content');
+
+    // construir contenido sin estilos en línea pesados (usar clases)
     const detallesPrenda = prendaData.tipo ? `
-        <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; text-align: left; border-left: 4px solid #5d9e9e;">
-            <h3 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.3em;">📋 Detalles de la prenda guardada:</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="prenda-detalles">
+            <h3 style="color: var(--accent-teal); margin-bottom:8px;">📋 Detalles de la prenda guardada:</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                 <p><strong>🏷️ Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
                 <p><strong>👕 Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
                 <p><strong>🎨 Color:</strong> ${prendaData.color || 'No especificado'}</p>
@@ -197,96 +172,60 @@ function showSegmentationResults(originalImageUrl, segmentedImageUrl, prendaData
             </div>
         </div>
     ` : '';
-    
+
     resultsDiv.innerHTML = `
-        <h2 style="color: #5d9e9e; margin-bottom: 25px; font-size: 2em; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <span>✅</span> Prenda Guardada - Fondo Removido
-        </h2>
+        <div class="modal-title"><span>✅</span> <strong>Prenda Guardada - Fondo Removido</strong></div>
         ${detallesPrenda}
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 30px 0;">
-            <div style="text-align: center;">
-                <h4 style="color: #666; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🖼️</span> Imagen Original
-                </h4>
-                <div style="border: 3px solid #e0e0e0; border-radius: 12px; padding: 10px; background: #f8f9fa;">
-                    <img src="${originalImageUrl}" alt="Imagen original" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:18px 0;">
+            <div style="text-align:center;">
+                <h4 class="muted" style="margin-bottom:10px;"><span>🖼️</span> Imagen Original</h4>
+                <div class="image-box">
+                    <img src="${originalImageUrl}" alt="Imagen original" style="width:100%; max-width:300px; height:auto; border-radius:8px;">
                 </div>
             </div>
-            <div style="text-align: center;">
-                <h4 style="color: #5d9e9e; margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🎯</span> Fondo Removido
-                </h4>
-                <div style="border: 3px solid #5d9e9e; border-radius: 12px; padding: 10px; background: #f0f8f8;">
-                    <img src="${segmentedImageUrl}" alt="Imagen sin fondo" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;">
+            <div style="text-align:center;">
+                <h4 style="color: var(--accent-teal); margin-bottom:10px;"><span>🎯</span> Fondo Removido</h4>
+                <div class="image-box" style="border-color: var(--accent-teal);">
+                    <img src="${segmentedImageUrl}" alt="Imagen sin fondo" style="width:100%; max-width:300px; height:auto; border-radius:8px;">
                 </div>
             </div>
         </div>
-        
-        <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #e8f4f8 0%, #d4edf2 100%); border-radius: 12px; border-left: 4px solid #e69c67;">
-            <p style="color: #2c5530; font-weight: bold; font-size: 1.1em; margin-bottom: 8px;">✅ Fondo removido exitosamente</p>
-            <p style="color: #666; font-size: 0.95em;">La prenda ha sido aislada mediante inteligencia artificial. El fondo ha sido eliminado para mejores recomendaciones de outfit.</p>
+        <div class="prenda-detalles" style="border-left-color: var(--accent-orange);">
+            <p style="font-weight:700; color: var(--muted-text);">✅ Fondo removido exitosamente</p>
+            <p class="muted">La prenda ha sido aislada mediante inteligencia artificial. El fondo ha sido eliminado para mejores recomendaciones de outfit.</p>
         </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <button id="closeResults" style="
-                background: linear-gradient(135deg, #5d9e9e 0%, #4a8a8a 100%);
-                color: white;
-                border: none;
-                padding: 15px 35px;
-                border-radius: 30px;
-                cursor: pointer;
-                font-weight: bold;
-                font-size: 1.1em;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(93, 158, 158, 0.3);
-            ">Continuar al Armario</button>
+        <div style="text-align:center; margin-top:18px;">
+            <button id="closeResults" class="btn-primary">Continuar al Armario</button>
         </div>
     `;
-    
+
     overlay.appendChild(resultsDiv);
     document.body.appendChild(overlay);
-    
-    // Agregar efecto hover al botón
-    const closeButton = document.getElementById('closeResults');
-    closeButton.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px)';
-        this.style.boxShadow = '0 6px 20px rgba(93, 158, 158, 0.4)';
-    });
-    
-    closeButton.addEventListener('mouseleave', function() {
-        this.style.transform = '';
-        this.style.boxShadow = '0 4px 15px rgba(93, 158, 158, 0.3)';
-    });
-    
-    closeButton.addEventListener('click', function() {
-        overlay.remove();
-        // Limpiar datos de sessionStorage después del envío exitoso
-        sessionStorage.removeItem('prendaData');
-        // Limpiar URL de la imagen original
-        if (originalImageUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(originalImageUrl);
-        }
-        // Redirigir al inicio después de cerrar
-        setTimeout(() => {
-            window.location.href = INICIO_URL || "/inicio/";
-        }, 500);
-    });
 
-    // Cerrar al hacer clic fuera del modal
+    const closeButton = document.getElementById('closeResults');
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            overlay.remove();
+            sessionStorage.removeItem('prendaData');
+            if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(originalImageUrl);
+            }
+            setTimeout(() => window.location.href = INICIO_URL || "/inicio/", 500);
+        });
+    }
+
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) {
             overlay.remove();
-            if (originalImageUrl.startsWith('blob:')) {
+            if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
                 URL.revokeObjectURL(originalImageUrl);
             }
             sessionStorage.removeItem('prendaData');
-            setTimeout(() => {
-                window.location.href = INICIO_URL || "/inicio/";
-            }, 500);
+            setTimeout(() => window.location.href = INICIO_URL || "/inicio/", 500);
         }
     });
 }
+
 
 // Función para enviar imagen al servidor
 async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
@@ -355,42 +294,21 @@ async function sendImageToDjango(blob, filename = 'prenda_capturada.png') {
 // Función de fallback si la segmentación no está disponible
 function showSuccessMessage(blob) {
     const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 1000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    `;
+    overlay.classList.add('modal-overlay');
 
     const resultsDiv = document.createElement('div');
-    resultsDiv.style.cssText = `
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        z-index: 1001;
-        max-width: 500px;
-        text-align: center;
-        position: relative;
-    `;
-    
+    resultsDiv.classList.add('modal-content');
+
     const originalImageUrl = blob ? URL.createObjectURL(blob) : '';
     const imagePreview = originalImageUrl ? `
-        <div style="margin: 20px 0;">
-            <img src="${originalImageUrl}" alt="Prenda guardada" style="width: 100%; max-width: 300px; height: auto; border-radius: 12px; border: 3px solid #5d9e9e;">
+        <div style="margin: 16px 0;">
+            <img src="${originalImageUrl}" alt="Prenda guardada" style="width:100%; max-width:300px; height:auto; border-radius:12px; border:3px solid var(--accent-teal);">
         </div>
     ` : '';
-    
+
     const detallesPrenda = prendaData.tipo ? `
-        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: left;">
-            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Detalles de la prenda guardada:</h3>
+        <div class="prenda-detalles">
+            <h3 style="color: var(--accent-teal); margin-bottom:8px;">Detalles de la prenda guardada:</h3>
             <p><strong>Categoría:</strong> ${prendaData.categoria || 'No especificada'}</p>
             <p><strong>Tipo:</strong> ${prendaData.tipo || 'No especificado'}</p>
             <p><strong>Color:</strong> ${prendaData.color || 'No especificado'}</p>
@@ -399,39 +317,29 @@ function showSuccessMessage(blob) {
             <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
         </div>
     ` : '';
-    
+
     resultsDiv.innerHTML = `
-        <h2 style="color: #5d9e9e; margin-bottom: 20px;">✅ Prenda Guardada</h2>
+        <div class="modal-title">✅ <strong>Prenda Guardada</strong></div>
         ${imagePreview}
         ${detallesPrenda}
-        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <div style="margin-top:12px; padding:12px; border-radius:8px; background: linear-gradient(135deg, var(--card-gradient-start), var(--card-gradient-end));">
             <p>La prenda se ha guardado exitosamente en tu armario.</p>
         </div>
-        <div style="text-align: center; margin-top: 25px;">
-            <button id="closeResults" style="
-                background: #5d9e9e;
-                color: white;
-                border: none;
-                padding: 12px 25px;
-                border-radius: 25px;
-                cursor: pointer;
-                font-weight: bold;
-            ">Continuar</button>
+        <div style="text-align:center; margin-top:16px;">
+            <button id="closeResults" class="btn-primary">Continuar</button>
         </div>
     `;
-    
+
     overlay.appendChild(resultsDiv);
     document.body.appendChild(overlay);
-    
+
     document.getElementById('closeResults').addEventListener('click', function() {
         overlay.remove();
         if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
             URL.revokeObjectURL(originalImageUrl);
         }
         sessionStorage.removeItem('prendaData');
-        setTimeout(() => {
-            window.location.href = INICIO_URL || "/inicio/";
-        }, 500);
+        setTimeout(() => window.location.href = INICIO_URL || "/inicio/", 500);
     });
 
     overlay.addEventListener('click', function(e) {
@@ -441,9 +349,7 @@ function showSuccessMessage(blob) {
                 URL.revokeObjectURL(originalImageUrl);
             }
             sessionStorage.removeItem('prendaData');
-            setTimeout(() => {
-                window.location.href = INICIO_URL || "/inicio/";
-            }, 500);
+            setTimeout(() => window.location.href = INICIO_URL || "/inicio/", 500);
         }
     });
 }
@@ -502,18 +408,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar información de la prenda si existe
     if (prendaData.tipo) {
         const infoDiv = document.createElement('div');
-        infoDiv.style.cssText = `
-            background: #f8fdff;
-            border: 1px solid #5d9e9e;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-            width: 90%;
-            max-width: 500px;
-        `;
+        infoDiv.classList.add('prenda-info');
+
         infoDiv.innerHTML = `
-            <h3 style="color: #5d9e9e; margin-bottom: 10px;">Información de la prenda:</h3>
+            <h3>Información de la prenda:</h3>
             <p><strong>Categoría:</strong> ${prendaData.categoria}</p>
             <p><strong>Tipo:</strong> ${prendaData.tipo}</p>
             <p><strong>Color:</strong> ${prendaData.color}</p>
@@ -521,6 +419,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <p><strong>Estilo:</strong> ${prendaData.estilo}</p>
             <p><strong>Favorito:</strong> ${prendaData.esFavorito ? 'Sí' : 'No'}</p>
         `;
+
+
         
         // Insertar antes del título principal
         const mainContent = document.querySelector('.main-content');
@@ -833,3 +733,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+const body = document.body;
+    const toggleBtn = document.getElementById("theme-toggle");
+
+    toggleBtn.addEventListener("click", () => {
+        body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
+    });

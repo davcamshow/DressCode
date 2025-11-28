@@ -1,3 +1,13 @@
+
+// Toggle de modo oscuro/claro
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("theme-toggle");
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  }
+});
 // Inicializar fondo dinámico con partículas similares al register
 function initDynamicBackground() {
   const canvas = document.getElementById('dynamic-bg');
@@ -156,15 +166,17 @@ function initHoverEffects() {
   const labels = document.querySelectorAll('.login-form label');
   
   // Efecto sutil en el contenedor principal al hacer hover
-  if (loginContainer) {
-    loginContainer.addEventListener('mouseenter', function() {
-      document.body.style.background = 'linear-gradient(135deg, #f9f6f2 0%, #eae2d9 50%, #d9ccbd 100%)';
+  loginContainer.addEventListener('mouseenter', function() {
+    if (!document.body.classList.contains('dark-mode')) {
+        document.body.style.background = 'linear-gradient(135deg, #f9f6f2 0%, #eae2d9 50%, #d9ccbd 100%)';
+      }
     });
-    
-    loginContainer.addEventListener('mouseleave', function() {
+
+  loginContainer.addEventListener('mouseleave', function() {
+    if (!document.body.classList.contains('dark-mode')) {
       document.body.style.background = 'linear-gradient(135deg, #f8f4f0 0%, #e8dfd4 50%, #d4c4b0 100%)';
-    });
-  }
+    }
+  });
   
   // Efectos en labels al interactuar con inputs
   inputs.forEach((input, index) => {

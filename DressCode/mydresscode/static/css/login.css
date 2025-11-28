@@ -1,3 +1,142 @@
+/* Botón de cambio de tema */
+.theme-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #4a8a8a;
+  color: #F5F5DC;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.theme-button:hover {
+  background: #faffff;
+  transform: scale(1.05);
+}
+
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+
+
+.icon-moon {
+  background-color: #0f1010;
+  color: #F5F5DC;
+}
+
+.icon-sun {
+  background-color: #f9fafa;
+  color: #1C1A17;
+}
+
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+/* Modo oscuro */
+body.dark-mode {
+  background: linear-gradient(135deg, #1C1A17, #2A2A2A);
+  color: #F5F5DC;
+}
+
+body.dark-mode .pantalla-login {
+  background-color: #2A2A2A;
+  border: 1px solid #3B2F2F;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+body.dark-mode header {
+  background-color: #2A2A2A;
+  border-bottom: 1px solid #3B2F2F;
+}
+
+body.dark-mode .back-btn {
+  color: #F5F5DC;
+}
+
+body.dark-mode input,
+body.dark-mode label,
+body.dark-mode h2,
+body.dark-mode .olvide,
+body.dark-mode .alert {
+  background-color: #2A2A2A;
+  color: #F5F5DC;
+  border-color: #3B2F2F;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #1C1A17, #2A2A2A);
+}
+
+body.dark-mode input[type="email"],
+body.dark-mode input[type="password"] {
+  background-color: #2A2A2A;
+  color: #F5F5DC;
+  border: 1px solid #3B2F2F;
+}
+
+body.dark-mode label {
+  color: #F5F5DC;
+}
+
+body.dark-mode h2 {
+  color: #F5F5DC;
+}
+
+body.dark-mode .olvide {
+  color: #df8a50;
+}
+
+body.dark-mode .login-form input::placeholder {
+  color: #c9b09a;
+}
+
+input, label, h2, .olvide {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode label {
+  color: #F5F5DC;
+  text-shadow: 0 0 2px #1C1A17;
+}
+
+
+body.dark-mode .login-form label {
+  color: #F5F5DC !important;
+  text-shadow: none;
+}
 /* Reset básico */
 * {
   margin: 0;
