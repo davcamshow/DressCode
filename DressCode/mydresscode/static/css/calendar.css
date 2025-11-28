@@ -1,0 +1,161 @@
+/* Estilos para el botón de cambio de tema */
+.theme-button:hover {
+  background: #ffffff00;
+  transform: scale(1.05);
+}
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 13.5px;
+  right: 90px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.icon-moon {
+  background-color: #0f1010;
+  color: #F5F5DC;
+}
+
+.icon-sun {
+  background-color: #f9fafa;
+  color: #1C1A17;
+}
+
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
+
+
+
+
+/* === MODO OSCURO === */
+body.dark-mode {
+  background-color: #1C1A17;
+  color: #F5F5DC;
+}
+
+/* Títulos */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode .page-subtitle {
+  color: #F5F5DC;
+}
+
+/* Calendario */
+body.dark-mode .calendar-container {
+  background-color: #2A2A2A;
+  border-color: #3B2F2F;
+}
+
+body.dark-mode .calendar-month,
+body.dark-mode .calendar-details {
+  background-color: #2A2A2A;
+  color: #F5F5DC;
+}
+
+body.dark-mode .calendar-header,
+body.dark-mode .calendar-day-header {
+  background-color: #3B2F2F;
+  color: #F5F5DC;
+}
+
+body.dark-mode .calendar-day {
+  background-color: #2A2A2A;
+  border: 1px solid #3B2F2F;
+  color: #F5F5DC;
+}
+
+body.dark-mode .calendar-day.today {
+  background-color: #5B9B9D;
+  color: #1C1A17;
+}
+
+body.dark-mode .calendar-day.past-day {
+  opacity: 0.5;
+}
+
+/* Botones */
+body.dark-mode .nav-btn,
+body.dark-mode .add-event-btn,
+body.dark-mode .form-btn {
+  background-color: #df8a50;
+  color: #1C1A17;
+  border: none;
+}
+
+body.dark-mode .form-btn.cancel {
+  background-color: #999;
+  color: #1C1A17;
+}
+
+/* Modal */
+body.dark-mode .modal-overlay {
+  background: rgba(0,0,0,0.7);
+}
+
+body.dark-mode .modal-content {
+  background-color: #2A2A2A;
+  color: #F5F5DC;
+  border: 1px solid #3B2F2F;
+}
+
+/* Inputs y textarea */
+body.dark-mode .form-input,
+body.dark-mode .form-textarea {
+  background-color: #1C1A17;
+  color: #F5F5DC;
+  border: 1px solid #3B2F2F;
+}
+
+/* Eventos */
+body.dark-mode .no-events p,
+body.dark-mode .no-events small,
+body.dark-mode .event-date,
+body.dark-mode .details-title {
+  color: #F5F5DC;
+}
+
+/* Sección de todos los eventos */
+body.dark-mode .all-events-section {
+  border-top: 2px solid #3B2F2F !important;
+}
+
+body.dark-mode .all-events-section h3 {
+  color: #df8a50 !important;
+}
+

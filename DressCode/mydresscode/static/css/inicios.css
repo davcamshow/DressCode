@@ -665,6 +665,8 @@ button:hover {
 
 .user-icon {
   width: 45px;
+  right: -120px;
+  top: -10px;
   height: 45px;
   border-radius: 50%;
   background: linear-gradient(135deg, #5b9b9d 0%, #e91e63 100%);
@@ -708,10 +710,10 @@ button:hover {
 .profile-dropdown-content {
   display: none;
   position: absolute;
-  right: 0;
+  right: 0px;
   top: 100%;
-  margin-top: 10px;
-  width: 200px;
+  margin-top: 200px;
+  width: 10px;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
@@ -794,14 +796,15 @@ button:hover {
 
 /* Estilos para el botón de cambio de tema */
 .theme-button:hover {
-  background: #ffffff2b;
+  background: #ffffff00;
   transform: scale(1.05);
 }
 .theme-toggle-wrapper {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 10;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 .theme-button {
@@ -826,6 +829,7 @@ button:hover {
 
 
 
+
 .icon-moon {
   background-color: #0f1010;
   color: #F5F5DC;
@@ -839,6 +843,31 @@ button:hover {
 .theme-button span:hover {
   transform: scale(1.1);
 }
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
+
+body, html {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  will-change: auto !important;
+}
+
+/* Cuando está en oscuro */
+body.dark-mode .icon-moon { display: none; }
+body.dark-mode .icon-sun { display: inline-flex; }
 
 /* ===== MODO OSCURO GLOBAL ===== */
 body.dark-mode {

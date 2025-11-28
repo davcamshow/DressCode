@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
     <title>Calendario de Outfits | DressCode</title>
     {% load static %}
     <style>
@@ -577,6 +579,12 @@
 
         <h1>Calendario de Outfits</h1>
         <p class="page-subtitle">Planifica tus outfits para eventos especiales</p>
+        <div class="theme-toggle-wrapper">
+            <button id="theme-toggle" class="theme-button">
+                <span class="icon-moon">🌙</span>
+                <span class="icon-sun">☀️</span>
+            </button>
+        </div>
 
     <div class="calendar-container">
         <!-- Vista de calendario mensual -->
@@ -1077,5 +1085,6 @@
             loadEvents();
         });
     </script>
+    <script src="{% static 'js/calendar.js' %}"></script>
 </body>
 </html>

@@ -2,21 +2,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("theme-toggle");
 
   // Al cargar la página, revisa si hay un tema guardado en localStorage
-  const savedTheme = localStorage.getItem("theme");
+  const savedTheme = localStorage.getItem("theme") || "light";
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
   }
+
+  // Mostrar el ícono correcto al cargar
+  updateIcons(savedTheme);
 
   // Evento al hacer clic en el botón
   toggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 
-    // Guardar preferencia en localStorage
-    if (document.body.classList.contains("dark-mode")) {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
+    // Detectar nuevo tema
+    const isDark = document.body.classList.contains("dark-mode");
+    const newTheme = isDark ? "dark" : "light";
+
+    // Guardar preferencia
+    localStorage.setItem("theme", newTheme);
+
+    // Actualizar íconos
+    updateIcons(newTheme);
 
     // Reiniciar partículas y clima si los usas
     const particlesContainer = document.getElementById("particles-js");
@@ -28,7 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
       loadWeather(); // tu función del clima
     }
   });
+
+  // Función para mostrar/ocultar íconos
+  function updateIcons(theme) {
+    const moonIcon = toggle.querySelector(".icon-moon");
+    const sunIcon = toggle.querySelector(".icon-sun");
+
+    if (theme === "dark") {
+      moonIcon.style.display = "none";
+      sunIcon.style.display = "inline-flex";
+    } else {
+      moonIcon.style.display = "inline-flex";
+      sunIcon.style.display = "none";
+    }
+  }
 });
+
 
 const WEATHER_API_KEY = "8a33fa8635d6adf10672a0fa18b68316";
 const WEATHER_CITY = "Morelia";

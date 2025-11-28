@@ -18,9 +18,16 @@
     <div class="header-center">
       <img src="{% static 'img/logo.png' %}" alt="Logo Mi Armario" />
     </div>
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" class="theme-button">
+          <span class="icon-moon">🌙</span>
+          <span class="icon-sun">☀️</span>
+      </button>
+    </div>
     <div class="header-right">
       <a href="{% url 'inicio' %}" class="salir-btn">Salir</a>
     </div>
+
   </header>
 
   <!-- NAV DE OPCIONES -->
@@ -55,12 +62,6 @@
     </ul>
   </nav>
 
-  <div class="theme-toggle-wrapper">
-      <button id="theme-toggle" class="theme-button">
-          <span class="icon-moon">🌙</span>
-          <span class="icon-sun">☀️</span>
-      </button>
-    </div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="canvas-area">
