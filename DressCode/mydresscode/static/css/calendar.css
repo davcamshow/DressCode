@@ -159,3 +159,139 @@ body.dark-mode .all-events-section h3 {
   color: #df8a50 !important;
 }
 
+/* ================================
+      COMPLEMENTO UNIVERSAL 
+      PARA MODO OSCURO COMPLETO
+================================ */
+
+/* Contenedores generales */
+body.dark-mode .container,
+body.dark-mode .content,
+body.dark-mode .box,
+body.dark-mode .card,
+body.dark-mode .section {
+  background-color: #22221F !important;
+  color: #F5F5DC !important;
+  border-color: #3B2F2F !important;
+}
+
+/* Navbars / headers */
+body.dark-mode header,
+body.dark-mode .navbar,
+body.dark-mode .top-bar {
+  background-color: #1C1A17 !important;
+  color: #F5F5DC !important;
+  border-bottom: 1px solid #3B2F2F !important;
+}
+
+/* Footer */
+body.dark-mode footer {
+  background-color: #1C1A17;
+  color: #F5F5DC;
+  border-top: 1px solid #3B2F2F;
+}
+
+/* Tablas */
+body.dark-mode table {
+  color: #F5F5DC;
+  background-color: #22221F;
+}
+
+body.dark-mode table th {
+  background-color: #3B2F2F;
+  color: #F5F5DC;
+}
+
+body.dark-mode table td {
+  background-color: #2A2A2A;
+  border-color: #3B2F2F;
+}
+
+/* Links */
+body.dark-mode a {
+  color: #df8a50;
+}
+
+body.dark-mode a:hover {
+  color: #e49f6a;
+}
+
+/* Sombras adaptadas */
+body.dark-mode .card,
+body.dark-mode .modal-content,
+body.dark-mode .calendar-day {
+  box-shadow: 0 0 10px rgba(0,0,0,0.6) !important;
+}
+
+/* Scrollbar (solo Chrome/Edge) */
+body.dark-mode ::-webkit-scrollbar {
+  width: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #5B9B9D;
+  border-radius: 5px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #2A2A2A;
+}
+
+/* Inputs */
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #c9c9b9;
+}
+
+/* Botones hover */
+body.dark-mode button:hover,
+body.dark-mode .form-btn:hover,
+body.dark-mode .add-event-btn:hover {
+  background-color: #e49f6a00 !important;
+  color: #1C1A17 !important;
+}
+
+/* Divisores */
+body.dark-mode hr {
+  border-color: #3B2F2F;
+}
+
+/* Etiquetas de formulario */
+body.dark-mode label {
+  color: #cbce6f !important;
+}
+
+/* Tooltips (si existen) */
+body.dark-mode .tooltip {
+  background-color: #3B2F2F;
+  color: #F5F5DC;
+  border-color: #5B9B9D;
+}
+
+body.dark-mode .page-background,
+body.dark-mode .main-wrapper,
+body.dark-mode html,
+body.dark-mode body {
+    background: #1C1A17 !important;
+}
+
+/* Arreglar fondo claro global */
+body.dark-mode {
+    background: #1C1A17 !important; /* fondo sólido */
+}
+
+body.dark-mode {
+    background: linear-gradient(to bottom, #1c1a17, #0e0d0c) !important;
+}
+
+body.dark-mode .calendar-details {
+    background-color: #2A2A2A !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode #selectedDate,
+body.dark-mode .event-date {
+    color: #ffd28a !important; /* visible y bonito */
+    font-weight: 600;
+}
+
