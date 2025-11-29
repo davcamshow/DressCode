@@ -1,3 +1,4 @@
+
 // Crear partículas de fondo
 function createBackgroundParticles() {
     const container = document.getElementById('bg-particles');

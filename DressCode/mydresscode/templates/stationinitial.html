@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+<button id="darkModeToggle" class="dark-toggle">🌙</button>
+
 <div class="wizard-container">
     <h2>Descubre tus Favoritas</h2>
     <p class="step-info">Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</p>
@@ -102,6 +104,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateContinueButton();
 });
+
+// ------------------------------
+//     MODO OSCURO
+// ------------------------------
+function setupDarkMode() {
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    const saved = localStorage.getItem("darkMode");
+    if (saved === "enabled") {
+        body.classList.add("dark-mode");
+        toggleBtn.textContent = "☀️";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+            localStorage.setItem("darkMode", "enabled");
+            toggleBtn.textContent = "☀️";
+        } else {
+            localStorage.setItem("darkMode", "disabled");
+            toggleBtn.textContent = "🌙";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", setupDarkMode);
 </script>
 
 <style>
@@ -123,5 +153,94 @@ document.addEventListener('DOMContentLoaded', function() {
         gap: 15px;
     }
 }
+
+/* 🔘 BOTÓN MODO OSCURO */
+.dark-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.85);
+    border: none;
+    padding: 10px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 5000;
+    transition: .3s;
+}
+.dark-toggle:hover {
+    transform: scale(1.15);
+}
+
+/* =====================================================
+   🌙 MODO OSCURO — SOLO SE AGREGA, NO CAMBIA NADA TUYO
+   ===================================================== */
+body.dark-mode {
+    background: #1C1A17 !important;
+    color: #F5F5DC !important;
+}
+
+/* Botón en oscuro */
+body.dark-mode .dark-toggle {
+    background: #2A2A2A !important;
+    color: #F5F5DC !important;
+    border: 1px solid #3B2F2F !important;
+}
+
+/* Contenedor principal */
+body.dark-mode .wizard-container {
+    background: rgba(0,0,0,0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid #3B2F2F !important;
+}
+
+/* Textos */
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode p,
+body.dark-mode label {
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .instruction {
+    color: #C0B9A8 !important;
+}
+
+/* Las tarjetas de temporadas (sin cambiar tus clases) */
+body.dark-mode .choice-label .choice-content {
+    background: #2A2A2A !important;
+    border: 1px solid #3B2F2F !important;
+    color: #F5F5DC !important;
+}
+
+/* Seleccionada */
+body.dark-mode .choice-label input:checked + .choice-content {
+    border-color: #D4AF37 !important;
+    background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.50)) !important;
+    box-shadow: 0 0 10px rgba(212,175,55,0.4);
+}
+
+/* Barra de progreso */
+body.dark-mode .progress-bar {
+    background: #2A2A2A !important;
+    border-color: #3B2F2F !important;
+}
+body.dark-mode .progress-fill {
+    background: #D4AF37 !important;
+}
+
+/* Botones */
+body.dark-mode .btn-style {
+    background: #2A2A2A !important;
+    color: #F5F5DC !important;
+    border: 1px solid #3B2F2F !important;
+}
+
+body.dark-mode .btn-continuar.btn-active {
+    background: #D4AF37 !important;
+    color: #1C1A17 !important;
+}
+
 </style>
 {% endblock %}

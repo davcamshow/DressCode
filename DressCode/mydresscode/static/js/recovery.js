@@ -1,3 +1,35 @@
+/* ======================================
+   MODO OSCURO – (AÑADIDO SIN ROMPER NADA)
+====================================== */
+function initDarkMode() {
+  const btnDark = document.getElementById("darkModeBtn");
+  if (!btnDark) return;
+
+  // Cargar preferencia
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark");
+    btnDark.textContent = "☀️";
+  } else {
+    btnDark.textContent = "🌙";
+  }
+
+  btnDark.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+      localStorage.setItem("darkMode", "enabled");
+      btnDark.textContent = "☀️";
+    } else {
+      localStorage.setItem("darkMode", "disabled");
+      btnDark.textContent = "🌙";
+    }
+  });
+}
+
+/* ======================================
+   TU CÓDIGO ORIGINAL COMPLETO
+====================================== */
+
 // Inicializar fondo dinámico con partículas similares al register
 function initDynamicBackground() {
   const canvas = document.getElementById('dynamic-bg');
@@ -221,7 +253,6 @@ function clearErrors() {
 function initHoverEffects() {
   const recoveryContainer = document.querySelector('.pantalla-recuperar');
   
-  // Efecto sutil en el contenedor principal al hacer hover
   if (recoveryContainer) {
     recoveryContainer.addEventListener('mouseenter', function() {
       document.body.style.background = 'linear-gradient(135deg, #f9f6f2 0%, #eae2d9 50%, #d9ccbd 100%)';
@@ -235,6 +266,7 @@ function initHoverEffects() {
 
 // Inicialización cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', function() {
+  initDarkMode(); // ← AÑADIDO
   initDynamicBackground();
   createFloatingParticles();
   initHoverEffects();

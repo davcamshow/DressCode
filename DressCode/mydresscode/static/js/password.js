@@ -1,3 +1,38 @@
+// -------------------------------------------
+// 🌙 MODO OSCURO (AGREGADO)
+// -------------------------------------------
+
+// Activar modo oscuro según localStorage
+function setupDarkMode() {
+    const toggle = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    // Activar si está guardado
+    if (localStorage.getItem("dark-mode") === "enabled") {
+        body.classList.add("dark-mode");
+        toggle.textContent = "☀️";
+    }
+
+    // Listener del botón
+    toggle.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+            localStorage.setItem("dark-mode", "enabled");
+            toggle.textContent = "☀️";
+        } else {
+            localStorage.setItem("dark-mode", "disabled");
+            toggle.textContent = "🌙";
+        }
+    });
+}
+
+
+
+// -------------------------------------------
+// ⭐ TU CÓDIGO ORIGINAL (NO MODIFICADO)
+// -------------------------------------------
+
 // Elementos del DOM
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirm-password');
@@ -136,7 +171,10 @@ function initApp() {
     setupFormValidation();
     setupInputEvents();
     adjustContainerHeight();
-    
+
+    // MODO OSCURO
+    setupDarkMode();
+
     // Ajustar altura cuando cambie el tamaño de la ventana
     window.addEventListener('resize', adjustContainerHeight);
 }

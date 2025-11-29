@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+<button id="darkModeToggle" class="dark-toggle">🌙</button>
+
 <div class="wizard-container">
     <h2>Completa tu Perfil</h2>
     <p class="step-info">Paso {{ wizard.steps.step1 }} de {{ wizard.steps.count }}</p>
@@ -172,6 +174,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateContinueButton();
 });
+
+// --- MODO OSCURO ---
+function setupDarkMode() {
+    const toggleBtn = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    // Cargar preferencia guardada
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "enabled") {
+        body.classList.add("dark-mode");
+        toggleBtn.textContent = "☀️";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+            toggleBtn.textContent = "☀️";
+            localStorage.setItem("darkMode", "enabled");
+        } else {
+            toggleBtn.textContent = "🌙";
+            localStorage.setItem("darkMode", "disabled");
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupDarkMode();  // <<--- ACTIVAMOS MODO OSCURO
+});
 </script>
 
 <style>
@@ -292,5 +323,137 @@ document.addEventListener('DOMContentLoaded', function() {
     cursor: pointer;
     opacity: 1;
 }
+
+/* --- BOTÓN MODO OSCURO --- */
+.dark-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    padding: 10px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 5000;
+    transition: 0.3s ease-in-out;
+}
+.dark-toggle:hover {
+    transform: scale(1.15);
+}
+
+/* 🔥 BOTÓN EN MODO OSCURO */
+body.dark-mode .dark-toggle {
+    background: #2A2A2A !important;     /* gris cálido oscuro */
+    color: #F5F5DC !important;          /* texto beige */
+    border: 1px solid #3B2F2F !important; /* borde café */
+    box-shadow: 0 0 8px rgba(212,175,55,0.35);
+}
+
+body.dark-mode .dark-toggle:hover {
+    transform: scale(1.15);
+    background: #3B2F2F !important;
+}
+
+/* ============================
+   🔥 MODO OSCURO — PALETA ELEGIDA
+   ============================ */
+
+/* Fondo principal */
+body.dark-mode {
+    background: #1C1A17 !important;
+    color: #F5F5DC !important;
+}
+
+/* CONTENEDOR PRINCIPAL */
+body.dark-mode .wizard-container {
+    background: rgba(0,0,0,0.3) !important; /* Glassmorphism */
+    backdrop-filter: blur(10px);
+    border: 1px solid #3B2F2F !important;
+    color: #F5F5DC !important;
+}
+
+/* TEXTOS */
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode p,
+body.dark-mode label {
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .instruction {
+    color: #C0B9A8 !important;
+}
+
+/* TARJETAS DE TALLA */
+body.dark-mode .talla-field-group {
+    background: #2A2A2A !important;
+    border: 1px solid #3B2F2F !important;
+}
+
+body.dark-mode .talla-content {
+    background: #2A2A2A !important;
+    border: 2px solid #3B2F2F !important;
+}
+
+body.dark-mode .talla-value {
+    color: #F5F5DC !important;
+}
+
+/* ESTADO SELECCIONADO */
+body.dark-mode .talla-card input:checked + .talla-content {
+    border-color: #D4AF37 !important;
+    background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.50)) !important;
+    box-shadow: 0 0 10px rgba(212,175,55,0.4);
+}
+
+/* HOVERS */
+body.dark-mode .talla-card:hover .talla-content {
+    border-color: #D4AF37 !important;
+    transform: translateY(-2px);
+}
+
+/* PROGRESS BAR */
+body.dark-mode .progress-bar {
+    background: #2A2A2A !important;
+    border: 1px solid #3B2F2F;
+}
+
+body.dark-mode .progress-fill {
+    background: #D4AF37 !important;
+}
+
+/* MENSAJES */
+body.dark-mode .talla-warning {
+    background: rgba(212,175,55,0.15) !important;
+    color: #D4AF37 !important;
+    border-left-color: #D4AF37 !important;
+}
+
+body.dark-mode .talla-error {
+    background: rgba(139,0,0,0.2) !important;
+    color: #ffb3b3 !important;
+    border-left-color: #8B0000 !important;
+}
+
+/* BOTONES */
+body.dark-mode .btn-style {
+    background: #2A2A2A !important;
+    color: #F5F5DC !important;
+    border: 1px solid #3B2F2F !important;
+}
+
+body.dark-mode .btn-continuar.btn-active {
+    background: #D4AF37 !important;
+    color: #1C1A17 !important;
+}
+
+body.dark-mode .btn-anterior {
+    background: #3B2F2F !important;
+    color: #F5F5DC !important;
+}
+
+
 </style>
 {% endblock %}

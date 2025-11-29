@@ -444,3 +444,98 @@ p[style*="color:red"] {
     padding: 10px 12px;
   }
 }
+
+/* ==========================================================
+   🌙 MODO OSCURO — SIN BORRAR NADA DE TU CSS ORIGINAL 
+========================================================== */
+
+/* Fondo */
+body.dark {
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #000 100%) !important;
+  color: #f8f8f8;
+}
+
+/* Caja */
+body.dark .pantalla-recuperar {
+  background-color: rgba(20, 20, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Títulos */
+body.dark h2 {
+  color: #fff;
+  text-shadow: 0 0 4px rgba(255,255,255,0.15);
+}
+
+body.dark p {
+  color: #e0e0e0;
+}
+
+/* ⭐ LABEL igual al PASSWORD */
+body.dark .input-label {
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(255,255,255,0.15);
+  font-weight: 600;
+}
+
+/* Input */
+body.dark input[type="email"] {
+  background-color: rgba(30, 30, 30, 0.8);
+  border: 2px solid #555;
+  color: #fff;
+}
+
+body.dark input[type="email"]::placeholder {
+  color: #bcbcbc;
+}
+
+/* partículas */
+body.dark .particle {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .decoration {
+  filter: brightness(0.6);
+}
+
+/* ==========================================================
+   🌙 BOTÓN MODO OSCURO — IGUALITO AL DE PASSWORD
+========================================================== */
+
+.darkmode-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #3a2b1f;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 5px 15px rgba(80, 60, 40, 0.2);
+}
+
+.darkmode-btn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+body.dark .darkmode-btn {
+  background: rgba(30, 30, 30, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.45);
+}
+
+body.dark .darkmode-btn:hover {
+  background: rgba(50, 50, 50, 0.7);
+}
