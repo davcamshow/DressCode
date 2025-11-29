@@ -588,3 +588,174 @@ body {
         padding: 10px 12px;
     }
 }
+
+/* Estilos para el botón de cambio de tema */
+.theme-button:hover {
+  background: #ffffff00;
+  transform: scale(1.05);
+}
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 8px;
+  right: 90px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.icon-moon {
+  background-color: #0f1010;
+  color: #F5F5DC;
+}
+
+.icon-sun {
+  background-color: #f9fafa;
+  color: #1C1A17;
+}
+
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
+
+/* Tema oscuro */
+body.dark-mode {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 50%, #353535 100%);
+  color: #e0e0e0;
+}
+
+/* Iconos de sol/luna */
+body.dark-mode .icon-sun {
+  display: inline-flex;
+}
+
+body.dark-mode .icon-moon {
+  display: none;
+}
+
+/* Contenedor principal */
+body.dark-mode .container {
+  background: rgba(30, 30, 30, 0.9);
+}
+
+/* Elementos decorativos */
+body.dark-mode .decoration {
+  background-color: rgba(70, 70, 70, 0.3);
+}
+
+/* Header/logo */
+body.dark-mode .header {
+  background: transparent;
+}
+
+body.dark-mode .header .logo {
+  filter: brightness(0) invert(1);
+}
+
+/* Texto principal */
+body.dark-mode .main-content h2.title {
+  color: #f0f0f0;
+}
+
+body.dark-mode .main-content p.description,
+body.dark-mode .main-content .terms {
+  color: #dcdcdc;
+}
+
+body.dark-mode .main-content .terms-link {
+  color: #f0a500;
+}
+
+/* Botones */
+body.dark-mode .btn {
+  background-color: #4a3a2a;
+  color: #f0f0f0;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .btn:hover {
+  background-color: #5c4935;
+}
+
+body.dark-mode .btn-google {
+  background-color: #333333;
+  color: #f0f0f0;
+}
+
+body.dark-mode .btn-google:hover {
+  background-color: #444444;
+}
+
+/* Input fields */
+body.dark-mode .input-field {
+  background-color: #2b2b2b;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+body.dark-mode .input-field::placeholder {
+  color: #aaa;
+}
+
+/* Labels */
+body.dark-mode .input-label {
+  color: #f0f0f0;
+}
+
+/* Error messages */
+body.dark-mode .error-message {
+  color: #ff6b6b;
+}
+
+/* Divider */
+body.dark-mode .divider span {
+  color: #ccc;
+}
+
+/* Partículas */
+body.dark-mode #bg-particles,
+body.dark-mode #particles {
+  background: transparent;
+}
+
+/* Formulario */
+body.dark-mode .form {
+  background-color: rgba(40, 40, 40, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+

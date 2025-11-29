@@ -1,4 +1,45 @@
 
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("theme-toggle");
+
+  // Al cargar la página, revisa si hay un tema guardado en localStorage
+  const savedTheme = localStorage.getItem("theme") || "light";
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+  }
+
+  // Mostrar el ícono correcto al cargar
+  updateIcons(savedTheme);
+
+  // Evento al hacer clic en el botón
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    // Detectar nuevo tema
+    const isDark = document.body.classList.contains("dark-mode");
+    const newTheme = isDark ? "dark" : "light";
+
+    // Guardar preferencia
+    localStorage.setItem("theme", newTheme);
+
+    // Actualizar íconos
+    updateIcons(newTheme); });
+    
+  // Función para mostrar/ocultar íconos
+  function updateIcons(theme) {
+    const moonIcon = toggle.querySelector(".icon-moon");
+    const sunIcon = toggle.querySelector(".icon-sun");
+
+    if (theme === "dark") {
+      moonIcon.style.display = "none";
+      sunIcon.style.display = "inline-flex";
+    } else {
+      moonIcon.style.display = "inline-flex";
+      sunIcon.style.display = "none";
+    }
+  }
+
+});
 // Configuración de Supabase
 const SUPABASE_URL = 'https://uovktvztwuzstzbzjafr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdmt0dnp0d3V6c3R6YnpqYWZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzY2OTIsImV4cCI6MjA3NTk1MjY5Mn0.ZeelvIIIXAxawn_I-pCF2MX4kct1ldNNKUMZ-t8PtQc';
