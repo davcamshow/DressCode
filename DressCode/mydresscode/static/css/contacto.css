@@ -375,3 +375,224 @@
     padding: 20px 15px;
   }
 }
+
+/* Estilos para el botón de cambio de tema */
+.theme-button:hover {
+  background: #ffffff00;
+  transform: scale(1.05);
+}
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 8px;
+  right: 90px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.icon-moon {
+  background-color: #0f1010;
+  color: #F5F5DC;
+}
+
+.icon-sun {
+  background-color: #f9fafa;
+  color: #1C1A17;
+}
+
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
+
+/* ============================
+   🌙 MODO OSCURO – CONTACTO
+   ============================ */
+
+body.dark-mode .contact-header h1,
+body.dark-mode .form-container h2,
+body.dark-mode .faq-section h2,
+body.dark-mode .social-section h2 {
+    color: #fdecd1 !important;  /* título suave */
+}
+
+body.dark-mode .contact-header p,
+body.dark-mode .form-container > p,
+body.dark-mode .faq-section > p,
+body.dark-mode .social-section > p {
+    color: #e2c9a8 !important;
+}
+
+/* Contenedor principal */
+body.dark-mode .contact-container {
+    color: #f5e3c8 !important;
+}
+
+/* Tarjetas de información */
+body.dark-mode .info-card {
+    background: rgba(30, 30, 30, 0.85) !important;
+    border-color: rgba(255, 206, 140, 0.2) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .info-card:hover {
+    background: rgba(40, 40, 40, 0.95) !important;
+}
+
+/* Textos dentro de las tarjetas */
+body.dark-mode .info-card h3 {
+    color: #ffe0b5 !important;
+}
+
+body.dark-mode .info-card p {
+    color: #d8b48a !important;
+}
+
+body.dark-mode .info-card span {
+    color: #bda183 !important;
+}
+
+/* Formulario */
+body.dark-mode .contact-form-section {
+    background: rgba(25, 25, 25, 0.9) !important;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 206, 140, 0.15) !important;
+}
+
+/* Labels */
+body.dark-mode .form-group label {
+    color: #ffe9c7 !important;
+}
+
+/* Inputs */
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: rgba(40, 40, 40, 0.8) !important;
+    border-color: rgba(255, 206, 140, 0.25) !important;
+    color: #fce3c1 !important;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+    background: rgba(60, 60, 60, 0.95) !important;
+    border-color: #e7b076 !important;
+    box-shadow: 0 0 0 3px rgba(255, 206, 140, 0.25) !important;
+}
+
+/* Preguntas frecuentes */
+body.dark-mode .faq-item {
+    background: rgba(40, 40, 40, 0.8) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .faq-item:hover {
+    background: rgba(50, 50, 50, 0.95) !important;
+}
+
+body.dark-mode .faq-item h3 {
+    color: #ffd9a5 !important;
+}
+
+body.dark-mode .faq-item p {
+    color: #e2c9a8 !important;
+}
+
+/* Redes sociales */
+body.dark-mode .social-card {
+    background: rgba(35, 35, 35, 0.85) !important;
+    color: #ffe9c7 !important;
+    border-color: rgba(255, 206, 140, 0.15) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .social-card:hover {
+    background: rgba(45, 45, 45, 0.95) !important;
+}
+
+/* Colores de texto dentro de social cards */
+body.dark-mode .social-card h3 {
+    color: #ffe0b3 !important;
+}
+
+body.dark-mode .social-card p {
+    color: #ddc3a4 !important;
+}
+
+/* Íconos */
+body.dark-mode .info-icon,
+body.dark-mode .social-icon {
+    color: #ffcc91 !important;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
+
+.dark-mode .contact-container {
+  background-color: #1e1e1e;
+}
+
+.dark-mode .info-card,
+.dark-mode .faq-item,
+.dark-mode .social-card {
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.dark-mode .topbar {
+    background-color: #555151;
+    color: #eee;
+}
+.dark-mode .topbar .menu-item {
+    color: #eee;
+}
+.dark-mode .topbar .menu-item.active {
+    border-bottom-color: #fff; /* o tu color destacado */
+}
+
+body.dark-mode .info-card {
+  background-color: #1e1e1e !important;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #1a1a1a 0%, #222 50%, #2a2a2a 100%) !important;
+}
+
+body.dark-mode #dynamic-bg {
+  filter: brightness(0.5);
+}

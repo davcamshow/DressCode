@@ -1,14 +1,14 @@
-/* Botón de cambio de tema */
+/* Estilos para el botón de cambio de tema */
 .theme-button:hover {
-  background: #faffff;
+  background: #ffffff00;
   transform: scale(1.05);
 }
-
 .theme-toggle-wrapper {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
+  top: 8px;
+  right: 90px;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 .theme-button {
@@ -31,8 +31,6 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-
-
 .icon-moon {
   background-color: #0f1010;
   color: #F5F5DC;
@@ -46,6 +44,20 @@
 .theme-button span:hover {
   transform: scale(1.1);
 }
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
 
 /* Modo oscuro */
 body.dark-mode {
@@ -710,6 +722,19 @@ h2::after {
   .olvide {
     font-size: 12px;
   }
+}
+
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #f5e3c8;
+}
+
+body.dark-mode .pantalla-login {
+  background-color: #1e1e1e;
+}
+
+body.dark-mode #dynamic-bg {
+  filter: brightness(0.4);
 }
 
 /* Para pantallas muy altas */

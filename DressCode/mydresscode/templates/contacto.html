@@ -1,167 +1,209 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contacto - DressCode Fashion</title>
-  <link rel="stylesheet" href="{% static 'css/welcome.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/contacto.css' %}" />
-</head>
-<body>
-  <!-- Canvas para el fondo dinámico -->
-  <canvas id="dynamic-bg"></canvas>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contacto - DressCode Fashion</title>
+    <link rel="stylesheet" href="{% static 'css/welcome.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/contacto.css' %}" />
+  </head>
+  <body>
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" class="theme-button">
+        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">☀️</span>
+      </button>
+    </div>
+    <!-- Canvas para el fondo dinámico -->
+    <canvas id="dynamic-bg"></canvas>
 
-  <div class="container">
-    <!-- Barra superior -->
-    <nav class="topbar" aria-label="Main navigation">
-      <div class="menu-item" onclick="window.location.href='{% url 'home' %}'">Inicio</div>
-      <div class="menu-item" onclick="window.location.href='{% url 'sobre_nosotros' %}'">Sobre Nosotros</div>
-      <div class="menu-item active" onclick="window.location.href='{% url 'contacto' %}'">Contacto</div>
-    </nav>
+    <div class="container">
+      <!-- Barra superior -->
+      <nav class="topbar" aria-label="Main navigation">
+        <div
+          class="menu-item"
+          onclick="window.location.href='{% url 'home' %}'"
+        >
+          Inicio
+        </div>
+        <div
+          class="menu-item"
+          onclick="window.location.href='{% url 'sobre_nosotros' %}'"
+        >
+          Sobre Nosotros
+        </div>
+        <div
+          class="menu-item active"
+          onclick="window.location.href='{% url 'contacto' %}'"
+        >
+          Contacto
+        </div>
+      </nav>
 
-    <!-- Contenido principal -->
-    <div class="contact-container">
-      <header class="contact-header">
-        <h1>Conecta con DressCode</h1>
-        <p>¿Tienes preguntas, sugerencias o quieres colaborar con nosotros? Estamos aquí para escucharte y ayudarte.</p>
-      </header>
+      <!-- Contenido principal -->
+      <div class="contact-container">
+        <header class="contact-header">
+          <h1>Conecta con DressCode</h1>
+          <p>
+            ¿Tienes preguntas, sugerencias o quieres colaborar con nosotros?
+            Estamos aquí para escucharte y ayudarte.
+          </p>
+        </header>
 
-      <div class="contact-content">
-        <!-- Información de contacto -->
-        <section class="contact-info">
-          <div class="info-card">
-            <div class="info-icon">📧</div>
-            <h3>Email</h3>
-            <p>hola@dresscode.com</p>
-            <span>Respuesta en 24 horas</span>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">📱</div>
-            <h3>Teléfono</h3>
-            <p>+1 (555) 123-4567</p>
-            <span>Lunes a Viernes 9am - 6pm</span>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">💬</div>
-            <h3>Chat en Vivo</h3>
-            <p>Soporte inmediato</p>
-            <span>Disponible 24/7</span>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">📍</div>
-            <h3>Oficina</h3>
-            <p>Av. Fashion 123</p>
-            <span>Ciudad de México</span>
-          </div>
-        </section>
-
-        <!-- Formulario de contacto -->
-        <section class="contact-form-section">
-          <div class="form-container">
-            <h2>Envíanos un Mensaje</h2>
-            <p>Completa el formulario y te responderemos lo antes posible.</p>
-            
-            <form class="contact-form" id="contactForm">
-              <div class="form-group">
-                <label for="nombre">Nombre Completo *</label>
-                <input type="text" id="nombre" name="nombre" required>
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required>
-              </div>
-
-              <div class="form-group">
-                <label for="asunto">Asunto *</label>
-                <select id="asunto" name="asunto" required>
-                  <option value="">Selecciona un asunto</option>
-                  <option value="soporte">Soporte Técnico</option>
-                  <option value="colaboracion">Colaboración</option>
-                  <option value="prensa">Prensa</option>
-                  <option value="sugerencia">Sugerencia</option>
-                  <option value="otros">Otros</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="mensaje">Mensaje *</label>
-                <textarea id="mensaje" name="mensaje" rows="6" required placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
-              </div>
-
-              <button type="submit" class="submit-btn">
-                <span>ENVIAR MENSAJE</span>
-                <div class="loading-spinner"></div>
-              </button>
-            </form>
-          </div>
-        </section>
-
-        <!-- Preguntas frecuentes -->
-        <section class="faq-section">
-          <h2>Preguntas Frecuentes</h2>
-          <div class="faq-grid">
-            <div class="faq-item">
-              <h3>¿Cómo funciona el guardarropa virtual?</h3>
-              <p>Puedes subir fotos de tus prendas y nuestro sistema las organiza automáticamente por categorías, colores y estaciones.</p>
+        <div class="contact-content">
+          <!-- Información de contacto -->
+          <section class="contact-info">
+            <div class="info-card">
+              <div class="info-icon">📧</div>
+              <h3>Email</h3>
+              <p>hola@dresscode.com</p>
+              <span>Respuesta en 24 horas</span>
             </div>
 
-            <div class="faq-item">
-              <h3>¿Es gratuito usar DressCode?</h3>
-              <p>Sí, la versión básica es completamente gratuita. Ofrecemos planes premium con funciones adicionales.</p>
+            <div class="info-card">
+              <div class="info-icon">📱</div>
+              <h3>Teléfono</h3>
+              <p>+1 (555) 123-4567</p>
+              <span>Lunes a Viernes 9am - 6pm</span>
             </div>
 
-            <div class="faq-item">
-              <h3>¿Cómo creo outfits?</h3>
-              <p>Nuestra IA sugiere combinaciones basadas en tu guardarropa, o puedes crear outfits manualmente arrastrando prendas.</p>
+            <div class="info-card">
+              <div class="info-icon">💬</div>
+              <h3>Chat en Vivo</h3>
+              <p>Soporte inmediato</p>
+              <span>Disponible 24/7</span>
             </div>
 
-            <div class="faq-item">
-              <h3>¿Puedo usar DressCode en múltiples dispositivos?</h3>
-              <p>Absolutamente. Tu cuenta se sincroniza automáticamente entre web y nuestra app móvil.</p>
+            <div class="info-card">
+              <div class="info-icon">📍</div>
+              <h3>Oficina</h3>
+              <p>Av. Fashion 123</p>
+              <span>Ciudad de México</span>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- Redes sociales -->
-        <section class="social-section">
-          <h2>Síguenos en Redes Sociales</h2>
-          <p>Mantente al día con las últimas tendencias y actualizaciones</p>
-          <div class="social-grid">
-            <a href="#" class="social-card instagram">
-              <div class="social-icon">📸</div>
-              <h3>Instagram</h3>
-              <p>@DressCodeFashion</p>
-            </a>
+          <!-- Formulario de contacto -->
+          <section class="contact-form-section">
+            <div class="form-container">
+              <h2>Envíanos un Mensaje</h2>
+              <p>Completa el formulario y te responderemos lo antes posible.</p>
 
-            <a href="#" class="social-card tiktok">
-              <div class="social-icon">🎵</div>
-              <h3>TikTok</h3>
-              <p>@DressCodeStyle</p>
-            </a>
+              <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                  <label for="nombre">Nombre Completo *</label>
+                  <input type="text" id="nombre" name="nombre" required />
+                </div>
 
-            <a href="#" class="social-card twitter">
-              <div class="social-icon">🐦</div>
-              <h3>Twitter</h3>
-              <p>@DressCodeApp</p>
-            </a>
+                <div class="form-group">
+                  <label for="email">Email *</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
 
-            <a href="#" class="social-card youtube">
-              <div class="social-icon">📺</div>
-              <h3>YouTube</h3>
-              <p>DressCode Tutorials</p>
-            </a>
-          </div>
-        </section>
+                <div class="form-group">
+                  <label for="asunto">Asunto *</label>
+                  <select id="asunto" name="asunto" required>
+                    <option value="">Selecciona un asunto</option>
+                    <option value="soporte">Soporte Técnico</option>
+                    <option value="colaboracion">Colaboración</option>
+                    <option value="prensa">Prensa</option>
+                    <option value="sugerencia">Sugerencia</option>
+                    <option value="otros">Otros</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="mensaje">Mensaje *</label>
+                  <textarea
+                    id="mensaje"
+                    name="mensaje"
+                    rows="6"
+                    required
+                    placeholder="Cuéntanos en qué podemos ayudarte..."
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                  <span>ENVIAR MENSAJE</span>
+                  <div class="loading-spinner"></div>
+                </button>
+              </form>
+            </div>
+          </section>
+
+          <!-- Preguntas frecuentes -->
+          <section class="faq-section">
+            <h2>Preguntas Frecuentes</h2>
+            <div class="faq-grid">
+              <div class="faq-item">
+                <h3>¿Cómo funciona el guardarropa virtual?</h3>
+                <p>
+                  Puedes subir fotos de tus prendas y nuestro sistema las
+                  organiza automáticamente por categorías, colores y estaciones.
+                </p>
+              </div>
+
+              <div class="faq-item">
+                <h3>¿Es gratuito usar DressCode?</h3>
+                <p>
+                  Sí, la versión básica es completamente gratuita. Ofrecemos
+                  planes premium con funciones adicionales.
+                </p>
+              </div>
+
+              <div class="faq-item">
+                <h3>¿Cómo creo outfits?</h3>
+                <p>
+                  Nuestra IA sugiere combinaciones basadas en tu guardarropa, o
+                  puedes crear outfits manualmente arrastrando prendas.
+                </p>
+              </div>
+
+              <div class="faq-item">
+                <h3>¿Puedo usar DressCode en múltiples dispositivos?</h3>
+                <p>
+                  Absolutamente. Tu cuenta se sincroniza automáticamente entre
+                  web y nuestra app móvil.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Redes sociales -->
+          <section class="social-section">
+            <h2>Síguenos en Redes Sociales</h2>
+            <p>Mantente al día con las últimas tendencias y actualizaciones</p>
+            <div class="social-grid">
+              <a href="#" class="social-card instagram">
+                <div class="social-icon">📸</div>
+                <h3>Instagram</h3>
+                <p>@DressCodeFashion</p>
+              </a>
+
+              <a href="#" class="social-card tiktok">
+                <div class="social-icon">🎵</div>
+                <h3>TikTok</h3>
+                <p>@DressCodeStyle</p>
+              </a>
+
+              <a href="#" class="social-card twitter">
+                <div class="social-icon">🐦</div>
+                <h3>Twitter</h3>
+                <p>@DressCodeApp</p>
+              </a>
+
+              <a href="#" class="social-card youtube">
+                <div class="social-icon">📺</div>
+                <h3>YouTube</h3>
+                <p>DressCode Tutorials</p>
+              </a>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="{% static 'js/welcome.js' %}"></script>
-  <script src="{% static 'js/contacto.js' %}"></script>
-</body>
+    <script src="{% static 'js/welcome.js' %}"></script>
+    <script src="{% static 'js/contacto.js' %}"></script>
+  </body>
 </html>
