@@ -7,7 +7,7 @@
 .theme-toggle-wrapper {
   position: fixed;
   top: 8px;
-  right: 90px;
+  right: 15px; ;
   z-index: 9999;
   pointer-events: auto;
 }
@@ -32,15 +32,16 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.icon-moon {
-  background-color: #0f1010;
-  color: #F5F5DC;
+/* Modo claro → botón transparente */
+.icon-moon,
+.icon-sun {
+  background-color: transparent !important;
+  border: none !important;   /* QUITA EL BORDE */
+  color: #1C1A17;
+  box-shadow: none !important; /* QUITA LA SOMBRA */
 }
 
-.icon-sun {
-  background-color: #f9fafa;
-  color: #1C1A17;
-}
+
 
 .theme-button span:hover {
   transform: scale(1.1);
@@ -65,6 +66,29 @@ body.dark-mode {
   background-color: #1c1c1c;
   color: #f5f1e8; /* tu bone-white */
 }
+
+/* MODO OSCURO - botón negro */
+
+/* MODO OSCURO — botón totalmente transparente */
+body.dark-mode .icon-moon,
+body.dark-mode .icon-sun {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Ícono que se muestra en modo oscuro */
+body.dark-mode .icon-moon {
+    display: none !important;
+}
+
+body.dark-mode .icon-sun {
+    display: inline-flex !important;
+    color: #F5F5DC !important; /* color del ícono */
+}
+
+
+
 
 body.dark-mode .main-header-container,
 body.dark-mode .favorites-section,
@@ -371,4 +395,222 @@ body.dark-mode header,
 body.dark-mode footer {
   background-color: #1c1c1c;
   color: #f5f1e8;
+}
+
+
+/* ===================== 🌙 MODO OSCURO COMPLETO PARA DRESSCODE - ARMARIO ===================== */
+
+/* Fondo general */
+body.dark-mode {
+    background: #1C1A17 !important;
+    color: #F5F5DC !important;
+}
+
+
+/* Header */
+body.dark-mode .main-header-container {
+    background: #1a1916 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #3B2F2F !important;
+}
+
+/* Top nav */
+body.dark-mode .top-nav-icons {
+    background: #1C1A17 !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .nav-icon span {
+    color: #E0D8C0 !important;
+}
+
+body.dark-mode .nav-icon img {
+    filter: brightness(0.75) !important;
+}
+
+body.dark-mode .nav-icon.primary-icon {
+    background: rgba(255,255,255,0.08) !important;
+    color: #F5F5DC !important;
+}
+
+/* Títulos */
+body.dark-mode h1,
+body.dark-mode h2 {
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .item-count {
+    color: #C0B9A8 !important;
+}
+
+/* Buscador */
+body.dark-mode .search-input {
+    background: #2A2A2A !important;
+    border: 1px solid #444 !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .search-input::placeholder {
+    color: #C0B9A8 !important;
+}
+
+body.dark-mode .search-icon {
+    color: #D4AF37 !important;
+}
+
+/* Filtros */
+body.dark-mode .category-filters {
+    background: #1a1917 !important;
+}
+
+body.dark-mode .filter-btn {
+    background: #2A2A2A !important;
+    border: 1px solid #444 !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .filter-btn.active {
+    background: #D4AF37 !important;
+    color: #1C1A17 !important;
+    border-color: #D4AF37 !important;
+}
+
+body.dark-mode .filter-btn .btn-icon img {
+    filter: brightness(0.9) invert(0.1);
+}
+
+/* Stats */
+body.dark-mode .stat-box {
+    background: #2A2A2A !important;
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode .stat-number,
+body.dark-mode .stat-label {
+    color: #F5F5DC !important;
+}
+
+/* Favoritos */
+body.dark-mode .favorites-section {
+    background: #1a1917 !important;
+    border: 1px solid #3B2F2F !important;
+}
+
+body.dark-mode .favorites-title {
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .favorites-count {
+    background: #2A2A2A !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .favorite-item {
+    background: #2A2A2A !important;
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode .favorite-item img {
+    filter: brightness(0.9);
+}
+
+/* Grid */
+body.dark-mode .photo-grid {
+    background: transparent !important;
+}
+
+body.dark-mode .photo-item {
+    background: #2A2A2A !important;
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode .photo-item:hover {
+    border-color: #D4AF37 !important;
+}
+
+/* Imágenes */
+body.dark-mode .photo-item img {
+    filter: brightness(0.85) contrast(1.05);
+}
+
+/* Segmentadas */
+body.dark-mode .prenda-img.segmentada {
+    border-color: #5b9b9d !important;
+}
+
+body.dark-mode .segmentada-badge {
+    background: rgba(91,155,157,0.85) !important;
+}
+
+/* Info prenda */
+body.dark-mode .prenda-info {
+    background: rgba(0, 0, 0, 0.30) !important;
+    border-top: 1px solid #555 !important;
+}
+
+body.dark-mode .prenda-nombre {
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .prenda-color,
+body.dark-mode .prenda-temporada {
+    color: #D4C8A8 !important;
+}
+
+/* Heart */
+body.dark-mode .heart {
+    background: rgba(0,0,0,0.5) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+body.dark-mode .heart::before {
+    color: #C0B9A8 !important;
+}
+
+body.dark-mode .heart.active::before {
+    color: #E96D74 !important;
+}
+
+/* Floating button (+) */
+body.dark-mode .floating-add-btn {
+    background: #D4AF37 !important;
+    color: #1C1A17 !important;
+    border: 3px solid #F5F5DC !important;
+}
+
+/* Delete button */
+body.dark-mode .delete-btn {
+    background: #8C1C1C !important;
+    color: #F5F5DC !important;
+    border-color: #F5F5DC !important;
+}
+
+/* Modal */
+body.dark-mode .modal-content {
+    background: #1a1917 !important;
+    border: 1px solid #444 !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .modal-btn.cancel {
+    background: #2A2A2A !important;
+    color: #F5F5DC !important;
+}
+
+body.dark-mode .modal-btn.delete {
+    background: #D4AF37 !important;
+    color: #1C1A17 !important;
+}
+
+/* Mensajes */
+body.dark-mode .mensaje-exito,
+body.dark-mode .mensaje-flotante {
+    background: rgba(91,155,157,0.95) !important;
+    color: #F5F5DC !important;
+}
+
+/* Fondo de secciones */
+body.dark-mode section,
+body.dark-mode main {
+    background: #1C1A17 !important;
 }
