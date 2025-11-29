@@ -418,9 +418,118 @@
             font-size: 1.2rem;
             letter-spacing: 1px;
         }
+
+                /* 🌙 BOTÓN ELEGANTE */
+        .dark-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+        }
+
+        .dark-toggle:hover {
+            background: #D4AF37;
+            color: #1C1A17;
+        }
+
+        /* 🌙 MODO OSCURO — PALETA COMPLETA */
+        body.dark-mode {
+            --color-bg: #1C1A17;
+            --color-text: #F5F5DC;
+            --color-text-secondary: #C0B9A8;
+            --color-accent: #D4AF37;
+            --color-accent-light: #C0B9A8;
+            --color-card: #2A2A2A;
+            --color-card-hover: #3B2F2F;
+            --color-border: #3B2F2F;
+            --color-highlight: rgba(255,255,255,0.08);
+        }
+
+        /* Botón en modo oscuro */
+        body.dark-mode .dark-toggle {
+            border-color: #F5F5DC;
+            color: #F5F5DC;
+        }
+
+        body.dark-mode .dark-toggle:hover {
+            background: #F5F5DC;
+            color: #1C1A17;
+        }
+
+        /* Ajustes generales en modo oscuro */
+        body.dark-mode {
+            background: #1C1A17;
+            color: #F5F5DC;
+        }
+
+        /* Tarjetas, secciones y contenedores */
+        body.dark-mode .section,
+        body.dark-mode .header,
+        body.dark-mode .contact-info,
+        body.dark-mode .footer {
+            background: #2A2A2A;
+            border-color: #3B2F2F;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        /* Inputs y selects */
+        body.dark-mode .form-control {
+            background: #1C1A17;
+            color: #F5F5DC;
+            border: 1px solid #3B2F2F;
+        }
+
+        body.dark-mode .form-control::placeholder {
+            color: #C0B9A8;
+        }
+
+        /* Títulos y textos */
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3,
+        body.dark-mode p,
+        body.dark-mode span,
+        body.dark-mode label {
+            color: #F5F5DC;
+        }
+
+        /* Acentos en dorado */
+        body.dark-mode strong,
+        body.dark-mode .section-title,
+        body.dark-mode i {
+            color: #D4AF37;
+        }
+
+        /* Accordion */
+        body.dark-mode .accordion {
+            background: #2A2A2A;
+            border-color: #3B2F2F;
+        }
+
+        body.dark-mode .accordion-header:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        body.dark-mode .accordion.active .accordion-content p {
+            color: #C0B9A8;
+        }
+
     </style>
 </head>
 <body>
+
+    <button id="darkModeToggle" class="dark-toggle">🌙</button>
+
     <div class="container">
         <div class="header">
             <div class="header-content">
@@ -584,6 +693,27 @@
             }
         `;
         document.head.appendChild(style);
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const toggleBtn = document.getElementById("darkModeToggle");
+        const body = document.body;
+
+        // Cargar preferencia guardada
+        if (localStorage.getItem("dark-mode") === "true") {
+            body.classList.add("dark-mode");
+            toggleBtn.textContent = "☀️";
+        }
+
+        // Alternar modo
+        toggleBtn.addEventListener("click", () => {
+            body.classList.toggle("dark-mode");
+
+            const isDark = body.classList.contains("dark-mode");
+            localStorage.setItem("dark-mode", isDark);
+
+            toggleBtn.textContent = isDark ? "☀️" : "🌙";
+        });
+    });
     </script>
 </body>
 </html>

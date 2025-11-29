@@ -109,3 +109,24 @@ const statsSection = document.querySelector('.stats-section');
 if (statsSection) {
   statsObserver.observe(statsSection);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    // Cargar preferencia guardada
+    if (localStorage.getItem("dark-mode") === "true") {
+        body.classList.add("dark-mode");
+        toggleBtn.textContent = "☀️";
+    }
+
+    // Alternar modo oscuro
+    toggleBtn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+
+        const isDark = body.classList.contains("dark-mode");
+        localStorage.setItem("dark-mode", isDark);
+
+        toggleBtn.textContent = isDark ? "☀️" : "🌙";
+    });
+});
