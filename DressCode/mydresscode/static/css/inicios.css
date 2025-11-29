@@ -665,7 +665,7 @@ button:hover {
 
 .user-icon {
   width: 45px;
-  right: -120px;
+  right: 20px;
   top: -10px;
   height: 45px;
   border-radius: 50%;
@@ -710,10 +710,10 @@ button:hover {
 .profile-dropdown-content {
   display: none;
   position: absolute;
-  right: 0px;
-  top: 100%;
-  margin-top: 200px;
-  width: 10px;
+  top: 100%; /* justo debajo del icono */
+  right: 0;
+  margin-top: 8px; /* pequeño espacio */
+  width: 200px; /* ancho adecuado */
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
@@ -1021,3 +1021,4 @@ body.dark-mode .menu-icon i {
 body.dark-mode .menu-content span {
   color: #c9b09a;
 }
+
