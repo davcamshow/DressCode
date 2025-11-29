@@ -131,6 +131,21 @@ body.dark-mode .login-form label {
   color: #F5F5DC !important;
   text-shadow: none;
 }
+
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #f5e3c8;
+}
+
+body.dark-mode .pantalla-login {
+  background-color: #2A2A2A;
+}
+
+body.dark-mode #dynamic-bg {
+  filter: brightness(0.4);
+}
+
+
 /* Reset básico */
 * {
   margin: 0;
@@ -724,18 +739,8 @@ h2::after {
   }
 }
 
-body.dark-mode {
-  background-color: #121212 !important;
-  color: #f5e3c8;
-}
 
-body.dark-mode .pantalla-login {
-  background-color: #1e1e1e;
-}
 
-body.dark-mode #dynamic-bg {
-  filter: brightness(0.4);
-}
 
 /* Para pantallas muy altas */
 @media (min-height: 800px) {

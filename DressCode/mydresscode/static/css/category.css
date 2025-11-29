@@ -737,12 +737,18 @@ input:checked + .slider:before {
   }
 }
 
-/*modo oscuro*/
+/* Estilos para el botón de cambio de tema */
+.theme-button:hover {
+  background: #ffffff00;
+  transform: scale(1.05);
+}
 .theme-toggle-wrapper {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1001;
+  top: 27.5px;
+  right: 110px;
+  
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 .theme-button {
@@ -766,18 +772,32 @@ input:checked + .slider:before {
 }
 
 .icon-moon {
-  background-color: #000000;
+  background-color: #0f1010;
   color: #F5F5DC;
 }
 
 .icon-sun {
-  background-color: #ffffff;
+  background-color: #f9fafa;
   color: #1C1A17;
 }
 
 .theme-button span:hover {
   transform: scale(1.1);
 }
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
 
 /* Fondo general */
 body.dark-mode {
