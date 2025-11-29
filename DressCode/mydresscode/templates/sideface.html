@@ -6,6 +6,141 @@
   <title>Mi Perfil | DressCode</title>
   
   <style>
+
+    /* 🌙 BOTÓN DE MODO OSCURO SIN BORDE */
+    .dark-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: #F5F5DC;
+      font-size: 22px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+      border: none !important; 
+    }
+
+    .dark-toggle:hover {
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.08);
+    }
+
+    body.dark-mode .dark-toggle {
+      background: rgba(255,255,255,0.12) !important;
+      color: #F5F5DC !important;
+    }
+
+    body.dark-mode .dark-toggle:hover {
+      background: rgba(255,255,255,0.25) !important;
+    }
+
+
+    /* 🌙 VARIABLES DE MODO OSCURO */
+    body.dark-mode {
+      --color-primary: #F5F5DC;
+      --color-secondary: #D4AF37;
+      --color-light: #2A2A2A;
+      --color-neutral2: #C0B9A8;
+      --color-neutral3: #D4AF37;
+      --color-dark: #F5F5DC;
+      --color-warm1: #3B2F2F;
+      --color-warm2: #3B2F2F;
+      --color-cream: #1C1A17;
+      --sombra-suave: 0px 4px 20px rgba(0,0,0,0.4);
+      --sombra-media: 0px 8px 30px rgba(0,0,0,0.5);
+    }
+
+    /* 🌙 FONDO GENERAL */
+    body.dark-mode {
+      background: #1C1A17 !important;
+      color: #F5F5DC !important;
+    }
+
+    /* 🌙 CONTENEDOR PRINCIPAL */
+    body.dark-mode .profile-container {
+      background: #2A2A2A !important;
+      color: #F5F5DC !important;
+    }
+
+    /* 🌙 PANEL IZQUIERDO */
+    body.dark-mode .profile-panel {
+      background: #2A2A2A !important;
+      border-color: #3B2F2F !important;
+    }
+
+    /* 🌙 FOTO DE PERFIL */
+    body.dark-mode .profile-pic {
+      background: #3B2F2F !important;
+      color: #F5F5DC !important;
+    }
+
+    body.dark-mode .profile-menu {
+      background-color: rgba(255,255,255,0.10) !important;
+    }
+
+    body.dark-mode .dropdown-menu {
+      background: #2A2A2A !important;
+      border: 1px solid #3B2F2F;
+    }
+
+    body.dark-mode .dropdown-item {
+      color: #F5F5DC !important;
+    }
+
+    body.dark-mode .dropdown-item:hover {
+      background: #3B2F2F !important;
+    }
+
+    /* 🌙 TEXTOS */
+    body.dark-mode .profile-name,
+    body.dark-mode .profile-email,
+    body.dark-mode .pref-title,
+    body.dark-mode .page-title,
+    body.dark-mode .section-title,
+    body.dark-mode .size-type,
+    body.dark-mode .size-value,
+    body.dark-mode .event-title {
+      color: #F5F5DC !important;
+    }
+
+    body.dark-mode .style-badge {
+      background: #3B2F2F !important;
+      color: #F5F5DC !important;
+    }
+
+    /* 🌙 EVENTOS */
+    body.dark-mode .event {
+      background: #2A2A2A !important;
+      color: #F5F5DC !important;
+    }
+
+    /* 🌙 MODALES */
+    body.dark-mode .modal-content {
+      background: #2A2A2A !important;
+      color: #F5F5DC !important;
+      border: 1px solid #3B2F2F;
+    }
+
+    body.dark-mode .modal-btn,
+    body.dark-mode .file-label,
+    body.dark-mode .btn {
+      background: #3B2F2F !important;
+      color: #F5F5DC !important;
+      border: none !important;
+    }
+
+    body.dark-mode .modal-btn:hover,
+    body.dark-mode .file-label:hover,
+    body.dark-mode .btn:hover {
+      background: #D4AF37 !important;
+      color: #1C1A17 !important;
+    }
+
     /* --- Paleta de Colores --- */
     :root {
       --color-primary: #21281e;
@@ -581,6 +716,9 @@
   </style>
 </head>
 <body>
+
+  <button id="darkModeToggle" class="dark-toggle">🌙</button>
+
   <!-- Contenedor Principal -->
   <div class="profile-container">
     <!-- Panel Izquierdo - Perfil -->
@@ -895,6 +1033,31 @@
         }
       });
     });
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+      
+      const toggle = document.getElementById("darkModeToggle");
+
+      // Cargar preferencia
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.body.classList.add("dark-mode");
+        toggle.textContent = "☀️";
+      }
+
+      // Alternar modo
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("dark-mode", isDark);
+
+        toggle.textContent = isDark ? "☀️" : "🌙";
+      });
+
+    });
+
+
   </script>
 </body>
 </html>
