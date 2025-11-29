@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Armario | DressCode</title>
+  <link rel="stylesheet" href="{% static 'css/myCloset.css' %}">
   
   <!-- CSS INLINE MEJORADO -->
   <style>
@@ -1021,7 +1022,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  
+  <div class="theme-toggle-wrapper">
+    <button id="theme-toggle" class="theme-button">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+  </div>
   <div class="main-header-container">
     <div class="top-nav-icons">
       <a href="{% url 'inicio' %}" class="nav-icon">
@@ -1585,5 +1591,7 @@
       filterItems(currentFilter);
     });
   </script>
+
+  <script src="{% static 'js/myCloset.js' %}"></script>
 </body>
 </html>
