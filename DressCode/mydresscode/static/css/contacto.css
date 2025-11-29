@@ -409,16 +409,14 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.icon-moon {
-  background-color: #0f1010;
-  color: #F5F5DC;
-}
-
+/* Modo claro → botón transparente */
+.icon-moon,
 .icon-sun {
-  background-color: #f9fafa;
+  background-color: transparent !important;
+  border: none !important;   /* QUITA EL BORDE */
   color: #1C1A17;
+  box-shadow: none !important; /* QUITA LA SOMBRA */
 }
-
 .theme-button span:hover {
   transform: scale(1.1);
 }

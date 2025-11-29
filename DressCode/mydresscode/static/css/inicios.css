@@ -828,20 +828,17 @@ button:hover {
 }
 
 
-
-
-.icon-moon {
-  background-color: #0f1010;
-  color: #F5F5DC;
-}
-
-.icon-sun {
-  background-color: #f9fafa;
-  color: #1C1A17;
-}
-
 .theme-button span:hover {
   transform: scale(1.1);
+}
+
+/* Modo claro → botón transparente */
+.icon-moon,
+.icon-sun {
+  background-color: transparent !important;
+  border: none !important;   /* QUITA EL BORDE */
+  color: #1C1A17;
+  box-shadow: none !important; /* QUITA LA SOMBRA */
 }
 
 /* Mostrar solo un ícono según el tema */
