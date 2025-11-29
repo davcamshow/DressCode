@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Variables globales
-const CAMERA_URL = "{% url 'camera' %}";
+
 const CATEGORIA_DATA = {
     'calzado': {
         'title': 'Calzado',

@@ -470,13 +470,22 @@ def eliminar_prendas(request):
         logger.error(f"Error al eliminar prendas: {e}")
         return JsonResponse({'status': 'ok', 'message': 'Prendas eliminadas correctamente.'})
 
+
+
 def seleccionar_categoria(request):
     """Vista para seleccionar categoría antes de capturar la prenda"""
     if 'usuario_id' not in request.session:
         messages.error(request, "Debes iniciar sesión para agregar prendas.")
         return redirect('login')
     
-    return render(request, 'category.html')
+    # ✅ Pasar todas las URLs necesarias al template
+    context = {
+        'camera_url': reverse('camera'),
+        'my_closet_url': reverse('my_closet'),
+        'inicio_url': reverse('inicio')
+    }
+    
+    return render(request, 'category.html', context)
 
 
 def segmentar_y_subir(imagen_url, nombre_segmentado):

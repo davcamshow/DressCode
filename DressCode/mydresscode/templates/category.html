@@ -240,7 +240,14 @@
             </form>
         </div>
     </main>
-
+    <script>
+    // ✅ URLs definidas correctamente desde el contexto de Django
+    const CAMERA_URL = "{{ camera_url }}";
+    const MY_CLOSET_URL = "{{ my_closet_url }}";
+    const INICIO_URL = "{{ inicio_url }}";
+    
+    // El resto de tu código JavaScript permanece igual...
+</script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="{% static 'js/category.js' %}"></script>
 </body>
