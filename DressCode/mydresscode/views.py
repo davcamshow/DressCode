@@ -1275,15 +1275,24 @@ def simular_segmentacion(imagen):
 def ayuda_contacto(request):
     return render(request, 'help.html')
 
-@login_required
+@configuracion_requerida
 def configuration_system(request):
     """Vista principal del sistema de configuración"""
-    context = {
-        'user': request.user,
-        'active_tab': 'general'
-    }
-    return render(request, 'configurationsystem.html', context)
-
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        context = {
+            'usuario': usuario,
+            'active_tab': 'general'
+        }
+        return render(request, 'configurationsystem.html', context)
+        
+    except (KeyError, Usuario.DoesNotExist):
+        messages.error(request, "Debes iniciar sesión para acceder a la configuración.")
+        return redirect('login')
+    
+    
 def calendar_view(request, year=None, month=None):
     # Si no se especifica mes/año, usar el actual
     today = date.today()
@@ -1788,10 +1797,11 @@ def debug_all_outfits(request):
     except Exception as e:
         print(f"❌ ERROR en debug_all_outfits: {str(e)}")
         return JsonResponse({'success': False, 'error': str(e)})
+    
 
-
+@configuracion_requerida
 def ver_prendas_temp(request):
-    """Página temporal para ver las prendas - SIN RESTRICCIONES"""
+    """Página para ver las prendas y outfits - CON RESTRICCIONES"""
     if 'usuario_id' not in request.session:
         return redirect('login')
     

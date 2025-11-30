@@ -1,1 +1,1220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración | DressCode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        :root {
+            --color-primary-dark: #3a3021; /* Marrón muy oscuro/casi negro */
+            --color-secondary: #a47968;  /* Rosado/Marrón Taupe */
+            --color-background-light: #fbfbe9; /* Beige cremoso claro (FBFBE9) */
+            --color-text-neutral: #605b57; /* Gris oscuro/Topo */
+            --color-accent-peach: #dea583; /* Melocotón suave */
+            --color-link-hover: #cf8e71; /* Terracota */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background-light);
+            color: var(--color-primary-dark);
+        }
+        .innovative-card {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .innovative-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        .config-link {
+            color: var(--color-primary-dark);
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .config-link:hover {
+            background-color: rgba(164, 121, 104, 0.1); /* Ligero hover del color secundario */
+            color: var(--color-secondary);
+        }
+        .logout-button {
+            background-color: var(--color-accent-peach);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .logout-button:hover {
+            background-color: var(--color-link-hover);
+            transform: scale(1.02);
+        }
+        .delete-button {
+            border: 1px solid #ef4444; /* Rojo suave */
+            color: #ef4444;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .delete-button:hover {
+            background-color: #fee2e2; /* Fondo rojo muy claro */
+            color: #b91c1c; /* Rojo más oscuro */
+        }
+        .select-box {
+            position: relative;
+        }
+        .select-box select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        .select-box::after {
+            content: "▼";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--color-text-neutral);
+            font-size: 12px;
+        }
+        .input-field {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            border-color: var(--color-secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(164, 121, 104, 0.2);
+        }
+        .textarea-field {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: border-color 0.2s;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .textarea-field:focus {
+            border-color: var(--color-secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(164, 121, 104, 0.2);
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: var(--color-secondary);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        .radio-option {
+            transition: background-color 0.2s;
+        }
+        .radio-option:hover {
+            background-color: rgba(164, 121, 104, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 flex justify-center items-start">
 
+    <!-- Contenedor Principal de la Configuración -->
+    <div class="w-full max-w-4xl pt-8 pb-12">
+        
+        <!-- Cabecera -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800">Configuración <span style="color: var(--color-secondary);">General</span></h1>
+            <p class="mt-2 text-lg" style="color: var(--color-text-neutral);">Personaliza tu experiencia y gestiona tu cuenta.</p>
+        </header>
+
+        <!-- Sección de Cuenta y Funcionalidades (Grid) -->
+        <h2 class="text-2xl font-bold mb-4" style="color: var(--color-primary-dark);">Cuenta y Preferencias</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- 1. Información de la App -->
+            <a href="#" class="config-link innovative-card rounded-xl p-6 flex items-center justify-between" onclick="showModal('Información de la App')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-3 rounded-full" style="background-color: var(--color-accent-peach); color: white;">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </span>
+                    <div>
+                        <p class="font-bold">Información de la App</p>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">Detalles sobre DressCode.</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+            
+            <!-- 2. Preferencias de Fuente -->
+            <a href="#" class="config-link innovative-card rounded-xl p-6 flex items-center justify-between" onclick="showModal('Preferencias de Fuente')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-3 rounded-full" style="background-color: var(--color-secondary); color: white;">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </span>
+                    <div>
+                        <p class="font-bold">Preferencias de Fuente</p>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">Personaliza la tipografía de la app.</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+
+            <!-- 3. Notificaciones Inteligentes -->
+            <a href="#" class="config-link innovative-card rounded-xl p-6 flex items-center justify-between" onclick="showModal('Notificaciones')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-3 rounded-full" style="background-color: var(--color-accent-peach); color: white;">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    </span>
+                    <div>
+                        <p class="font-bold">Notificaciones</p>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">Alertas de clima y sugerencias de atuendos.</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+
+            <!-- 4. Términos y Condiciones -->
+            <a href="#" class="config-link innovative-card rounded-xl p-6 flex items-center justify-between" onclick="showModal('Términos y Condiciones')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-3 rounded-full" style="background-color: var(--color-secondary); color: white;">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </span>
+                    <div>
+                        <p class="font-bold">Términos y Condiciones</p>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">Consulta nuestros términos de servicio.</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+        </div>
+
+        <!-- Sección de Soporte y Ayuda -->
+        <h2 class="text-2xl font-bold mt-10 mb-4" style="color: var(--color-primary-dark);">Soporte</h2>
+        <div class="innovative-card rounded-xl">
+            <!-- 5. Centro de Ayuda -->
+            <a href="#" class="config-link rounded-t-xl p-4 sm:p-6 flex items-center justify-between border-b" style="border-color: rgba(0, 0, 0, 0.05);" onclick="showModal('Ayuda y FAQ')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-2 rounded-full bg-gray-100 text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9.247a1 1 0 011.002-.272l3.492 1.954m-4.502-1.682l.86 1.722M15 11l-3-3m0 0l-3 3m3-3v12m-2-12l-2 2"></path></svg>
+                    </span>
+                    <p class="font-medium">Centro de Ayuda y Preguntas Frecuentes</p>
+                </div>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+            <!-- 6. Enviar Comentarios -->
+            <a href="#" class="config-link rounded-b-xl p-4 sm:p-6 flex items-center justify-between" onclick="showModal('Enviar Comentarios')">
+                <div class="flex items-center space-x-4">
+                    <span class="p-2 rounded-full bg-gray-100 text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H3a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v1"></path></svg>
+                    </span>
+                    <p class="font-medium">Enviar Comentarios y Sugerencias</p>
+                </div>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+        </div>
+
+        <!-- Sección Crítica: Cerrar Sesión y Eliminar Cuenta -->
+        <h2 class="text-2xl font-bold mt-10 mb-4" style="color: var(--color-primary-dark);">Acciones Críticas</h2>
+        <div class="flex flex-col sm:flex-row gap-4">
+            
+            <!-- Botón de Cerrar Sesión -->
+            <button class="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-white logout-button" onclick="showModal('Cerrar Sesión Completo')">
+                Cerrar Sesión
+            </button>
+
+            <!-- Botón de Eliminar Cuenta -->
+            <button class="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold bg-white delete-button" onclick="showModal('Eliminar Cuenta')">
+                Eliminar Mi Cuenta
+            </button>
+        </div>
+
+        <!-- Información Legal y Versión -->
+        <footer class="mt-12 text-center text-sm" style="color: var(--color-text-neutral);">
+            <p><a href="#" class="hover:underline" style="color: var(--color-link-hover);" onclick="showModal('Política de Privacidad')">Política de Privacidad</a></p>
+            <p class="mt-2 text-xs">Versión 1.2.0 del Armario Digital</p>
+        </footer>
+
+    </div>
+
+    <!-- Modal de Información de la App -->
+    <div id="appInfoModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Información de la App</h3>
+                    <button onclick="closeAppInfoModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center" style="background-color: var(--color-secondary);">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2" style="color: var(--color-primary-dark);">DressCode</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">Versión 1.2.0</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg" style="background-color: rgba(164, 121, 104, 0.05);">
+                        <h5 class="font-semibold mb-2" style="color: var(--color-primary-dark);">Descripción</h5>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">DressCode es tu asistente personal de moda. Organiza tu vestuario, recibe recomendaciones inteligentes de outfits y descubre nuevas combinaciones con las prendas que ya tienes.</p>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-semibold mb-2" style="color: var(--color-primary-dark);">Características Principales</h5>
+                        <ul class="text-sm space-y-1" style="color: var(--color-text-neutral);">
+                            <li>• Organización digital de tu armario</li>
+                            <li>• Recomendaciones de outfits por clima</li>
+                            <li>• Planificación de los outfits para tus eventos</li>
+                            <li>• Combinaciones automáticas</li>
+                            <li>• Seguimiento de tus outfits favoritos</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-semibold mb-2" style="color: var(--color-primary-dark);">Desarrollado por</h5>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">Design Team</p>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-semibold mb-2" style="color: var(--color-primary-dark);">Soporte</h5>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">soporte@dresscode.com</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="closeAppInfoModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Preferencias de Fuente -->
+    <div id="fontPrefsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Preferencias de Fuente</h3>
+                    <button onclick="closeFontPrefsModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2 text-sm" style="color: var(--color-text-neutral);">Personaliza la tipografía de DressCode</p>
+            </div>
+            
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <div class="space-y-6">
+                    <!-- Tamaño de fuente -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Tamaño de fuente</h4>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm" style="color: var(--color-text-neutral);">Pequeño</span>
+                            <div class="flex space-x-2">
+                                <button class="w-10 h-10 rounded-full border flex items-center justify-center font-size-option" data-size="small" style="border-color: var(--color-secondary); color: var(--color-secondary);">A</button>
+                                <button class="w-10 h-10 rounded-full border flex items-center justify-center bg-gray-100 font-size-option" data-size="medium">A</button>
+                                <button class="w-10 h-10 rounded-full border flex items-center justify-center bg-gray-100 font-size-option text-lg" data-size="large">A</button>
+                                <button class="w-10 h-10 rounded-full border flex items-center justify-center bg-gray-100 font-size-option text-xl" data-size="xlarge">A</button>
+                            </div>
+                            <span class="text-sm" style="color: var(--color-text-neutral);">Grande</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tipo de fuente -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Familia tipográfica</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 rounded-lg border font-option radio-option" data-font="inter">
+                                <span style="font-family: 'Inter', sans-serif;">Inter (Predeterminada)</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: var(--color-secondary);">
+                                    <div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border font-option radio-option" data-font="arial">
+                                <span style="font-family: 'Arial', sans-serif;">Arial</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border font-option radio-option" data-font="georgia">
+                                <span style="font-family: 'Georgia', serif;">Georgia</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Peso de fuente -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Grosor de fuente</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 rounded-lg border weight-option radio-option" data-weight="light">
+                                <span class="font-light">Ligero</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border weight-option radio-option" data-weight="normal">
+                                <span class="font-normal">Normal</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: var(--color-secondary);">
+                                    <div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border weight-option radio-option" data-weight="semibold">
+                                <span class="font-semibold">Seminegrita</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="closeFontPrefsModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notificaciones -->
+    <div id="notificationsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Notificaciones</h3>
+                    <button onclick="closeNotificationsModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2 text-sm" style="color: var(--color-text-neutral);">Configura las alertas y sugerencias de DressCode</p>
+            </div>
+            
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <div class="space-y-6">
+                    <!-- Alertas de clima -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Alertas de clima</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium" style="color: var(--color-primary-dark);">Notificaciones diarias</p>
+                                    <p class="text-sm" style="color: var(--color-text-neutral);">Sugerencias de outfit basadas en el clima</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="dailyWeather" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium" style="color: var(--color-primary-dark);">Alertas de cambios bruscos</p>
+                                    <p class="text-sm" style="color: var(--color-text-neutral);">Cuando el clima cambia repentinamente</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="weatherAlerts" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sugerencias de atuendos -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Sugerencias de atuendos</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium" style="color: var(--color-primary-dark);">Recordatorios matutinos</p>
+                                    <p class="text-sm" style="color: var(--color-text-neutral);">Sugerencias al comenzar el día</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="morningReminders" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium" style="color: var(--color-primary-dark);">Para eventos en calendario</p>
+                                    <p class="text-sm" style="color: var(--color-text-neutral);">Sugerencias para eventos programados</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="eventSuggestions">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Frecuencia -->
+                    <div>
+                        <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">Frecuencia de notificaciones</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 rounded-lg border frequency-option radio-option" data-frequency="low">
+                                <span>Solo importantes</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border frequency-option radio-option" data-frequency="medium">
+                                <span>Moderado (Recomendado)</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: var(--color-secondary);">
+                                    <div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg border frequency-option radio-option" data-frequency="high">
+                                <span>Todas las sugerencias</span>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center" style="border-color: #ddd;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="saveNotificationSettings()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Guardar Configuración
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones -->
+    <div id="termsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Términos y Condiciones</h3>
+                    <button onclick="closeTermsModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2 text-sm" style="color: var(--color-text-neutral);">Última actualización: Noviembre 2025</p>
+            </div>
+            
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">1. Aceptación de los Términos</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            Al utilizar la web DressCode, aceptas cumplir con estos Términos y Condiciones. Si no estás de acuerdo con alguna parte de estos términos, no podrás utilizar nuestros servicios.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">2. Descripción del Servicio</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            DressCode es una aplicación que te permite organizar tu vestuario virtual, recibir recomendaciones inteligentes de outfits basadas en tu estilo personal, condiciones climáticas y ocasiones específicas.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">3. Uso Aceptable</h4>
+                        <p class="text-sm mb-2" style="color: var(--color-text-neutral);">
+                            Te comprometes a utilizar la web de DressCode únicamente para fines legales y de acuerdo con estos términos.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">4. Propiedad Intelectual</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            Todos los derechos de propiedad intelectual relacionados con la web de DressCode son propiedad de DressCode Inc. Conservas los derechos sobre las imágenes de tus prendas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="closeTermsModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Aceptar Términos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Política de Privacidad -->
+    <div id="privacyModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Política de Privacidad</h3>
+                    <button onclick="closePrivacyModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2 text-sm" style="color: var(--color-text-neutral);">Cómo protegemos y utilizamos tu información</p>
+            </div>
+            
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">Información que Recopilamos</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            Recopilamos información sobre tus prendas, outfits favoritos, preferencias de estilo y datos de uso para mejorar nuestras recomendaciones.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">Uso de la Información</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            Utilizamos tu información para personalizar recomendaciones, mejorar la aplicación y proporcionarte un mejor servicio. Nunca vendemos tu información personal.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">Protección de Datos</h4>
+                        <p class="text-sm" style="color: var(--color-text-neutral);">
+                            Implementamos medidas de seguridad para proteger tu información personal y las imágenes de tu armario contra accesos no autorizados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="closePrivacyModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: var(--color-accent-peach);">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2" style="color: var(--color-primary-dark);">¿Cerrar Sesión?</h3>
+                <p class="mb-6 text-sm" style="color: var(--color-text-neutral);">Se cerrará tu sesión en todos los dispositivos. Tendrás que volver a ingresar tus credenciales.</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-gray-600 bg-gray-100 hover:bg-gray-200">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmLogout()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-white" style="background-color: var(--color-accent-peach);">
+                        Sí, Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Eliminar Cuenta -->
+    <div id="deleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95" style="border: 2px solid #ef4444;">
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: #ef4444;">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2" style="color: #b91c1c;">¡Eliminar Cuenta!</h3>
+                <p class="mb-6 text-sm" style="color: var(--color-text-neutral);">Esta acción es irreversible. Se borrarán todos tus datos, prendas, atuendos y preferencias de estilo.</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-gray-600 bg-gray-100 hover:bg-gray-200">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmDelete()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-white" style="background-color: #ef4444;">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Centro de Ayuda y Preguntas Frecuentes -->
+    <div id="faqModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <!-- Cabecera del Modal -->
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Centro de Ayuda</h3>
+                    <button onclick="closeFaqModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2" style="color: var(--color-text-neutral);">Encuentra respuestas a las preguntas más frecuentes sobre el funcionamiento de la aplicación.</p>
+            </div>
+            
+            <!-- Contenido del Modal - Preguntas Frecuentes -->
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <!-- Introducción -->
+                <div class="mb-6 p-4 rounded-lg" style="background-color: rgba(164, 121, 104, 0.05);">
+                    <p class="font-medium" style="color: var(--color-primary-dark);">Sistema de Armario y Recomendaciones para Vestir</p>
+                    <p class="mt-1 text-sm" style="color: var(--color-text-neutral);">Organiza, combina y planifica tus outfits fácilmente</p>
+                </div>
+                
+                <!-- Separador -->
+                <div class="border-t mb-6" style="border-color: rgba(0, 0, 0, 0.1);"></div>
+                
+                <!-- Pregunta 1 -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">¿Cómo funciona el sistema de recomendaciones por clima?</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">
+                        Nuestro sistema analiza la temperatura actual y las condiciones climáticas para sugerir outfits apropiados. Para días fríos recomienda capas y abrigos, mientras que para climas cálidos sugiere prendas ligeras y frescas.
+                    </p>
+                </div>
+                
+                <!-- Separador -->
+                <div class="border-t mb-6" style="border-color: rgba(0, 0, 0, 0.1);"></div>
+                
+                <!-- Pregunta 2 -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">¿Cómo capturo nuevas prendas para mi armario digital?</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">
+                        Usa la función "Capturar Prenda" para añadir nuevas prendas desde inicio o en el botón flotante de mi armario. Puedes tomar fotos con tu cámara o subir imágenes existentes. El sistema te desplegará menús para identificar colores, tipo de prenda, ocasión y temporada.
+                    </p>
+                </div>
+                
+                <!-- Separador -->
+                <div class="border-t mb-6" style="border-color: rgba(0, 0, 0, 0.1);"></div>
+                
+                <!-- Pregunta 3 -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">¿Cómo genera outfits automáticamente la aplicación?</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">
+                        Al hacer clic en "Generar Outfit", nuestro algoritmo inteligente combina prendas de tu armario considerando: compatibilidad de colores, estilo personal, ocasión, clima actual y tus prendas favoritas.
+                    </p>
+                </div>
+                
+                <!-- Separador -->
+                <div class="border-t mb-6" style="border-color: rgba(0, 0, 0, 0.1);"></div>
+                
+                <!-- Pregunta 4 -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">¿Puedo guardar y organizar mis outfits favoritos?</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">
+                        Sí, la sección "Mis Outfits" te permite guardar tus mejores combinaciones. Puedes categorizarlas por ocasión (trabajo, casual, formal) y acceder rápidamente a ellas cuando las necesites.
+                    </p>
+                </div>
+                
+                <!-- Separador -->
+                <div class="border-t mb-6" style="border-color: rgba(0, 0, 0, 0.1);"></div>
+                
+                <!-- Pregunta 5 -->
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3" style="color: var(--color-primary-dark);">¿Cómo mejora el sistema sus recomendaciones con el tiempo?</h4>
+                    <p class="text-sm" style="color: var(--color-text-neutral);">
+                        La aplicación aprende de tus preferencias. Cuando marcas outfits como favoritos o calificas las combinaciones sugeridas, el sistema refina sus futuras recomendaciones para alinearse mejor con tu estilo personal.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Pie del Modal -->
+            <div class="p-4 border-t text-center" style="border-color: rgba(0, 0, 0, 0.05);">
+                <button onclick="closeFaqModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Enviar Comentarios y Sugerencias -->
+    <div id="commentsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <!-- Cabecera del Modal -->
+            <div class="p-6 border-b" style="border-color: rgba(0, 0, 0, 0.05);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold" style="color: var(--color-primary-dark);">Contáctanos</h3>
+                    <button onclick="closeCommentsModal()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenido del Modal - Formulario -->
+            <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px);">
+                <!-- Nombre completo -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--color-primary-dark);">Nombre completo</label>
+                    <input type="text" id="userName" placeholder="Tu nombre" class="w-full input-field rounded-lg py-3 px-4">
+                </div>
+                
+                <!-- Correo electrónico -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--color-primary-dark);">Correo electrónico</label>
+                    <input type="email" id="userEmail" placeholder="tu@email.com" class="w-full input-field rounded-lg py-3 px-4">
+                </div>
+                
+                <!-- Asunto -->
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">Asunto</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: var(--color-secondary);"></div>
+                            <span>Selecciona un asunto</span>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="technical">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: #ddd;"></div>
+                            <span>Problema técnico con la app</span>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="closet">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: #ddd;"></div>
+                            <span>Dudas sobre el armario digital</span>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="recommendations">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: #ddd;"></div>
+                            <span>Sugerencias para recomendaciones</span>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="weather">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: #ddd;"></div>
+                            <span>Problemas con detección de clima</span>
+                        </div>
+                        <div class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 subject-option" data-subject="other">
+                            <div class="w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0" style="border-color: #ddd;"></div>
+                            <span>Otro</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mensaje -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold mb-3" style="color: var(--color-primary-dark);">Mensaje</h4>
+                    <textarea id="userMessage" placeholder="Describe tu consulta o problema..." class="w-full textarea-field rounded-lg py-3 px-4"></textarea>
+                </div>
+                
+                <!-- Botón Enviar -->
+                <button onclick="submitFeedback()" class="w-full py-3 rounded-lg font-semibold text-white mb-6 transition-all duration-200 hover:opacity-90" style="background-color: var(--color-secondary);">
+                    ENVIAR MENSAJE
+                </button>
+                
+                <!-- Otras formas de contacto -->
+                <div class="border-t pt-6" style="border-color: rgba(0, 0, 0, 0.1);">
+                    <h4 class="text-lg font-medium mb-4" style="color: var(--color-primary-dark);">Otras formas de contactarnos</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <span style="color: var(--color-text-neutral);">soporte@dresscode.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            <span style="color: var(--color-text-neutral);">+52 78 56 320 145</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                            </svg>
+                            <span style="color: var(--color-text-neutral);">www.dresscode.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de envío -->
+    <div id="confirmationModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: var(--color-secondary);">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2" style="color: var(--color-primary-dark);">¡Mensaje Enviado!</h3>
+                <p class="mb-6 text-sm" style="color: var(--color-text-neutral);">Hemos recibido tu comentario. Te contactaremos pronto.</p>
+                <button onclick="closeConfirmationModal()" class="px-6 py-2 rounded-lg font-medium text-white" style="background-color: var(--color-secondary);">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para almacenar configuraciones
+        let currentSettings = {
+            fontSize: 'medium',
+            fontFamily: 'inter',
+            fontWeight: 'normal',
+            notifications: {
+                dailyWeather: true,
+                weatherAlerts: true,
+                morningReminders: true,
+                eventSuggestions: false,
+                frequency: 'medium'
+            },
+            selectedSubject: ''
+        };
+
+        // Función principal para mostrar modales
+        function showModal(action) {
+            switch(action) {
+                case 'Información de la App':
+                    showAppInfoModal();
+                    break;
+                case 'Preferencias de Fuente':
+                    showFontPrefsModal();
+                    break;
+                case 'Notificaciones':
+                    showNotificationsModal();
+                    break;
+                case 'Términos y Condiciones':
+                    showTermsModal();
+                    break;
+                case 'Política de Privacidad':
+                    showPrivacyModal();
+                    break;
+                case 'Cerrar Sesión Completo':
+                    showLogoutModal();
+                    break;
+                case 'Eliminar Cuenta':
+                    showDeleteModal();
+                    break;
+                case 'Ayuda y FAQ':
+                    showFaqModal();
+                    break;
+                case 'Enviar Comentarios':
+                    showCommentsModal();
+                    break;
+            }
+        }
+
+        // ========== FUNCIONES PARA CADA MODAL ==========
+
+        // Información de la App
+        function showAppInfoModal() {
+            const modal = document.getElementById('appInfoModal');
+            showModalBase(modal);
+        }
+
+        function closeAppInfoModal() {
+            const modal = document.getElementById('appInfoModal');
+            closeModalBase(modal);
+        }
+
+        // Preferencias de Fuente
+        function showFontPrefsModal() {
+            const modal = document.getElementById('fontPrefsModal');
+            initializeFontSettings();
+            showModalBase(modal);
+        }
+
+        function closeFontPrefsModal() {
+            const modal = document.getElementById('fontPrefsModal');
+            closeModalBase(modal);
+        }
+
+        // Notificaciones
+        function showNotificationsModal() {
+            const modal = document.getElementById('notificationsModal');
+            initializeNotificationSettings();
+            showModalBase(modal);
+        }
+
+        function closeNotificationsModal() {
+            const modal = document.getElementById('notificationsModal');
+            closeModalBase(modal);
+        }
+
+        // Términos y Condiciones
+        function showTermsModal() {
+            const modal = document.getElementById('termsModal');
+            showModalBase(modal);
+        }
+
+        function closeTermsModal() {
+            const modal = document.getElementById('termsModal');
+            closeModalBase(modal);
+        }
+
+        // Política de Privacidad
+        function showPrivacyModal() {
+            const modal = document.getElementById('privacyModal');
+            showModalBase(modal);
+        }
+
+        function closePrivacyModal() {
+            const modal = document.getElementById('privacyModal');
+            closeModalBase(modal);
+        }
+
+        // Cerrar Sesión
+        function showLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            showModalBase(modal);
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            closeModalBase(modal);
+        }
+
+        function confirmLogout() {
+            alert('Sesión cerrada exitosamente');
+            closeLogoutModal();
+        }
+
+        // Eliminar Cuenta
+        function showDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            showModalBase(modal);
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            closeModalBase(modal);
+        }
+
+        function confirmDelete() {
+            alert('Cuenta eliminada permanentemente');
+            closeDeleteModal();
+        }
+
+        // Centro de Ayuda
+        function showFaqModal() {
+            const modal = document.getElementById('faqModal');
+            showModalBase(modal);
+        }
+
+        function closeFaqModal() {
+            const modal = document.getElementById('faqModal');
+            closeModalBase(modal);
+        }
+
+        // Enviar Comentarios
+        function showCommentsModal() {
+            const modal = document.getElementById('commentsModal');
+            initializeSubjectSelection();
+            showModalBase(modal);
+        }
+
+        function closeCommentsModal() {
+            const modal = document.getElementById('commentsModal');
+            closeModalBase(modal);
+        }
+
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            closeModalBase(modal);
+        }
+
+        // ========== FUNCIONES BASE PARA MODALES ==========
+        function showModalBase(modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const modalContent = modal.querySelector('div');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }
+
+        function closeModalBase(modal) {
+            const modalContent = modal.querySelector('div');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // ========== FUNCIONALIDADES ESPECÍFICAS ==========
+
+        // Configuración de Fuentes
+        function initializeFontSettings() {
+            // Tamaño de fuente
+            document.querySelectorAll('.font-size-option').forEach(option => {
+                option.classList.remove('bg-gray-100');
+                option.style.borderColor = '#ddd';
+                option.style.color = 'var(--color-primary-dark)';
+                
+                if (option.dataset.size === currentSettings.fontSize) {
+                    option.style.borderColor = 'var(--color-secondary)';
+                    option.style.color = 'var(--color-secondary)';
+                } else {
+                    option.classList.add('bg-gray-100');
+                }
+                
+                option.addEventListener('click', function() {
+                    currentSettings.fontSize = this.dataset.size;
+                    initializeFontSettings();
+                });
+            });
+
+            // Familia de fuente
+            document.querySelectorAll('.font-option').forEach(option => {
+                const radio = option.querySelector('.w-5.h-5');
+                radio.style.borderColor = '#ddd';
+                radio.innerHTML = '';
+                
+                if (option.dataset.font === currentSettings.fontFamily) {
+                    radio.style.borderColor = 'var(--color-secondary)';
+                    radio.innerHTML = '<div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>';
+                }
+                
+                option.addEventListener('click', function() {
+                    currentSettings.fontFamily = this.dataset.font;
+                    initializeFontSettings();
+                });
+            });
+
+            // Peso de fuente
+            document.querySelectorAll('.weight-option').forEach(option => {
+                const radio = option.querySelector('.w-5.h-5');
+                radio.style.borderColor = '#ddd';
+                radio.innerHTML = '';
+                
+                if (option.dataset.weight === currentSettings.fontWeight) {
+                    radio.style.borderColor = 'var(--color-secondary)';
+                    radio.innerHTML = '<div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>';
+                }
+                
+                option.addEventListener('click', function() {
+                    currentSettings.fontWeight = this.dataset.weight;
+                    initializeFontSettings();
+                });
+            });
+        }
+
+        // Configuración de Notificaciones
+        function initializeNotificationSettings() {
+            // Toggles
+            document.getElementById('dailyWeather').checked = currentSettings.notifications.dailyWeather;
+            document.getElementById('weatherAlerts').checked = currentSettings.notifications.weatherAlerts;
+            document.getElementById('morningReminders').checked = currentSettings.notifications.morningReminders;
+            document.getElementById('eventSuggestions').checked = currentSettings.notifications.eventSuggestions;
+
+            // Frecuencia
+            document.querySelectorAll('.frequency-option').forEach(option => {
+                const radio = option.querySelector('.w-5.h-5');
+                radio.style.borderColor = '#ddd';
+                radio.innerHTML = '';
+                
+                if (option.dataset.frequency === currentSettings.notifications.frequency) {
+                    radio.style.borderColor = 'var(--color-secondary)';
+                    radio.innerHTML = '<div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>';
+                }
+                
+                option.addEventListener('click', function() {
+                    currentSettings.notifications.frequency = this.dataset.frequency;
+                    initializeNotificationSettings();
+                });
+            });
+        }
+
+        function saveNotificationSettings() {
+            currentSettings.notifications.dailyWeather = document.getElementById('dailyWeather').checked;
+            currentSettings.notifications.weatherAlerts = document.getElementById('weatherAlerts').checked;
+            currentSettings.notifications.morningReminders = document.getElementById('morningReminders').checked;
+            currentSettings.notifications.eventSuggestions = document.getElementById('eventSuggestions').checked;
+            
+            alert('Configuración de notificaciones guardada');
+            closeNotificationsModal();
+        }
+
+        // Selección de Asunto en Comentarios
+        function initializeSubjectSelection() {
+            document.querySelectorAll('.subject-option').forEach(option => {
+                const radio = option.querySelector('.w-5.h-5');
+                radio.style.borderColor = '#ddd';
+                radio.innerHTML = '';
+                
+                if (option.dataset.subject === currentSettings.selectedSubject) {
+                    radio.style.borderColor = 'var(--color-secondary)';
+                    radio.innerHTML = '<div class="w-3 h-3 rounded-full" style="background-color: var(--color-secondary);"></div>';
+                }
+                
+                option.addEventListener('click', function() {
+                    currentSettings.selectedSubject = this.dataset.subject;
+                    initializeSubjectSelection();
+                });
+            });
+        }
+
+        // Envío de Comentarios
+        function submitFeedback() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const message = document.getElementById('userMessage').value;
+            
+            if (!name || !email || !currentSettings.selectedSubject || !message) {
+                alert('Por favor, completa todos los campos obligatorios.');
+                return;
+            }
+            
+            console.log('Feedback enviado:', {
+                name,
+                email,
+                subject: currentSettings.selectedSubject,
+                message
+            });
+            
+            closeCommentsModal();
+            setTimeout(() => {
+                showConfirmationModal();
+            }, 300);
+            
+            // Limpiar formulario
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userMessage').value = '';
+            currentSettings.selectedSubject = '';
+            initializeSubjectSelection();
+        }
+
+        function showConfirmationModal() {
+            const modal = document.getElementById('confirmationModal');
+            showModalBase(modal);
+        }
+
+        // Inicializar eventos cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar configuraciones por defecto
+            initializeFontSettings();
+            initializeNotificationSettings();
+            initializeSubjectSelection();
+        });
+    </script>
+
+</body>
+</html>
