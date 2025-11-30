@@ -888,54 +888,116 @@ def obtener_preferencias_por_valoracion(usuario_id):
                 afinidad_temporada[outfit.temporada] = afinidad_temporada.get(outfit.temporada, 0) + score
 
     return afinidad_colores, afinidad_estilos, afinidad_temporada
-
-
-
 @csrf_exempt
+@require_POST
 def guardar_outfit(request):
     if request.method == 'POST':
-        if request.headers.get("x-requested-with") != "XMLHttpRequest":
-            return JsonResponse({'error': 'Solo AJAX permitido.'}, status=400)
-
+        print("=== INICIANDO GUARDADO DE OUTFIT ===")
+        
         if 'usuario_id' not in request.session:
             return JsonResponse({'error': 'Usuario no autenticado.'}, status=401)
 
         try:
-            usuario = Usuario.objects.get(idUsuario=request.session['usuario_id'])
+            usuario_id = request.session['usuario_id']
+            usuario = Usuario.objects.get(idUsuario=usuario_id)
+            print(f"✅ Usuario: {usuario.nombre} (ID: {usuario_id})")
 
-            estilo = request.POST.get('estilo') or 'Sin estilo'
-            clima = request.POST.get('clima_recomendado') or 'Desconocido'
-            es_favorito = request.POST.get('esFavorito', 'false') == 'true'
+            # Obtener datos básicos
+            estilo = request.POST.get('estilo', 'Personalizado')
+            clima = request.POST.get('clima_recomendado', 'Templado')
+            
+            print(f"📝 Estilo: {estilo}")
+            print(f"🌤️ Clima: {clima}")
 
+            # DEBUG: Ver TODO lo que viene en el POST
+            print("📨 DATOS POST RECIBIDOS:")
+            for key, values in request.POST.lists():
+                print(f"   {key}: {values}")
+
+            # Obtener listas de prendas - FORMA CORRECTA
+            imagenes = request.POST.getlist('imagenes')
+            tipos = request.POST.getlist('tipos')
+            
+            print(f"👕 Imágenes recibidas: {len(imagenes)}")
+            print(f"🏷️ Tipos recibidos: {len(tipos)}")
+            
+            # Mostrar cada prenda individualmente
+            for i, (url, tipo) in enumerate(zip(imagenes, tipos)):
+                print(f"   Prenda {i+1}: {tipo} -> {url[:80]}...")
+
+            if not imagenes or not tipos:
+                error_msg = f'No se recibieron prendas. Imágenes: {len(imagenes)}, Tipos: {len(tipos)}'
+                print(f"❌ {error_msg}")
+                return JsonResponse({'error': error_msg}, status=400)
+
+            if len(imagenes) != len(tipos):
+                error_msg = f'Cantidad no coincide: {len(imagenes)} imágenes vs {len(tipos)} tipos'
+                print(f"❌ {error_msg}")
+                return JsonResponse({'error': error_msg}, status=400)
+
+            # 1. CREAR OUTFIT
             nuevo_outfit = Outfit.objects.create(
                 idUsuario=usuario,
                 estilo=estilo,
                 clima_recomendado=clima,
                 fecha_creacion=datetime.now(),
-                esFavorito=es_favorito
+                esFavorito=False
             )
+            print(f"✅ Outfit creado: ID {nuevo_outfit.idOutfit}")
 
-            imagenes = request.POST.getlist('imagenes')
-            tipos = request.POST.getlist('tipos')
+            # 2. GUARDAR PRENDAS - FORMA CORREGIDA
+            prendas_guardadas = 0
+            for i, (url, tipo) in enumerate(zip(imagenes, tipos)):
+                if url and tipo and url.strip() and tipo.strip():
+                    try:
+                        # Verificar que la URL sea válida
+                        if url.startswith('http'):
+                            VerPrenda.objects.create(
+                                outfit=nuevo_outfit,
+                                imagen_url=url.strip(),
+                                tipo_prenda=tipo.strip()
+                            )
+                            prendas_guardadas += 1
+                            print(f"✅ Prenda {i+1} guardada: {tipo.strip()}")
+                        else:
+                            print(f"⚠️ URL inválida omitida: {url[:50]}...")
+                    except Exception as e:
+                        print(f"❌ Error guardando prenda {i+1}: {str(e)}")
+                else:
+                    print(f"⚠️ Prenda {i+1} omitida - datos vacíos")
 
-            for url, tipo in zip(imagenes, tipos):
-                VerPrenda.objects.create(
-                    outfit=nuevo_outfit,
-                    imagen_url=url,
-                    tipo_prenda=tipo
-                )
+            print(f"📊 Total de prendas guardadas: {prendas_guardadas}")
+
+            # 3. CREAR RECOMENDACIÓN
+            recomendacion = Recomendacion.objects.create(
+                idUsuario=usuario,
+                idOutfit=nuevo_outfit,
+                clima_del_dia=clima,
+                valoracion=0
+            )
+            print(f"✅ Recomendación creada: ID {recomendacion.idRecomendacion}")
+
+            # Verificar que las prendas se guardaron
+            prendas_verificadas = VerPrenda.objects.filter(outfit=nuevo_outfit).count()
+            print(f"🔍 Verificación: {prendas_verificadas} prendas en la base de datos")
 
             return JsonResponse({
                 'success': True,
                 'message': 'Outfit guardado exitosamente.',
-                'outfit_id': nuevo_outfit.idOutfit
+                'outfit_id': nuevo_outfit.idOutfit,
+                'recomendacion_id': recomendacion.idRecomendacion,
+                'total_prendas': prendas_guardadas,
+                'prendas_verificadas': prendas_verificadas
             }, status=200)
 
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            error_msg = f"Error interno: {str(e)}"
+            print(f"❌ {error_msg}")
+            import traceback
+            print(traceback.format_exc())
+            return JsonResponse({'error': error_msg}, status=500)
 
-    return JsonResponse({'error': 'Petición inválida.'}, status=400)
-
+    return JsonResponse({'error': 'Método no permitido'}, status=400)
 # ---------------------------------------------------------------------------------
 # 5. CONFIGURACIÓN DEL ASISTENTE (WIZARD)
 # ---------------------------------------------------------------------------------
@@ -1377,3 +1439,360 @@ def calendar_events_api(request):
 # Vista para el calendario sin parámetros (mes actual)
 def calendar_current(request):
     return calendar_view(request)
+
+#mostrar ootds
+
+@configuracion_requerida
+def outfits_recommendations(request):
+    """Vista principal para mostrar recomendaciones de outfits"""
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        context = {
+            'usuario': usuario,
+            'page_title': 'Recomendaciones de Outfits'
+        }
+        return render(request, 'saveootd.html', context)
+        
+    except (KeyError, Usuario.DoesNotExist):
+        messages.error(request, "Debes iniciar sesión para ver las recomendaciones.")
+        return redirect('login')
+    
+@login_required
+def save_look(request):
+    """Vista para guardar un look (API)"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            look_name = data.get('look_name')
+            look_category = data.get('look_category')
+            
+            # Aquí guardarías en tu modelo o Supabase
+            # Ejemplo con modelo Django:
+            # saved_look = SavedLook.objects.create(
+            #     user=request.user,
+            #     name=look_name,
+            #     category=look_category
+            # )
+            
+            # Por ahora simulamos el guardado
+            return JsonResponse({
+                'success': True,
+                'message': f'Look "{look_name}" guardado correctamente'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error al guardar: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+@login_required
+def remove_look(request):
+    """Vista para eliminar un look guardado (API)"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            look_name = data.get('look_name')
+            
+            # Aquí eliminarías de tu modelo o Supabase
+            # Ejemplo con modelo Django:
+            # SavedLook.objects.filter(user=request.user, name=look_name).delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Look "{look_name}" eliminado correctamente'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error al eliminar: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+@login_required
+def get_saved_looks(request):
+    """Vista para obtener looks guardados del usuario"""
+    if request.method == 'GET':
+        try:
+            # Aquí obtendrías los looks guardados de tu modelo o Supabase
+            # Ejemplo con modelo Django:
+            # saved_looks = SavedLook.objects.filter(user=request.user).values('name', 'category')
+            # looks_list = list(saved_looks)
+            
+            # Por ahora devolvemos datos de ejemplo
+            looks_list = []  # Esto vendría de tu base de datos
+            
+            return JsonResponse({
+                'success': True,
+                'saved_looks': looks_list
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error al obtener looks: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+# REEMPLAZA completamente la vista 'obtener_recomendaciones_guardadas' con esta versión:
+@configuracion_requerida
+def obtener_recomendaciones_guardadas(request):
+    """Obtener las recomendaciones con sus prendas - VERSIÓN CORREGIDA"""
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        print(f"🔍 Buscando recomendaciones para usuario: {usuario_id}")
+
+        # Obtener TODAS las recomendaciones del usuario
+        recomendaciones = Recomendacion.objects.filter(idUsuario=usuario_id)
+        
+        print(f"📊 Recomendaciones encontradas: {recomendaciones.count()}")
+
+        recomendaciones_data = []
+        for rec in recomendaciones:
+            print(f"  Procesando recomendación ID: {rec.idRecomendacion}")
+            print(f"  Outfit ID: {rec.idOutfit.idOutfit}")
+            
+            # Obtener prendas del outfit
+            prendas_outfit = VerPrenda.objects.filter(outfit=rec.idOutfit)
+            print(f"  Prendas encontradas: {prendas_outfit.count()}")
+
+            # Procesar información de cada prenda
+            prendas_detalladas = []
+            for prenda in prendas_outfit:
+                prendas_detalladas.append({
+                    'tipo': prenda.tipo_prenda,
+                    'imagen_url': prenda.imagen_url
+                })
+                print(f"    - {prenda.tipo_prenda}: {prenda.imagen_url[:50]}...")
+
+            # Imagen principal (primera prenda)
+            imagen_principal = prendas_outfit.first().imagen_url if prendas_outfit.exists() else ''
+
+            recomendaciones_data.append({
+                'id': rec.idRecomendacion,
+                'outfit_id': rec.idOutfit.idOutfit,
+                'nombre': f"Look {rec.idOutfit.estilo}",
+                'categoria': rec.idOutfit.estilo,
+                'estilo': rec.idOutfit.estilo,
+                'clima': rec.clima_del_dia,
+                'imagen_url': imagen_principal,
+                'fecha_creacion': rec.fecha_generacion.strftime('%d/%m/%Y'),
+                'valoracion': rec.valoracion or 0,
+                'es_favorito': rec.idOutfit.esFavorito,
+                'prendas': prendas_detalladas,
+                'total_prendas': len(prendas_detalladas)
+            })
+
+        print(f"✅ Enviando {len(recomendaciones_data)} recomendaciones")
+        
+        return JsonResponse({
+            'success': True,
+            'recomendaciones': recomendaciones_data
+        })
+        
+    except Exception as e:
+        print(f"❌ ERROR en obtener_recomendaciones_guardadas: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+# AGREGA esta vista NUEVA al final de views.py
+@configuracion_requerida
+def obtener_prendas_outfit(request, outfit_id):
+    """Obtener las prendas específicas de un outfit"""
+    try:
+        usuario_id = request.session['usuario_id']
+        
+        # Verificar que el outfit pertenece al usuario
+        outfit = Outfit.objects.get(idOutfit=outfit_id, idUsuario=usuario_id)
+        prendas = VerPrenda.objects.filter(outfit=outfit)
+        
+        prendas_data = []
+        for prenda in prendas:
+            prendas_data.append({
+                'tipo': prenda.tipo_prenda,
+                'imagen_url': prenda.imagen_url,
+                'descripcion': f"{prenda.tipo_prenda} - {outfit.estilo}"
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'prendas': prendas_data,
+            'outfit_nombre': f"Look {outfit.estilo}",
+            'total_prendas': len(prendas_data)
+        })
+        
+    except Outfit.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Outfit no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        
+@csrf_exempt
+@require_POST
+def guardar_valoracion(request):
+    """Guardar valoración de una recomendación"""
+    try:
+        if 'usuario_id' not in request.session:
+            return JsonResponse({'success': False, 'error': 'Usuario no autenticado'}, status=401)
+        
+        data = json.loads(request.body)
+        recomendacion_id = data.get('recomendacion_id')
+        valoracion = data.get('valoracion')
+        
+        if not recomendacion_id or not valoracion:
+            return JsonResponse({'success': False, 'error': 'Datos incompletos'}, status=400)
+        
+        usuario_id = request.session['usuario_id']
+        
+        # Verificar que la recomendación pertenece al usuario
+        recomendacion = Recomendacion.objects.get(
+            idRecomendacion=recomendacion_id,
+            idUsuario=usuario_id
+        )
+        
+        recomendacion.valoracion = valoracion
+        recomendacion.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Valoración guardada correctamente'
+        })
+        
+    except Recomendacion.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Recomendación no encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
+# En views.py - AGREGAR esta vista temporal
+@configuracion_requerida
+def ver_outfits_guardados(request):
+    """Vista temporal para verificar outfits guardados"""
+    usuario_id = request.session['usuario_id']
+    usuario = Usuario.objects.get(idUsuario=usuario_id)
+    
+    outfits = Outfit.objects.filter(idUsuario=usuario).order_by('-fecha_creacion')
+    outfits_data = []
+    
+    for outfit in outfits:
+        prendas = VerPrenda.objects.filter(outfit=outfit)
+        outfits_data.append({
+            'id': outfit.idOutfit,
+            'estilo': outfit.estilo,
+            'fecha': outfit.fecha_creacion.strftime('%Y-%m-%d %H:%M'),
+            'prendas_count': prendas.count(),
+            'prendas': [
+                {
+                    'tipo': p.tipo_prenda,
+                    'imagen_url': p.imagen_url,
+                    'url_length': len(p.imagen_url)
+                } for p in prendas
+            ]
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'total_outfits': len(outfits_data),
+        'outfits': outfits_data
+    })
+    
+
+# TEMPORAL: Quita el decorator para debugging
+def debug_outfit(request, outfit_id):
+    """Vista temporal para debuguear un outfit específico"""
+    try:
+        # Verificación básica de sesión
+        if 'usuario_id' not in request.session:
+            return JsonResponse({'success': False, 'error': 'No autenticado'})
+            
+        usuario_id = request.session['usuario_id']
+        outfit = Outfit.objects.get(idOutfit=outfit_id, idUsuario=usuario_id)
+        prendas = VerPrenda.objects.filter(outfit=outfit)
+        
+        prendas_data = []
+        for prenda in prendas:
+            prendas_data.append({
+                'id': prenda.id,
+                'tipo': prenda.tipo_prenda,
+                'imagen_url': prenda.imagen_url,
+                'url_valida': prenda.imagen_url.startswith('http') if prenda.imagen_url else False,
+                'url_length': len(prenda.imagen_url) if prenda.imagen_url else 0
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'outfit': {
+                'id': outfit.idOutfit,
+                'estilo': outfit.estilo,
+                'clima': outfit.clima_recomendado,
+                'fecha': outfit.fecha_creacion.strftime('%Y-%m-%d %H:%M')
+            },
+            'prendas': prendas_data,
+            'total_prendas': len(prendas_data),
+            'debug': 'Vista de debug temporal'
+        })
+        
+    except Outfit.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Outfit no encontrado'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+# Vista temporal para ver todos los outfits del usuario
+def debug_all_outfits(request):
+    if 'usuario_id' not in request.session:
+        return JsonResponse({'success': False, 'error': 'No autenticado'})
+    
+    try:
+        usuario_id = request.session['usuario_id']
+        
+        # Buscar TODOS los outfits del usuario
+        outfits = Outfit.objects.filter(idUsuario=usuario_id).order_by('-fecha_creacion')
+        print(f"🔍 Outfits encontrados para usuario {usuario_id}: {outfits.count()}")
+
+        outfits_data = []
+        for outfit in outfits:
+            prendas = VerPrenda.objects.filter(outfit=outfit)
+            print(f"  Outfit {outfit.idOutfit}: {prendas.count()} prendas")
+            
+            outfits_data.append({
+                'outfit_id': outfit.idOutfit,
+                'estilo': outfit.estilo,
+                'clima': outfit.clima_recomendado,
+                'fecha': outfit.fecha_creacion.strftime('%Y-%m-%d %H:%M'),
+                'total_prendas': prendas.count(),
+                'prendas': [
+                    {
+                        'tipo': p.tipo_prenda,
+                        'imagen_url': p.imagen_url,
+                        'url_length': len(p.imagen_url)
+                    } for p in prendas
+                ]
+            })
+
+        return JsonResponse({
+            'success': True,
+            'total_outfits': len(outfits_data),
+            'outfits': outfits_data
+        })
+        
+    except Exception as e:
+        print(f"❌ ERROR en debug_all_outfits: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def ver_prendas_temp(request):
+    """Página temporal para ver las prendas - SIN RESTRICCIONES"""
+    if 'usuario_id' not in request.session:
+        return redirect('login')
+    
+    return render(request, 'ver_prendas_temp.html')

@@ -43,6 +43,19 @@ urlpatterns = [
     path("calendario/", views.calendar_view, name="calendar"),
     path("calendario/<int:year>/<int:month>/", views.calendar_view, name="calendar_month"),
     path('calendar/events/', views.calendar_events_api, name='calendar_events_api'),
+    
+    path('recommendations/', views.outfits_recommendations, name='outfits_recommendations'),
+    path('api/save-look/', views.save_look, name='save_look'),
+    path('api/remove-look/', views.remove_look, name='remove_look'),
+    path('api/saved-looks/', views.get_saved_looks, name='get_saved_looks'),
+     path('api/obtener-recomendaciones/', views.obtener_recomendaciones_guardadas, name='obtener_recomendaciones'),
+    path('api/guardar-valoracion/', views.guardar_valoracion, name='guardar_valoracion'),
+    path('api/ver-outfits/', views.ver_outfits_guardados, name='ver_outfits'),
+    path('api/debug-outfit/<int:outfit_id>/', views.debug_outfit, name='debug_outfit'),
+    path('outfits-recommendations/', views.outfits_recommendations, name='outfits_recommendations'),
+    path('api/debug-all-outfits/', views.debug_all_outfits, name='debug_all_outfits'),
+    path('ver-prendas-temp/', views.ver_prendas_temp, name='ver_prendas_temp'),
+
 ]
 
 

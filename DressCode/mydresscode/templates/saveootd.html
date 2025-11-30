@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendaciones - StyleRec</title>
+    <style>
+        :root {
+            --primary-dark: #21281e;
+            --primary-brown: #a47968;
+            --accent-green: #bfbe9;
+            --accent-cream: #f3d09f;
+            --neutral-taupe: #a1917c;
+            --neutral-gray: #605b57;
+            --accent-mauve: #8a6163;
+            --dark-brown: #3a3021;
+            --light-brown: #dea583;
+            --medium-brown: #cf8e71;
+            --dark-gray: #494a45;
+            --light-cream: #fbefbc;
+            
+            --card-bg: #ffffff;
+            --section-bg: #f8f7f4;
+            --border-color: #e8e6e1;
+            --text-dark: #21281e;
+            --text-medium: #605b57;
+            --text-light: #8a8985;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f8f6;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--primary-dark);
+            letter-spacing: 1px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-brown), var(--accent-mauve));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--dark-brown));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .stats-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 200;
+            color: var(--light-cream);
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        
+        /* Search and Filters */
+        .search-filters {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px 0 0 12px;
+            font-size: 15px;
+            border-right: none;
+            background: var(--section-bg);
+            color: var(--text-dark);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+        
+        .search-button {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary-brown), var(--medium-brown));
+            color: white;
+            border: none;
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background: linear-gradient(135deg, var(--medium-brown), var(--light-brown));
+            transform: translateY(-1px);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--section-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: var(--text-medium);
+            font-weight: 400;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: linear-gradient(135deg, var(--primary-brown), var(--accent-mauve));
+            color: white;
+            border-color: var(--primary-brown);
+            transform: translateY(-1px);
+        }
+        
+        /* Recommendations Grid */
+        .recommendations-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 25px;
+            color: var(--primary-dark);
+            letter-spacing: 0.5px;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .recommendation-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, var(--neutral-taupe), var(--primary-brown));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15px;
+            position: relative;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--accent-mauve), var(--primary-brown));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+        
+        .card-category {
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-brown), var(--medium-brown));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--medium-brown), var(--light-brown));
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary-brown);
+            color: var(--primary-brown);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary-brown);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Saved Looks Section */
+        .saved-looks-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        
+        .saved-looks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        
+        .saved-look-item {
+            background: var(--section-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .saved-look-item:hover {
+            background: var(--light-cream);
+            border-color: var(--accent-cream);
+        }
+        
+        .saved-look-item .remove-btn {
+            background: none;
+            border: none;
+            color: var(--accent-mauve);
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .saved-look-item .remove-btn:hover {
+            background-color: var(--accent-mauve);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: var(--text-light);
+            font-style: italic;
+            padding: 40px 20px;
+            grid-column: 1 / -1;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary-brown), var(--accent-mauve));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, var(--accent-mauve), #c44569);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .recommendations-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-title {
+                font-size: 20px;
+            }
+            
+            .stat-number {
+                font-size: 28px;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+
+/* Estilos para las estrellas de valoración */
+.estrellas-container {
+    margin-top: 5px;
+}
+
+.estrella-valoracion {
+    color: #ddd;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease;
+    margin-right: 2px;
+}
+
+.estrella-valoracion.activa {
+    color: #ffc107;
+}
+
+.estrella-valoracion:hover {
+    color: #ffc107;
+}
+
+.saved-look-info {
+    flex: 1;
+}
+
+.saved-look-info strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+
+.saved-look-info span {
+    font-size: 12px;
+    color: var(--text-medium);
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Estilos para las prendas del outfit */
+.prendas-container {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 12px;
+}
+
+.prendas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.prenda-item {
+    text-align: center;
+    width: 60px;
+    transition: transform 0.2s ease;
+}
+
+.prenda-item:hover {
+    transform: scale(1.05);
+}
+
+.prenda-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.prenda-item:hover img {
+    border-color: var(--primary-brown);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.prenda-tipo {
+    font-size: 10px;
+    margin-top: 4px;
+    color: var(--text-medium);
+    word-break: break-word;
+}
+
+/* Mejorar el contenedor de looks guardados */
+.saved-look-item {
+    background: var(--section-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.saved-look-item:hover {
+    background: var(--light-cream);
+    border-color: var(--accent-cream);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+    </style>
+</head>
+<body>
+    <!-- Notificación -->
+    <div class="notification" id="notification"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">StyleRec</div>
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div class="user-details">
+                    <div class="user-name">Abel Tanez</div>
+                    <div class="user-id">ID: 51</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stats-title">Recomendaciones Personalizadas</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">RECOMENDACIONES</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="savedCount">0</span>
+                    <span class="stat-label">GUARDADOS</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">PREFERENCIAS</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">4</span>
+                    <span class="stat-label">OCASIONES</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Buscar outfits por ocasión o estilo...">
+                <button class="search-button">Buscar</button>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active">Todo</button>
+                <button class="filter-btn">Universitario</button>
+                <button class="filter-btn">Concierto</button>
+                <button class="filter-btn">Oficina</button>
+                <button class="filter-btn">Cita</button>
+                <button class="filter-btn">Deportivo</button>
+                <button class="filter-btn">Favoritos</button>
+            </div>
+        </div>
+        
+        <!-- Recommendations Grid -->
+        <div class="recommendations-section">
+            <h2 class="section-title">Recomendaciones para ti</h2>
+            <div class="recommendations-grid">
+                <!-- Look 1 -->
+                <div class="recommendation-card">
+                    <div class="card-image">
+                        <div class="card-badge">Nuevo</div>
+                        Look Universitario
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">Estilo Campus</div>
+                        <div class="card-category">Casual • Confortable</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveLook('Estilo Campus', 'Universitario')">Guardar</button>
+                            <button class="btn btn-outline">Ver detalles</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Look 2 -->
+                <div class="recommendation-card">
+                    <div class="card-image">
+                        <div class="card-badge">Popular</div>
+                        Look Nocturno
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">Noche de Concierto</div>
+                        <div class="card-category">Evento • Elegante</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveLook('Noche de Concierto', 'Concierto')">Guardar</button>
+                            <button class="btn btn-outline">Ver detalles</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Look 3 -->
+                <div class="recommendation-card">
+                    <div class="card-image">
+                        Look Profesional
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">Oficina Moderna</div>
+                        <div class="card-category">Trabajo • Formal</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveLook('Oficina Moderna', 'Oficina')">Guardar</button>
+                            <button class="btn btn-outline">Ver detalles</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Look 4 -->
+                <div class="recommendation-card">
+                    <div class="card-image">
+                        <div class="card-badge">Romántico</div>
+                        Look Cita
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">Encuentro Especial</div>
+                        <div class="card-category">Cita • Sofisticado</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="saveLook('Encuentro Especial', 'Cita')">Guardar</button>
+                            <button class="btn btn-outline">Ver detalles</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Saved Looks Section -->
+        <div class="saved-looks-section">
+            <h2 class="section-title">Tus looks guardados</h2>
+            <div class="saved-looks-grid" id="savedLooksList">
+                <div class="empty-state">No tienes looks guardados todavía.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CSRF token para las peticiones AJAX
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Array para almacenar las recomendaciones guardadas
+let savedLooks = [];
+
+// Función para mostrar notificación
+function showNotification(message, isSuccess = true) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = isSuccess ? 'notification' : 'notification error';
+    notification.style.display = 'block';
+    
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+// Función para actualizar el contador de guardados
+function updateSavedCount() {
+    document.getElementById('savedCount').textContent = savedLooks.length;
+}
+
+// Función para guardar un look de recomendación
+async function saveLook(lookName, lookCategory) {
+    if (savedLooks.find(look => look.name === lookName)) {
+        showNotification(`"${lookName}" ya está en tus looks guardados.`, false);
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/save-look/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                look_name: lookName,
+                look_category: lookCategory
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            savedLooks.push({ 
+                name: lookName, 
+                category: lookCategory,
+                id: Date.now()
+            });
+            updateSavedLooksList();
+            updateSavedCount();
+            showNotification(`"${lookName}" se agregó a tus guardados`);
+        } else {
+            showNotification(data.message, false);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error al guardar el look', false);
+    }
+}
+
+// Función para cargar las recomendaciones guardadas (OUTFITS)
+async function loadSavedLooks() {
+    try {
+        const response = await fetch('/api/obtener-recomendaciones/');
+        const data = await response.json();
+        
+        if (data.success) {
+            savedLooks = data.recomendaciones.map(rec => ({
+                id: rec.id,
+                outfit_id: rec.outfit_id,
+                name: rec.nombre,
+                category: rec.categoria,
+                estilo: rec.estilo,
+                clima: rec.clima,
+                imagen_url: rec.imagen_url,
+                fecha: rec.fecha_creacion,
+                valoracion: rec.valoracion,
+                es_favorito: rec.es_favorito
+            }));
+            updateSavedLooksList();
+            updateSavedCount();
+        }
+    } catch (error) {
+        console.error('Error cargando recomendaciones:', error);
+    }
+}
+
+// Función para crear las estrellas de valoración
+function crearEstrellasValoracion(valoracionActual, recomendacionId) {
+    let estrellas = '';
+    for (let i = 5; i >= 1; i--) {
+        const activa = i <= valoracionActual;
+        estrellas = `
+            <span class="estrella-valoracion ${activa ? 'activa' : ''}" 
+                  data-value="${i}" 
+                  data-recomendacion="${recomendacionId}">★</span>
+        ` + estrellas;
+    }
+    return `<div class="estrellas-container">${estrellas}</div>`;
+}
+
+// Función para agregar event listeners a las estrellas
+function agregarEventListenersEstrellas() {
+    document.querySelectorAll('.estrella-valoracion').forEach(estrella => {
+        estrella.addEventListener('click', function() {
+            const valoracion = this.getAttribute('data-value');
+            const recomendacionId = this.getAttribute('data-recomendacion');
+            guardarValoracion(recomendacionId, valoracion);
+        });
+    });
+}
+
+// Función para guardar valoración
+async function guardarValoracion(recomendacionId, valoracion) {
+    try {
+        const response = await fetch('/api/guardar-valoracion/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                recomendacion_id: recomendacionId,
+                valoracion: parseInt(valoracion)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Valoración guardada correctamente ★');
+            // Recargar la lista para mostrar los cambios
+            loadSavedLooks();
+        } else {
+            showNotification('Error al guardar valoración', false);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error al guardar valoración', false);
+    }
+}
+
+// Función para eliminar recomendación
+async function eliminarRecomendacion(recomendacionId) {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta recomendación?')) {
+        return;
+    }
+    
+    try {
+        // Aquí implementarías la lógica para eliminar la recomendación
+        // Por ahora solo la removemos del frontend
+        savedLooks = savedLooks.filter(look => look.id !== recomendacionId);
+        updateSavedLooksList();
+        updateSavedCount();
+        showNotification('Recomendación eliminada');
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error al eliminar la recomendación', false);
+    }
+}
+
+// Función para actualizar la lista de looks guardados
+// Función para actualizar la lista de looks guardados
+function updateSavedLooksList() {
+    const savedLooksList = document.getElementById('savedLooksList');
+    savedLooksList.innerHTML = '';
+    
+    if (savedLooks.length === 0) {
+        savedLooksList.innerHTML = '<div class="empty-state">No tienes outfits guardados todavía.</div>';
+        return;
+    }
+    
+    savedLooks.forEach(look => {
+        const lookItem = document.createElement('div');
+        lookItem.className = 'saved-look-item';
+        
+        // Crear estrellas de valoración
+        const estrellas = crearEstrellasValoracion(look.valoracion, look.id);
+        
+        // Crear lista de prendas
+        let prendasHTML = '';
+        if (look.prendas && look.prendas.length > 0) {
+            prendasHTML = `
+                <div class="prendas-container" style="margin-top: 10px; font-size: 12px;">
+                    <strong>Prendas usadas (${look.total_prendas}):</strong>
+                    <div class="prendas-list" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                        ${look.prendas.map(prenda => `
+                            <div class="prenda-item" style="text-align: center; width: 60px;">
+                                <img src="${prenda.imagen_url}" 
+                                     alt="${prenda.tipo}" 
+                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px; border: 1px solid #e8e6e1;">
+                                <div style="font-size: 10px; margin-top: 2px;">${prenda.tipo}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        lookItem.innerHTML = `
+            <div class="saved-look-info">
+                <strong>${look.name}</strong>
+                <span>${look.estilo} • ${look.clima} • ${look.fecha}</span>
+                <div class="valoracion-estrellas" data-recomendacion-id="${look.id}">
+                    ${estrellas}
+                </div>
+                ${prendasHTML}
+            </div>
+            <button class="remove-btn" onclick="eliminarRecomendacion(${look.id})">×</button>
+        `;
+        savedLooksList.appendChild(lookItem);
+    });
+    
+    // Agregar event listeners a las estrellas
+    agregarEventListenersEstrellas();
+}
+
+// Función para inicializar filtros
+function initializeFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remover active de todos
+            filterButtons.forEach(b => b.classList.remove('active'));
+            // Agregar active al clickeado
+            this.classList.add('active');
+            
+            const filter = this.textContent;
+            showNotification(`Mostrando: ${filter}`);
+            
+            // Aquí iría la lógica de filtrado real
+            // Por ejemplo, filtrar las recomendaciones por categoría
+            if (filter === 'Todo') {
+                updateSavedLooksList();
+            } else {
+                const filteredLooks = savedLooks.filter(look => 
+                    look.category.toLowerCase().includes(filter.toLowerCase()) ||
+                    look.estilo.toLowerCase().includes(filter.toLowerCase())
+                );
+                renderFilteredLooks(filteredLooks);
+            }
+        });
+    });
+}
+
+// Función para renderizar looks filtrados (opcional)
+function renderFilteredLooks(filteredLooks) {
+    const savedLooksList = document.getElementById('savedLooksList');
+    savedLooksList.innerHTML = '';
+    
+    if (filteredLooks.length === 0) {
+        savedLooksList.innerHTML = '<div class="empty-state">No hay outfits en esta categoría.</div>';
+        return;
+    }
+    
+    filteredLooks.forEach(look => {
+        const lookItem = document.createElement('div');
+        lookItem.className = 'saved-look-item';
+        
+        const estrellas = crearEstrellasValoracion(look.valoracion, look.id);
+        
+        lookItem.innerHTML = `
+            <div class="saved-look-info">
+                <strong>${look.name}</strong>
+                <span>${look.estilo} • ${look.clima} • ${look.fecha}</span>
+                <div class="valoracion-estrellas" data-recomendacion-id="${look.id}">
+                    ${estrellas}
+                </div>
+            </div>
+            <button class="remove-btn" onclick="eliminarRecomendacion(${look.id})">×</button>
+        `;
+        savedLooksList.appendChild(lookItem);
+    });
+    
+    agregarEventListenersEstrellas();
+}
+
+// Función para manejar la búsqueda
+function handleSearch() {
+    const searchTerm = document.querySelector('.search-input').value.toLowerCase().trim();
+    if (searchTerm !== '') {
+        showNotification(`Buscando: ${searchTerm}`);
+        
+        // Filtrar looks por término de búsqueda
+        const filteredLooks = savedLooks.filter(look => 
+            look.name.toLowerCase().includes(searchTerm) ||
+            look.estilo.toLowerCase().includes(searchTerm) ||
+            look.category.toLowerCase().includes(searchTerm) ||
+            look.clima.toLowerCase().includes(searchTerm)
+        );
+        
+        renderFilteredLooks(filteredLooks);
+    } else {
+        // Si no hay término de búsqueda, mostrar todos
+        updateSavedLooksList();
+    }
+}
+
+// Función para limpiar búsqueda
+function clearSearch() {
+    document.querySelector('.search-input').value = '';
+    updateSavedLooksList();
+    showNotification('Búsqueda limpiada');
+}
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar las recomendaciones guardadas
+    loadSavedLooks();
+    
+    // Inicializar filtros
+    initializeFilters();
+    
+    // Configurar búsqueda
+    document.querySelector('.search-button').addEventListener('click', handleSearch);
+    
+    // Permitir búsqueda con Enter
+    document.querySelector('.search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    });
+    
+    // Botón para limpiar búsqueda (opcional - puedes agregar un botón de limpiar)
+    // document.querySelector('.clear-search').addEventListener('click', clearSearch);
+});
+
+// Función para recargar recomendaciones (puede ser llamada desde otros lugares)
+function recargarRecomendaciones() {
+    loadSavedLooks();
+    showNotification('Recomendaciones actualizadas');
+}
+
+// Exportar funciones para uso global (si es necesario)
+window.saveLook = saveLook;
+window.eliminarRecomendacion = eliminarRecomendacion;
+window.guardarValoracion = guardarValoracion;
+window.recargarRecomendaciones = recargarRecomendaciones;
+window.handleSearch = handleSearch;
+window.clearSearch = clearSearch;
+    </script>
+</body>
+</html>

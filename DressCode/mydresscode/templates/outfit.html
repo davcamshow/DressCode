@@ -31,36 +31,37 @@
   </header>
 
   <!-- NAV DE OPCIONES -->
-  <nav class="main-nav">
+  <!-- NAV DE OPCIONES - CORREGIR NOMBRES -->
+<nav class="main-nav">
     <ul>
-      <li class="dropdown"
-          onmouseover="cargarOpciones('estilo','lista-estilo')"
-          onmouseleave="ocultarLista('lista-estilo')">
-        <a href="#"><i class="fa-solid fa-shirt"></i> Generar por Estilo</a>
-        <ul class="dropdown-list" id="lista-estilo"></ul>
-      </li>
+        <li class="dropdown"
+            onmouseover="cargarOpciones('estilo','lista-estilo')"
+            onmouseleave="ocultarLista('lista-estilo')">
+            <a href="#"><i class="fa-solid fa-shirt"></i> Generar por Estilo</a>
+            <ul class="dropdown-list" id="lista-estilo"></ul>
+        </li>
 
-      <li class="dropdown"
-          onmouseover="cargarOpciones('temporada','lista-temporada')"
-          onmouseleave="ocultarLista('lista-temporada')">
-        <a href="#"><i class="fa-solid fa-snowflake"></i> Generar por Temporada</a>
-        <ul class="dropdown-list" id="lista-temporada"></ul>
-      </li>
+        <li class="dropdown"
+            onmouseover="cargarOpciones('temporada','lista-temporada')"
+            onmouseleave="ocultarLista('lista-temporada')">
+            <a href="#"><i class="fa-solid fa-snowflake"></i> Generar por Temporada</a>
+            <ul class="dropdown-list" id="lista-temporada"></ul>
+        </li>
 
-      <li class="dropdown"
-          onmouseover="cargarOpciones('color','lista-color')"
-          onmouseleave="ocultarLista('lista-color')">
-        <a href="#"><i class="fa-solid fa-palette"></i> Generar por Color</a>
-        <ul class="dropdown-list" id="lista-color"></ul>
-      </li>
+        <li class="dropdown"
+            onmouseover="cargarOpciones('color','lista-color')"
+            onmouseleave="ocultarLista('lista-color')">
+            <a href="#"><i class="fa-solid fa-palette"></i> Generar por Color</a>
+            <ul class="dropdown-list" id="lista-color"></ul>
+        </li>
 
-      <li>
-        <a href="{% url 'recomendar_outfit' %}">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Outfit Personalizado
-        </a>
-      </li>
+        <li>
+            <a href="{% url 'recomendar_outfit' %}">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Outfit Personalizado
+            </a>
+        </li>
     </ul>
-  </nav>
+</nav>
 
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -142,49 +143,113 @@
 
 
   </main>
-
-  <!-- PIE DE PÁGINA -->
-  <footer class="footer-actions">
+<!-- FORMULARIO SIMPLIFICADO Y CONFIABLE -->
+<footer class="footer-actions">
     <form id="guardarOutfitForm" method="POST" action="{% url 'guardar_outfit' %}"> 
-      {% csrf_token %} 
-      {% for img in imagenes %} 
-      <input type="hidden" name="imagenes" value="{{ img }}"> 
-      {% endfor %} 
-      {% for tipo in tipos %} 
-      <input type="hidden" name="tipos" value="{{ tipo }}"> 
-      {% endfor %} 
-      <button type="submit" class="save-btn">Guardar Outfit</button> 
+        {% csrf_token %} 
+        
+        <!-- PRENDAS - VERSIÓN SIMPLIFICADA -->
+        {% if outfit.vestido %}
+            <input type="hidden" name="imagenes" value="{{ outfit.vestido.imagen }}"> 
+            <input type="hidden" name="tipos" value="Vestido"> 
+        {% endif %}
+            
+        {% if outfit.parte_superior_base %}
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_base.imagen }}"> 
+            <input type="hidden" name="tipos" value="{{ outfit.parte_superior_base.tipo }}"> 
+        {% endif %}
+            
+        {% if outfit.parte_superior_externo %}
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_externo.imagen }}"> 
+            <input type="hidden" name="tipos" value="{{ outfit.parte_superior_externo.tipo }}"> 
+        {% endif %}
+            
+        {% if outfit.parte_inferior %}
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_inferior.imagen }}"> 
+            <input type="hidden" name="tipos" value="{{ outfit.parte_inferior.tipo }}"> 
+        {% endif %}
+        
+        {% if outfit.calzado %}
+            <input type="hidden" name="imagenes" value="{{ outfit.calzado.imagen }}"> 
+            <input type="hidden" name="tipos" value="Calzado"> 
+        {% endif %}
+        
+        {% if outfit.accesorios %}
+            {% for tipo, accesorio in outfit.accesorios.items %}
+                <input type="hidden" name="imagenes" value="{{ accesorio.imagen }}"> 
+                <input type="hidden" name="tipos" value="{{ tipo }}"> 
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Datos básicos -->
+        <input type="hidden" name="estilo" value="Personalizado">
+        <input type="hidden" name="clima_recomendado" value="Templado">
+        
+        <button type="submit" class="save-btn" id="submitBtn">💾 Guardar Outfit</button> 
     </form>
 
     <a href="{% url 'recomendar_outfit' %}?modo={{ request.GET.modo }}{% if request.GET.estilo %}&estilo={{ request.GET.estilo }}{% endif %}{% if request.GET.temporada %}&temporada={{ request.GET.temporada }}{% endif %}{% if request.GET.ciudad %}&ciudad={{ request.GET.ciudad }}{% endif %}" class="generate-btn">
-      Generar nuevo outfit
+        🔄 Generar nuevo outfit
     </a>
-  </footer>
+</footer>
 
-
-  <div id="toast-guardado" class="toast-guardado">¡Guardado exitosamente! 🎉</div>
-
-  <!-- MODAL PARA CALIFICAR -->
-  <div id="ratingModal" class="rating-modal">
-    <div class="rating-content">
-      <h3>¿Qué te pareció esta recomendación?</h3>
-
-      <div class="stars">
-        <span class="star" data-value="5">★</span>
-        <span class="star" data-value="4">★</span>
-        <span class="star" data-value="3">★</span>
-        <span class="star" data-value="2">★</span>
-        <span class="star" data-value="1">★</span>
-      </div>
-
-
-      <button id="enviarRating" class="rating-btn">Enviar</button>
-    </div>
-  </div>
-
-
-  <script src="{% static 'js/outfit.js' %}"></script>
-
+<script>
+document.getElementById('guardarOutfitForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log("=== ENVIANDO FORMULARIO ===");
+    
+    // Verificar qué se está enviando
+    const formData = new FormData(this);
+    console.log("Datos a enviar:");
+    for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}: ${value}`);
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Guardando...';
+    submitBtn.disabled = true;
+    
+    // Enviar con AJAX
+    const xhr = new XMLHttpRequest();
+    
+    xhr.open('POST', this.action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            try {
+                const data = JSON.parse(xhr.responseText);
+                console.log("Respuesta del servidor:", data);
+                
+                if (data.success) {
+                    alert(`✅ ¡Outfit guardado!\nID: ${data.outfit_id}\nPrendas: ${data.total_prendas}`);
+                    // Redirigir a recomendaciones
+                    window.location.href = "{% url 'outfits_recommendations' %}";
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (e) {
+                alert('✅ ¡Outfit guardado! Redirigiendo...');
+                window.location.href = "{% url 'outfits_recommendations' %}";
+            }
+        } else {
+            alert('❌ Error del servidor: ' + xhr.status);
+        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    xhr.onerror = function() {
+        alert('❌ Error de conexión');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    xhr.send(formData);
+});
+</script>
 
   <input type="hidden" id="idUsuario" value="{{ request.session.usuario_id }}">
   <input type="hidden" id="idOutfit">
