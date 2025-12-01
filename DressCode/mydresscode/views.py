@@ -1833,3 +1833,113 @@ def ver_prendas_temp(request):
         return redirect('login')
     
     return render(request, 'ver_prendas_temp.html')
+
+@csrf_exempt
+@require_POST
+@configuracion_requerida
+def eliminar_cuenta(request):
+    """Eliminar permanentemente la cuenta del usuario y todos sus datos"""
+    try:
+        usuario_id = request.session.get('usuario_id')
+        if not usuario_id:
+            return JsonResponse({'success': False, 'error': 'Usuario no autenticado.'}, status=401)
+
+        # Obtener el usuario
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        print(f"🗑️ Iniciando eliminación de cuenta para usuario: {usuario.email}")
+
+        # 1. ELIMINAR PRENDAS DEL ARMARIO (y sus imágenes de Supabase)
+        prendas = Armario.objects.filter(idUsuario=usuario)
+        print(f"📦 Eliminando {prendas.count()} prendas del armario...")
+        
+        for prenda in prendas:
+            try:
+                # Eliminar imagen de Supabase si existe
+                if prenda.imagen:
+                    try:
+                        image_path = prenda.imagen.split('/storage/v1/object/public/')[1]
+                        supabase.storage.from_(SUPABASE_STORAGE_BUCKET).remove([image_path])
+                        print(f"✅ Imagen eliminada de Supabase: {image_path}")
+                    except Exception as e:
+                        print(f"⚠️ No se pudo eliminar imagen de Supabase: {e}")
+                
+                # Eliminar imagen segmentada si existe
+                if prenda.imagen_segmentada:
+                    try:
+                        seg_path = prenda.imagen_segmentada.split('/storage/v1/object/public/')[1]
+                        supabase.storage.from_(SUPABASE_STORAGE_BUCKET).remove([seg_path])
+                        print(f"✅ Imagen segmentada eliminada de Supabase: {seg_path}")
+                    except Exception as e:
+                        print(f"⚠️ No se pudo eliminar imagen segmentada: {e}")
+                        
+            except Exception as e:
+                print(f"⚠️ Error procesando prenda {prenda.idPrenda}: {e}")
+        
+        # Eliminar registros de la base de datos
+        prendas.delete()
+        print("✅ Prendas eliminadas de la base de datos")
+
+        # 2. ELIMINAR OUTFITS Y RECOMENDACIONES
+        outfits = Outfit.objects.filter(idUsuario=usuario)
+        print(f"👗 Eliminando {outfits.count()} outfits...")
+        
+        for outfit in outfits:
+            # Eliminar prendas del outfit
+            VerPrenda.objects.filter(outfit=outfit).delete()
+            # Eliminar recomendaciones asociadas
+            Recomendacion.objects.filter(idOutfit=outfit).delete()
+        
+        outfits.delete()
+        print("✅ Outfits y recomendaciones eliminados")
+
+        # 3. ELIMINAR EVENTOS DEL CALENDARIO
+        eventos = CalendarEventos.objects.filter(id_usuario=usuario)
+        print(f"📅 Eliminando {eventos.count()} eventos del calendario...")
+        eventos.delete()
+        print("✅ Eventos del calendario eliminados")
+
+        # 4. ELIMINAR PERFIL
+        try:
+            profile = Profile.objects.get(user=usuario)
+            profile.delete()
+            print("✅ Perfil eliminado")
+        except Profile.DoesNotExist:
+            print("ℹ️ No se encontró perfil para eliminar")
+        except Profile.MultipleObjectsReturned:
+            # Si hay múltiples perfiles, eliminar todos
+            Profile.objects.filter(user=usuario).delete()
+            print("✅ Múltiples perfiles eliminados")
+
+        # 5. ELIMINAR USUARIO
+        email_usuario = usuario.email
+        usuario.delete()
+        print(f"✅ Usuario {email_usuario} eliminado de la base de datos")
+
+        # 6. LIMPIAR SESIÓN
+        if 'usuario_id' in request.session:
+            del request.session['usuario_id']
+        if 'usuario_nombre' in request.session:
+            del request.session['usuario_nombre']
+        
+        request.session.flush()
+        print("✅ Sesión limpiada")
+
+        # 7. Cerrar sesión de Django también por seguridad
+        logout(request)
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Cuenta eliminada permanentemente. Todos tus datos han sido borrados.'
+        })
+
+    except Usuario.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Usuario no encontrado.'}, status=404)
+    except Exception as e:
+        print(f"❌ ERROR CRÍTICO al eliminar cuenta: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False, 
+            'error': f'Error al eliminar la cuenta: {str(e)}'
+        }, status=500)

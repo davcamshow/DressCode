@@ -1064,21 +1064,102 @@
 
         
         // Eliminar Cuenta
-        function showDeleteModal() {
-            const modal = document.getElementById('deleteModal');
-            showModalBase(modal);
-        }
+function showDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    showModalBase(modal);
+}
 
-        function closeDeleteModal() {
-            const modal = document.getElementById('deleteModal');
-            closeModalBase(modal);
-        }
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    closeModalBase(modal);
+}
 
-        function confirmDelete() {
-            alert('Cuenta eliminada permanentemente');
-            closeDeleteModal();
-        }
+function confirmDelete() {
+    if (!confirm('¿ESTÁS ABSOLUTAMENTE SEGURO?\n\nEsta acción es IRREVERSIBLE. Se eliminarán:\n• Todos tus datos personales\n• Tu armario completo\n• Tus outfits guardados\n• Tus eventos del calendario\n• Tu perfil y preferencias\n\n¡NO PODRÁS RECUPERAR TU CUENTA!')) {
+        return;
+    }
 
+    // Cerrar el modal inmediatamente
+    closeDeleteModal();
+
+    // Mostrar indicador de carga
+    showLoadingIndicator('Eliminando cuenta...');
+
+    fetch('/eliminar-cuenta/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingIndicator();
+        if (data.success) {
+            alert('✅ ' + data.message);
+            // Redirigir al home
+            window.location.href = "{% url 'home' %}";
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        hideLoadingIndicator();
+        console.error('Error:', error);
+        alert('❌ Error al eliminar la cuenta: ' + error.message);
+    });
+}
+
+// Función para obtener el token CSRF
+function getCSRFToken() {
+    const name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Funciones para mostrar/ocultar carga
+function showLoadingIndicator(message = 'Procesando...') {
+    let loading = document.getElementById('globalLoading');
+    if (!loading) {
+        loading = document.createElement('div');
+        loading.id = 'globalLoading';
+        loading.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            z-index: 10000;
+            font-weight: bold;
+            text-align: center;
+        `;
+        loading.innerHTML = `
+            <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
+            <div>${message}</div>
+        `;
+        document.body.appendChild(loading);
+    }
+}
+
+function hideLoadingIndicator() {
+    const loading = document.getElementById('globalLoading');
+    if (loading) {
+        loading.remove();
+    }
+}
         // Centro de Ayuda
         function showFaqModal() {
             const modal = document.getElementById('faqModal');

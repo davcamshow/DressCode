@@ -55,7 +55,7 @@ urlpatterns = [
     path('outfits-recommendations/', views.outfits_recommendations, name='outfits_recommendations'),
     path('api/debug-all-outfits/', views.debug_all_outfits, name='debug_all_outfits'),
     path('ver-prendas-temp/', views.ver_prendas_temp, name='ver_prendas_temp'),
-
+    path('eliminar-cuenta/', views.eliminar_cuenta, name='eliminar_cuenta'),
 ]
 
 
