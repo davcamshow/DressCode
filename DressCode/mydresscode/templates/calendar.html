@@ -629,30 +629,28 @@
         </div>
         
         <!-- Panel de detalles -->
-        <div class="calendar-details">
-            <div class="details-header">
-                <h2 class="details-title" id="detailsTitle">Próximos Outfits Planificados</h2>
-            </div>
-            
-            <div class="event-date" id="selectedDate">Selecciona una fecha</div>
-            
-            <div class="events-list" id="eventsList">
-                <div class="no-events">
-                    <p>No hay eventos programados</p>
-                    <small>Selecciona una fecha para ver o agregar eventos</small>
+            <div class="calendar-details">
+                <div class="details-header">
+                    <h2 class="details-title" id="detailsTitle">Próximos Outfits Planificados</h2>
                 </div>
-            </div>
+                
+                <div class="event-date" id="selectedDate">Selecciona una fecha</div>
+                
+                <!-- ✅ CAMBIO: Inicialmente vacío, se llenará con JavaScript -->
+                <div class="events-list" id="eventsList">
+                    <!-- El contenido se cargará dinámicamente con JavaScript -->
+                </div>
 
-            <!-- LISTA DE TODOS LOS EVENTOS (NUEVA SECCIÓN) -->
-            <div class="all-events-section" style="margin-top: 30px; border-top: 2px solid var(--color-fondo-principal); padding-top: 20px;">
-                <h3 style="font-size: 18px; font-weight: 600; color: var(--color-primario); margin-bottom: 15px;">
-                    * Todos mis eventos
-                </h3>
-                <div id="allEventsList">
-                    <!-- Los eventos se cargarán aquí con JavaScript -->
+                <!-- LISTA DE TODOS LOS EVENTOS -->
+                <div class="all-events-section" style="margin-top: 30px; border-top: 2px solid var(--color-fondo-principal); padding-top: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 600; color: var(--color-primario); margin-bottom: 15px;">
+                        📅 Todos mis eventos
+                    </h3>
+                    <div id="allEventsList">
+                        <!-- El contenido se cargará dinámicamente con JavaScript -->
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <!-- Modal para agregar/editar eventos -->
@@ -716,11 +714,30 @@
             // Inicializar la aplicación
             initializeCalendar();
 
+                        // En la función initializeCalendar(), añade esto:
+            // En la función initializeCalendar(), CORREGIR esto:
             function initializeCalendar() {
-                setupEventListeners();
-                updateFloatingButton();
-                loadAllEvents(); // Cargar todos los eventos al inicio
-            }
+    setupEventListeners();
+    
+    // ✅ CORRECCIÓN: Mostrar estado inicial sin selección automática
+    selectedDateElement.textContent = "Selecciona una fecha";
+    eventsList.innerHTML = `
+        <div class="no-events">
+            <p>Selecciona una fecha en el calendario</p>
+            <small>Haz clic en cualquier día para ver o agregar eventos</small>
+        </div>
+    `;
+    
+    updateFloatingButton();
+    loadAllEvents();
+    
+    // ✅ DEBUG: Ver qué días tienen el botón "+"
+    console.log("🔍 Días con botón '+':");
+    document.querySelectorAll('.add-event-btn').forEach(btn => {
+        console.log(`- ${btn.dataset.date}`);
+    });
+}
+
 
             // Configurar event listeners
             function setupEventListeners() {
@@ -764,33 +781,43 @@
             }
 
             // Seleccionar fecha
-            function selectDate(dateString) {
-                const selectedDay = new Date(dateString);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+       // Seleccionar fecha - FUNCIÓN MEJORADA CON DEBUG
+function selectDate(dateString) {
+    console.log(`🎯 Intentando seleccionar fecha: ${dateString}`);
+    
+    // ✅ CORRECCIÓN: Crear la fecha correctamente sin problemas de timezone
+    const [year, month, day] = dateString.split('-');
+    const selectedDay = new Date(year, month - 1, day); // Meses van de 0-11
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-                // Verificar si es una fecha pasada
-                if (selectedDay < today) {
-                    alert('No puedes seleccionar fechas pasadas');
-                    return;
-                }
+    // ✅ DEBUG MEJORADO
+    console.log(`📅 Fecha seleccionada (local): ${selectedDay}`);
+    console.log(`📅 Fecha seleccionada (ISO): ${selectedDay.toISOString()}`);
+    console.log(`📅 Hoy: ${today}`);
+    console.log(`🔍 ¿Es fecha futura?: ${selectedDay >= today}`);
 
-                selectedDate = selectedDay;
-                selectedDateElement.textContent = formatDateLong(selectedDate);
-                renderEventsForDate(dateString);
-                
-                // Actualizar clases de selección
-                calendarDays.forEach(day => {
-                    day.classList.remove('selected');
-                    if (day.dataset.date === dateString) {
-                        day.classList.add('selected');
-                    }
-                });
+    selectedDate = selectedDay;
+    selectedDateElement.textContent = formatDateLong(selectedDate);
+    
+    // ✅ CORRECCIÓN: Usar dateString formateado correctamente
+    const formattedDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    console.log(`🔧 Fecha formateada para búsqueda: ${formattedDateString}`);
+    
+    renderEventsForDate(formattedDateString);
+    
+    // Actualizar clases de selección
+    calendarDays.forEach(dayElement => {
+        dayElement.classList.remove('selected');
+        if (dayElement.dataset.date === dateString) {
+            dayElement.classList.add('selected');
+            console.log(`✅ Día ${dateString} seleccionado visualmente`);
+        }
+    });
 
-                // Actualizar botón flotante
-                updateFloatingButton();
-            }
-
+    updateFloatingButton();
+}
             // Actualizar estado del botón flotante
             function updateFloatingButton() {
                 if (!addEventBtn) return;
@@ -805,31 +832,88 @@
             }
 
             // Renderizar eventos para una fecha específica
-            function renderEventsForDate(dateString) {
-                const dateEvents = events.filter(event => event.event_date === dateString);
-                
-                if (dateEvents.length === 0) {
-                    eventsList.innerHTML = `
-                        <div class="no-events">
-                            <p>No hay eventos programados para esta fecha</p>
-                            <small>Haz clic en el botón "+" para agregar un evento</small>
-                        </div>
-                    `;
-                } else {
-                    eventsList.innerHTML = dateEvents.map(event => `
-                        <div class="event-card">
-                            <div class="event-actions">
-                                <button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>
-                                <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
-                            </div>
-                            <h3 class="event-title">${event.event_title}</h3>
-                            ${event.event_outfit ? `<p class="event-outfit"> ${event.event_outfit}</p>` : ''}
-                            ${event.event_location ? `<p class="event-location"> ${event.event_location}</p>` : ''}
-                            ${event.event_description ? `<p class="event-description"> ${event.event_description}</p>` : ''}
-                        </div>
-                    `).join('');
-                }
-            }
+           // Renderizar eventos para una fecha específica - FUNCIÓN CORREGIDA
+// Renderizar eventos para una fecha específica - CON DEBUG MEJORADO
+function renderEventsForDate(dateString) {
+    console.log(`🔍 Buscando eventos para: ${dateString}`);
+    console.log(`📊 Total de eventos cargados: ${events.length}`);
+    
+    const dateEvents = events.filter(event => {
+        console.log(`   - Evento ${event.id}: ${event.event_date} (¿coincide? ${event.event_date === dateString})`);
+        return event.event_date === dateString;
+    });
+    
+    console.log(`🎯 Eventos encontrados para ${dateString}: ${dateEvents.length}`);
+    
+    if (dateEvents.length === 0) {
+        eventsList.innerHTML = `
+            <div class="no-events">
+                <p>No hay eventos programados para el ${formatDateDisplay(dateString)}</p>
+                <small>Haz clic en el botón "+" para agregar un evento</small>
+            </div>
+        `;
+    } else {
+        eventsList.innerHTML = dateEvents.map(event => `
+            <div class="event-card">
+                <div class="event-actions">
+                    <button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>
+                    <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
+                </div>
+                <h3 class="event-title">${escapeHtml(event.event_title)}</h3>
+                ${event.event_outfit ? `<p class="event-outfit">👗 ${escapeHtml(event.event_outfit)}</p>` : ''}
+                ${event.event_location ? `<p class="event-location">📍 ${escapeHtml(event.event_location)}</p>` : ''}
+                ${event.event_description ? `<p class="event-description">📝 ${escapeHtml(event.event_description)}</p>` : ''}
+            </div>
+        `).join('');
+    }
+}
+
+// Renderizar TODOS los eventos en el panel derecho - FUNCIÓN CORREGIDA
+function renderAllEvents() {
+    if (events.length === 0) {
+        allEventsList.innerHTML = `
+            <div class="no-events">
+                <p>No tienes eventos programados</p>
+                <small>Agrega eventos usando los botones "+" en el calendario</small>
+            </div>
+        `;
+    } else {
+        // Ordenar eventos por fecha (más recientes primero)
+        const sortedEvents = [...events].sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+        
+        const today = new Date().toISOString().split('T')[0];
+        
+        allEventsList.innerHTML = sortedEvents.map(event => {
+            const isPast = event.event_date < today;
+            const dateClass = isPast ? 'event-date-past' : 'event-date-future';
+            
+            return `
+            <div class="event-card" style="margin-bottom: 15px; ${isPast ? 'opacity: 0.8;' : ''}">
+                <div class="event-actions">
+                    ${!isPast ? `<button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>` : ''}
+                    <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
+                </div>
+                <div class="${dateClass}" style="font-size: 14px; margin-bottom: 5px;">
+                    📅 ${formatDateDisplay(event.event_date)}
+                </div>
+                <h3 class="event-title" style="font-size: 16px;">${escapeHtml(event.event_title)}</h3>
+                ${event.event_outfit ? `<p class="event-outfit" style="font-size: 14px;">👗 ${escapeHtml(event.event_outfit)}</p>` : ''}
+                ${event.event_location ? `<p class="event-location" style="font-size: 14px;">📍 ${escapeHtml(event.event_location)}</p>` : ''}
+            </div>
+        `}).join('');
+    }
+}
+
+// ✅ NUEVA FUNCIÓN: Para escapar HTML y prevenir XSS
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
             // Renderizar TODOS los eventos en el panel derecho
             function renderAllEvents() {
@@ -869,21 +953,43 @@
 
             // Abrir modal para agregar evento
             function openAddEventModal(dateString = null) {
-                const targetDate = dateString || formatDate(selectedDate);
-                
-                // Verificar que no sea fecha pasada
-                const today = new Date().toISOString().split('T')[0];
-                if (targetDate < today) {
-                    alert('No puedes agregar eventos a fechas pasadas');
-                    return;
-                }
-                
-                eventDateInput.value = targetDate;
-                eventIdInput.value = '';
-                eventForm.reset();
-                modalTitle.textContent = 'Agregar Evento';
-                eventModal.classList.add('active');
-            }
+    let targetDate;
+    
+    if (dateString) {
+        // ✅ CORRECCIÓN: Usar la fecha del botón clickeado directamente
+        targetDate = dateString;
+    } else if (selectedDate) {
+        // ✅ CORRECCIÓN: Formatear la fecha seleccionada correctamente
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        targetDate = `${year}-${month}-${day}`;
+    } else {
+        alert('Por favor, selecciona una fecha primero');
+        return;
+    }
+    
+    console.log(`📅 Fecha objetivo para nuevo evento: ${targetDate}`);
+    
+    // Verificar que no sea fecha pasada
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const targetDay = new Date(targetDate);
+    
+    if (targetDay < today) {
+        alert('No puedes agregar eventos a fechas pasadas');
+        return;
+    }
+    
+    eventDateInput.value = targetDate;
+    eventIdInput.value = '';
+    eventForm.reset();
+    modalTitle.textContent = 'Agregar Evento';
+    eventModal.classList.add('active');
+    
+    console.log(`✅ Modal abierto para fecha: ${targetDate}`);
+}
+
 
             // Editar evento
             window.editEvent = async function(eventId) {
@@ -901,86 +1007,108 @@
                 eventModal.classList.add('active');
             }
 
-            // Manejar envío del formulario - CORREGIDO PARA EVITAR DOBLE GUARDADO
-            async function handleEventSubmit(e) {
-                e.preventDefault();
+           
+// Manejar envío del formulario - FUNCIÓN CORREGIDA
+async function handleEventSubmit(e) {
+    e.preventDefault();
+    
+    if (isSubmitting) {
+        console.log(' Ya se está enviando el formulario...');
+        return;
+    }
+    
+    isSubmitting = true;
+    
+    const submitBtn = eventForm.querySelector('.save');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Guardando...';
+    submitBtn.disabled = true;
+
+    // ✅ CORRECCIÓN: Verificar y formatear correctamente la fecha
+    const eventDateValue = eventDateInput.value;
+    console.log(`📅 Fecha del formulario: ${eventDateValue}`);
+    
+    // Validar que la fecha sea correcta
+    const eventDate = new Date(eventDateValue);
+    if (isNaN(eventDate.getTime())) {
+        alert('Fecha inválida');
+        isSubmitting = false;
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+    }
+
+    const eventData = {
+        event_date: eventDateValue, // ✅ Usar el valor directamente del input
+        event_title: document.getElementById('eventTitle').value.trim(),
+        event_outfit: document.getElementById('eventOutfit').value.trim() || null,
+        event_location: document.getElementById('eventLocation').value.trim() || null,
+        event_description: document.getElementById('eventDescription').value.trim() || null
+    };
+
+    console.log(`📤 Enviando evento con fecha: ${eventData.event_date}`);
+
+    if (!eventData.event_title) {
+        alert('El título del evento es obligatorio');
+        isSubmitting = false;
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+    }
+
+    try {
+        let url = '/calendar/events/';
+        let method = 'POST';
+        
+        if (eventIdInput.value) {
+            eventData.id = eventIdInput.value;
+            method = 'PUT';
+        }
+
+        console.log(`Enviando evento: ${method}`, eventData);
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify(eventData)
+        });
+
+        if (response.ok) {
+            console.log('✅ Evento guardado correctamente');
+            await loadEvents();
+            
+            if (selectedDate) {
+                // ✅ CORRECCIÓN: Usar la fecha actualmente seleccionada
+                const currentDate = new Date(selectedDate);
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                const day = String(currentDate.getDate()).padStart(2, '0');
+                const currentDateString = `${year}-${month}-${day}`;
                 
-                // 🔒 EVITAR DOBLE ENVÍO
-                if (isSubmitting) {
-                    console.log(' Ya se está enviando el formulario...');
-                    return;
-                }
-                
-                isSubmitting = true;
-                
-                // Deshabilitar botón para evitar múltiples clics
-                const submitBtn = eventForm.querySelector('.save');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Guardando...';
-                submitBtn.disabled = true;
-
-                const eventData = {
-                    event_date: eventDateInput.value,
-                    event_title: document.getElementById('eventTitle').value.trim(),
-                    event_outfit: document.getElementById('eventOutfit').value.trim() || null,
-                    event_location: document.getElementById('eventLocation').value.trim() || null,
-                    event_description: document.getElementById('eventDescription').value.trim() || null
-                };
-
-                if (!eventData.event_title) {
-                    alert('El título del evento es obligatorio');
-                    isSubmitting = false;
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    return;
-                }
-
-                try {
-                    let url = '/calendar/events/';
-                    let method = 'POST';
-                    
-                    if (eventIdInput.value) {
-                        eventData.id = eventIdInput.value;
-                        method = 'PUT';
-                    }
-
-                    console.log(`Enviando evento: ${method}`, eventData);
-
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCSRFToken()
-                        },
-                        body: JSON.stringify(eventData)
-                    });
-
-                    if (response.ok) {
-                        console.log('Evento guardado correctamente');
-                        await loadEvents(); //  Solo una llamada a loadEvents
-                        
-                        if (selectedDate) {
-                            renderEventsForDate(formatDate(selectedDate));
-                        }
-                        
-                        renderAllEvents(); // Actualizar lista de todos los eventos
-                        closeEventModal();
-                    } else {
-                        throw new Error('Error al guardar el evento');
-                    }
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al guardar el evento');
-                } finally {
-                    // Rehabilitar botón
-                    isSubmitting = false;
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }
+                renderEventsForDate(currentDateString);
             }
+            
+            renderAllEvents();
+            closeEventModal();
+        } else {
+            throw new Error('Error al guardar el evento');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al guardar el evento');
+    } finally {
+        isSubmitting = false;
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
 
             // Eliminar evento
+            // En deleteEvent - CORREGIR
             window.deleteEvent = async function(eventId) {
                 if (!confirm('¿Estás seguro de que quieres eliminar este evento?')) {
                     return;
@@ -999,9 +1127,10 @@
                     if (response.ok) {
                         await loadEvents();
                         if (selectedDate) {
-                            renderEventsForDate(formatDate(selectedDate));
+                            // ✅ CORRECCIÓN: Usar formato directo en lugar de formatDate()
+                            renderEventsForDate(selectedDate.toISOString().split('T')[0]);
                         }
-                        renderAllEvents(); // Actualizar lista de todos los eventos
+                        renderAllEvents();
                     } else {
                         throw new Error('Error al eliminar el evento');
                     }
@@ -1042,27 +1171,38 @@
 
             // Funciones de utilidad
             function formatDate(date) {
-                return date.toISOString().split('T')[0];
-            }
+                    const formatted = date.toISOString().split('T')[0];
+                    console.log(`🔧 formatDate: ${date} -> ${formatted}`);
+                    return formatted;
+                }
 
             function formatDateLong(date) {
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                return date.toLocaleDateString('es-ES', options);
+                    // ✅ CORRECCIÓN: Usar métodos directos en lugar de toLocaleDateString que depende del timezone
+                    const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+                    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                    
+                    const dayName = days[date.getDay()];
+                    const dayNumber = date.getDate();
+                    const monthName = months[date.getMonth()];
+                    const year = date.getFullYear();
+                    
+                    return `${dayName}, ${dayNumber} de ${monthName} de ${year}`;
             }
 
+
             function formatDateDisplay(dateString) {
-                const date = new Date(dateString);
-                const options = { 
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric'
-                };
-                return date.toLocaleDateString('es-ES', options);
+    
+                    const date = new Date(dateString);
+                    
+                    // Ajustar por timezone (si es necesario)
+                    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                    
+                    const options = { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric'
+                    };
+                    return adjustedDate.toLocaleDateString('es-ES', options);
             }
 
             function getCSRFToken() {

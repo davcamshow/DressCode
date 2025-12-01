@@ -1401,19 +1401,38 @@ def calendar_events_api(request):
         # Crear nuevo evento
         try:
             data = json.loads(request.body)
+            print(f"🎯 DEBUG BACKEND - Fecha recibida del frontend: {data.get('event_date')}")
+            print(f"🎯 DEBUG BACKEND - Datos completos: {data}")
+            
+            # ✅ CORRECCIÓN: Convertir la fecha correctamente
+            event_date_str = data.get('event_date')
+            if event_date_str:
+                # Parsear la fecha manualmente para evitar problemas de timezone
+                from datetime import datetime
+                event_date = datetime.strptime(event_date_str, '%Y-%m-%d').date()
+                print(f"📅 Fecha parseada: {event_date}")
+            else:
+                event_date = None
+            
             event = CalendarEventos.objects.create(
                 id_usuario=usuario,
-                event_date=data.get('event_date'),
+                event_date=event_date,  # ✅ Usar la fecha convertida
                 event_title=data.get('event_title', ''),
                 event_outfit=data.get('event_outfit'),
                 event_location=data.get('event_location'),
                 event_description=data.get('event_description'),
             )
+            
+            print(f"✅ DEBUG BACKEND - Evento creado con fecha: {event.event_date}")
+            print(f"✅ DEBUG BACKEND - Evento ID: {event.id}")
+            print(f"🔍 DEBUG BACKEND - Tipo de fecha guardada: {type(event.event_date)}")
+            
             return JsonResponse({
                 'id': event.id,
                 'message': 'Event created successfully'
             }, status=201)
         except Exception as e:
+            print(f"❌ DEBUG BACKEND - Error: {str(e)}")
             return JsonResponse({'error': str(e)}, status=400)
     
     elif request.method == 'PUT':
@@ -1423,7 +1442,15 @@ def calendar_events_api(request):
             event_id = data.get('id')
             event = get_object_or_404(CalendarEventos, id=event_id, id_usuario=usuario)
             
-            event.event_date = data.get('event_date', event.event_date)
+            # ✅ CORRECCIÓN: Convertir la fecha también en el UPDATE
+            event_date_str = data.get('event_date')
+            if event_date_str:
+                from datetime import datetime
+                event_date = datetime.strptime(event_date_str, '%Y-%m-%d').date()
+                event.event_date = event_date
+            else:
+                event.event_date = data.get('event_date', event.event_date)
+                
             event.event_title = data.get('event_title', event.event_title)
             event.event_outfit = data.get('event_outfit', event.event_outfit)
             event.event_location = data.get('event_location', event.event_location)
