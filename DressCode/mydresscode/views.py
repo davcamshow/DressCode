@@ -472,6 +472,7 @@ def eliminar_prendas(request):
 
 
 
+@configuracion_requerida
 def seleccionar_categoria(request):
     """Vista para seleccionar categoría antes de capturar la prenda"""
     if 'usuario_id' not in request.session:
@@ -487,7 +488,7 @@ def seleccionar_categoria(request):
     
     return render(request, 'category.html', context)
 
-
+@configuracion_requerida
 def segmentar_y_subir(imagen_url, nombre_segmentado):
     response = requests.get(imagen_url)
     if response.status_code != 200:
@@ -514,6 +515,7 @@ def segmentar_y_subir(imagen_url, nombre_segmentado):
     )
     return supabase.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(path)
 
+@configuracion_requerida
 def segmentar_todas_las_prendas(request):
     prendas = Armario.objects.filter(imagen_segmentada__isnull=True)
     for prenda in prendas:
