@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -203,8 +204,8 @@
     /* --- Foto de Perfil --- */
     .profile-pic-container {
       position: relative;
-      width: 120px;
-      height: 120px;
+      width: 200px;
+      height: 200px;
       margin: 0 auto 20px;
     }
 
@@ -217,7 +218,7 @@
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 48px;
+      font-size: 60px;
       font-weight: bold;
       box-shadow: var(--sombra-media);
       overflow: hidden;
@@ -713,6 +714,82 @@
         flex-direction: row;
       }
     }
+/* Estilos para los iconos del header */
+.header-icon {
+    width: 24px;       /* Mismo tamaño para todos */
+    height: 24px;      /* Mismo tamaño para todos */
+    object-fit: contain; /* Mantiene la proporción de la imagen */
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+/* Efecto hover para interactividad */
+.header-btn:hover .header-icon {
+    transform: translateY(-3px) scale(1.1); /* Movimiento hacia arriba + escala */
+    opacity: 0.9;
+    filter: brightness(1.2) saturate(1.2); /* Aumenta brillo y saturación */
+}
+
+/* Estilo base para los botones */
+.header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 12px; /* Bordes más redondeados */
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
+    border: 1.5px solid;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Background sutil específico para cada botón */
+
+/* Botón Inicio - Naranja muy sutil */
+.header-buttons a[href*="inicio"] {
+    background: rgba(255, 204, 128, 0.15); /* Naranja muy transparente */
+    border-color: rgba(255, 182, 77, 0.25);
+}
+
+/* Botón Configuración - Rosa muy sutil */
+.header-buttons a[href*="configurationsystem"] {
+    background: rgba(248, 187, 217, 0.15); /* Rosa muy transparente */
+    border-color: rgba(244, 143, 177, 0.25);
+}
+
+/* Botón Calendario - Mix naranja/rosa sutil */
+.header-buttons a[href*="calendar"] {
+    background: rgba(255, 183, 77, 0.1); /* Naranja muy suave */
+    border-color: rgba(255, 152, 0, 0.2);
+}
+
+/* Efecto hover en el botón completo - NARANJA Y ROSA */
+.header-btn:hover {
+    background: linear-gradient(135deg, #ffcc80, #f8bbd9); /* Naranja a rosa */
+    transform: translateY(-2px); /* Levanta el botón completo */
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.25); /* Sombra naranja más pronunciada */
+    border: 1.5px solid rgba(255, 182, 77, 0.4); /* Borde más visible al hover */
+}
+
+/* Icono de inicio más grande */
+.header-buttons a:first-child .header-icon {
+    width: 32px;
+    height: 32px;
+}
+
+/* Efecto adicional para el botón activo o con foco */
+.header-btn:active {
+    transform: translateY(0); /* Vuelve a posición al hacer click */
+    transition: transform 0.1s ease;
+    box-shadow: 0 2px 6px rgba(255, 111, 0, 0.2); /* Sombra más suave al hacer click */
+}
+
+/* Icono de inicio más grande */
+.header-buttons a:first-child .header-icon {
+    width: 32px;
+    height: 32px;
+}
   </style>
 </head>
 <body>
@@ -760,9 +837,16 @@
       <!-- Encabezado Superior -->
       <div class="top-header">
         <div class="page-title">Mi Perfil</div>
-        <div class="header-buttons">
-          <a href="{% url 'inicio' %}" class="header-btn" title="Inicio">🏠</a>
-          <a href="{% url 'configurationsystem' %}" class="header-btn" title="Configuración">⚙️</a>
+          <div class="header-buttons">
+          <a href="{% url 'inicio' %}" class="header-btn" title="Inicio">
+          <img src="{% static 'img/icononicio.png' %}" alt="Inicio" class="header-icon">
+          </a>
+          <a href="{% url 'configurationsystem' %}" class="header-btn" title="Configuración">
+          <img src="{% static 'img/engranaje.png' %}" alt="Configuración" class="header-icon">
+          </a>
+          <a href="{% url 'calendar' %}" class="header-btn" title="Configuración">
+          <img src="{% static 'img/evento.png' %}" alt="Configuración" class="header-icon">
+          </a>
         </div>
       </div>
       

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -140,9 +141,73 @@
         .radio-option:hover {
             background-color: rgba(164, 121, 104, 0.05);
         }
+
+
+
+        /* Botón de Inicio para Configuración */
+.header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
+    border: 1.5px solid;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+/* Background sutil específico para el botón de inicio */
+.header-btn[href*="inicio"] {
+    background: rgba(255, 204, 128, 0.15); /* Naranja muy transparente */
+    border-color: rgba(255, 182, 77, 0.25);
+}
+
+/* Efecto hover para interactividad */
+.header-btn:hover .header-icon {
+    transform: translateY(-3px) scale(1.1);
+    opacity: 0.9;
+    filter: brightness(1.2) saturate(1.2);
+}
+
+/* Efecto hover en el botón completo - NARANJA Y ROSA */
+.header-btn:hover {
+    background: linear-gradient(135deg, #ffcc80, #f8bbd9); /* Naranja a rosa */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.25);
+    border: 1.5px solid rgba(255, 182, 77, 0.4);
+}
+
+/* Icono de inicio más grande */
+.header-btn[href*="inicio"] .header-icon {
+    width: 32px;
+    height: 32px;
+}
+
+/* Efecto adicional para el botón activo o con foco */
+.header-btn:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+    box-shadow: 0 2px 6px rgba(255, 111, 0, 0.2);
+}
+
+
     </style>
 </head>
 <body class="min-h-screen p-4 sm:p-8 flex justify-center items-start">
+     <!-- Botón de Inicio -->
+    <a href="{% url 'inicio' %}" class="header-btn calendar-home-btn" title="Inicio" style="position: fixed; top: 15px; left: 15px; z-index: 40;">
+        <img src="{% static 'img/icononicio.png' %}" alt="Inicio" class="header-icon">
+    </a>
 
     <!-- Contenedor Principal de la Configuración -->
     <div class="w-full max-w-4xl pt-8 pb-12">
@@ -257,7 +322,7 @@
         <!-- Información Legal y Versión -->
         <footer class="mt-12 text-center text-sm" style="color: var(--color-text-neutral);">
             <p><a href="#" class="hover:underline" style="color: var(--color-link-hover);" onclick="showModal('Política de Privacidad')">Política de Privacidad</a></p>
-            <p class="mt-2 text-xs">Versión 1.2.0 del Armario Digital</p>
+            <p class="mt-2 text-xs">Versión 5.2.0 de  DressCode</p>
         </footer>
 
     </div>
@@ -619,7 +684,7 @@
         </div>
     </div>
 
-    <!-- Modal de Cerrar Sesión -->
+        <!-- Modal de Cerrar Sesión -->
     <div id="logoutModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
         <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95" style="border: 2px solid var(--color-secondary);">
             <div class="text-center">
@@ -634,6 +699,7 @@
                     <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-gray-600 bg-gray-100 hover:bg-gray-200">
                         Cancelar
                     </button>
+                    <!-- BOTÓN QUE REDIRIGE A LA URL DE LOGOUT -->
                     <button onclick="confirmLogout()" class="flex-1 px-4 py-2 text-sm font-medium rounded-lg text-white" style="background-color: var(--color-accent-peach);">
                         Sí, Cerrar
                     </button>
@@ -980,6 +1046,7 @@
         }
 
         // Cerrar Sesión
+                // Cerrar Sesión - FUNCIÓN ACTUALIZADA
         function showLogoutModal() {
             const modal = document.getElementById('logoutModal');
             showModalBase(modal);
@@ -991,10 +1058,11 @@
         }
 
         function confirmLogout() {
-            alert('Sesión cerrada exitosamente');
-            closeLogoutModal();
+            // Redirigir a la URL de logout de Django
+            window.location.href = "{% url 'logout' %}";
         }
 
+        
         // Eliminar Cuenta
         function showDeleteModal() {
             const modal = document.getElementById('deleteModal');
