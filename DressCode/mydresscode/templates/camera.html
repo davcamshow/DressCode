@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dresscode - Camera</title>
+    <link rel="stylesheet" href="{% static 'css/camera.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -926,6 +927,13 @@
     </style>
 </head>
 <body>
+
+    <div class="theme-toggle-wrapper">
+        <button id="theme-toggle" class="theme-button">
+        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">☀️</span>
+        </button>
+    </div>
     <!-- Side Menu MEJORADO -->
     <button class="menu-toggle">☰</button>
     <div class="side-menu">
@@ -991,7 +999,7 @@
                     </a>
                 </div>
             </div>
-            <button id="theme-toggle" class="theme-button">🌙 / ☀️</button>
+            
         </div>
         
         <div class="logo" aria-label="logo">
@@ -1901,5 +1909,6 @@
             });
         });
     </script>
+    <script src="{% static 'js/camera.js' %}"></script>
 </body>
 </html>

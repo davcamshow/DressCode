@@ -217,6 +217,61 @@ document.getElementById("enviarRating").addEventListener("click", function () {
 });
 
 
+document.getElementById('guardarOutfitForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log("=== ENVIANDO FORMULARIO ===");
+    
+    // Verificar qué se está enviando
+    const formData = new FormData(this);
+    console.log("Datos a enviar:");
+    for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}: ${value}`);
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Guardando...';
+    submitBtn.disabled = true;
+    
+    // Enviar con AJAX
+    const xhr = new XMLHttpRequest();
+    
+    xhr.open('POST', this.action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            try {
+                const data = JSON.parse(xhr.responseText);
+                console.log("Respuesta del servidor:", data);
+                
+                if (data.success) {
+                    alert(`✅ ¡Outfit guardado!\nID: ${data.outfit_id}\nPrendas: ${data.total_prendas}`);
+                    // Redirigir a recomendaciones
+                    window.location.href = "{% url 'outfits_recommendations' %}";
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (e) {
+                alert('✅ ¡Outfit guardado! Redirigiendo...');
+                window.location.href = "{% url 'outfits_recommendations' %}";
+            }
+        } else {
+            alert('❌ Error del servidor: ' + xhr.status);
+        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    xhr.onerror = function() {
+        alert('❌ Error de conexión');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    };
+    
+    xhr.send(formData);
+});
 
 
 
