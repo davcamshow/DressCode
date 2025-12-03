@@ -72,13 +72,13 @@
 
         {% if outfit.vestido %}
           <div class="outfit-card">
-            <img src="{{ outfit.vestido.imagen }}" alt="{{ outfit.vestido.tipo }}">
+          <img src="{{ outfit.vestido.imagen_segmentada }}" alt="{{ outfit.vestido.tipo }}">
             <span>{{ outfit.vestido.tipo }}</span>
           </div>
         {% else %}
           {% if outfit.parte_superior_base %}
             <div class="outfit-card">
-              <img src="{{ outfit.parte_superior_base.imagen }}" alt="{{ outfit.parte_superior_base.tipo }}">
+              <img src="{{ outfit.parte_superior_base.imagen_segmentada }}" alt="{{ outfit.parte_superior_base.tipo }}">
               <span>{{ outfit.parte_superior_base.tipo }}</span>
             </div>
           {% else %}
@@ -100,7 +100,7 @@
 
           {% if outfit.parte_inferior %}
             <div class="outfit-card">
-              <img src="{{ outfit.parte_inferior.imagen }}" alt="{{ outfit.parte_inferior.tipo }}">
+              <img src="{{ outfit.parte_inferior.imagen_segmentada }}" alt="{{ outfit.parte_inferior.tipo }}">
               <span>{{ outfit.parte_inferior.tipo }}</span>
             </div>
           {% else %}
@@ -112,7 +112,7 @@
 
         {% if outfit.calzado %}
           <div class="outfit-card">
-            <img src="{{ outfit.calzado.imagen }}" alt="{{ outfit.calzado.tipo }}">
+            <img src="{{ outfit.calzado.imagen_segmentada }}" alt="{{ outfit.calzado.tipo }}">
             <span>{{ outfit.calzado.tipo }}</span>
           </div>
         {% else %}
@@ -124,7 +124,8 @@
         {% if outfit.accesorios.items %}
           {% for tipo, accesorio in outfit.accesorios.items %}
             <div class="outfit-card">
-              <img src="{{ accesorio.imagen }}" alt="{{ accesorio.tipo }}">
+               <img src="{{ outfit.accesorio.imagen_segmentada }}" alt="{{ outfit.accesorio.tipo }}">
+
               <span>{{ accesorio.tipo  }}</span>
             </div>
           {% empty %}
@@ -150,33 +151,33 @@
         
         <!-- PRENDAS - VERSIÓN SIMPLIFICADA -->
         {% if outfit.vestido %}
-            <input type="hidden" name="imagenes" value="{{ outfit.vestido.imagen }}"> 
+            <input type="hidden" name="imagenes" value="{{ outfit.vestido.imagen_segmentada }}"> 
             <input type="hidden" name="tipos" value="Vestido"> 
         {% endif %}
             
         {% if outfit.parte_superior_base %}
-            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_base.imagen }}"> 
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_base.imagen_segmentada }}"> 
             <input type="hidden" name="tipos" value="{{ outfit.parte_superior_base.tipo }}"> 
         {% endif %}
             
         {% if outfit.parte_superior_externo %}
-            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_externo.imagen }}"> 
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_superior_externo.imagen_segmentada}}"> 
             <input type="hidden" name="tipos" value="{{ outfit.parte_superior_externo.tipo }}"> 
         {% endif %}
             
         {% if outfit.parte_inferior %}
-            <input type="hidden" name="imagenes" value="{{ outfit.parte_inferior.imagen }}"> 
+            <input type="hidden" name="imagenes" value="{{ outfit.parte_inferior.imagen_segmentada}}"> 
             <input type="hidden" name="tipos" value="{{ outfit.parte_inferior.tipo }}"> 
         {% endif %}
         
         {% if outfit.calzado %}
-            <input type="hidden" name="imagenes" value="{{ outfit.calzado.imagen }}"> 
+            <input type="hidden" name="imagenes" value="{{ outfit.calzado.imagen_segmentada }}"> 
             <input type="hidden" name="tipos" value="Calzado"> 
         {% endif %}
         
         {% if outfit.accesorios %}
             {% for tipo, accesorio in outfit.accesorios.items %}
-                <input type="hidden" name="imagenes" value="{{ accesorio.imagen }}"> 
+                <input type="hidden" name="imagenes" value="{{ accesorio.imagen_segmentada }}"> 
                 <input type="hidden" name="tipos" value="{{ tipo }}"> 
             {% endfor %}
         {% endif %}
