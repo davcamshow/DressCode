@@ -1945,3 +1945,43 @@ def eliminar_cuenta(request):
             'success': False, 
             'error': f'Error al eliminar la cuenta: {str(e)}'
         }, status=500)
+        
+        
+@configuracion_requerida
+def api_outfits_favoritos(request):
+    if 'usuario_id' not in request.session:
+        return JsonResponse({'success': False, 'error': 'No autenticado'}, status=401)
+
+    usuario_id = request.session['usuario_id']
+    try:
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        outfits = Outfit.objects.filter(idUsuario=usuario, favorito=True).order_by('-fecha_creacion')
+
+        outfits_data = []
+        for outfit in outfits:
+            prendas = VerPrenda.objects.filter(outfit=outfit)
+            outfits_data.append({
+                'id': outfit.idOutfit,
+                'estilo': outfit.estilo,
+                'clima': outfit.clima_recomendado,
+                'fecha': outfit.fecha_creacion.strftime('%Y-%m-%d %H:%M'),
+                'prendas_count': prendas.count(),
+                'prendas': [
+                    {
+                        'tipo': p.tipo_prenda,
+                        'imagen_url': p.imagen_url,
+                        'url_length': len(p.imagen_url) if p.imagen_url else 0
+                    } for p in prendas
+                ]
+            })
+
+        return JsonResponse({'success': True, 'total_favoritos': len(outfits_data), 'outfits': outfits_data})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
+@configuracion_requerida
+def ver_outfits_favoritos(request):
+    if 'usuario_id' not in request.session:
+        return redirect('login')
+    return render(request, 'outfits_favoritos.html')

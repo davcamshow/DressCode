@@ -1,66 +1,123 @@
-
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Prendas Guardadas</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .outfit { border: 2px solid #a47968; border-radius: 10px; padding: 20px; margin: 20px 0; }
-        .prendas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 15px; }
-        .prenda-card { text-align: center; border: 1px solid #ddd; border-radius: 8px; padding: 10px; }
-        .prenda-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
-        .loading { color: #666; font-style: italic; }
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .outfit {
+        border: 2px solid #a47968;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .prendas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .prenda-card {
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+      }
+      .prenda-card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+
+      .acciones {
+        margin-bottom: 20px;
+      }
+
+      .btn-favoritos {
+        display: inline-block;
+        padding: 10px 18px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        border-radius: 8px;
+        color: #3e2c1c; /* café */
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-favoritos:hover {
+        background: linear-gradient(135deg, #f5e6d3, #e0c097);
+        color: #000;
+      }
     </style>
-</head>
-<body>
-    <h1> Prendas de tus Outfits Guardados</h1>
+  </head>
+  <body>
+    <h1>Prendas de tus Outfits Guardados</h1>
+    <!-- Botón para ver favoritos -->
+    <div class="acciones">
+      <a href="{% url 'ver_outfits_favoritos' %}" class="btn-favoritos">
+        <i class="fas fa-star"></i> Ver Favoritos
+      </a>
+    </div>
+
     <div id="outfits-container" class="loading">Cargando prendas...</div>
 
     <script>
-    fetch('/api/obtener-recomendaciones/')
-        .then(r => r.json())
-        .then(data => {
-            const container = document.getElementById('outfits-container');
-            
-            if (data.success && data.recomendaciones.length > 0) {
-                container.innerHTML = '';
-                
-                data.recomendaciones.forEach(outfit => {
-                    const outfitDiv = document.createElement('div');
-                    outfitDiv.className = 'outfit';
-                    
-                    let prendasHTML = '';
-                    if (outfit.prendas && outfit.prendas.length > 0) {
-                        prendasHTML = `
+      fetch("/api/obtener-recomendaciones/")
+        .then((r) => r.json())
+        .then((data) => {
+          const container = document.getElementById("outfits-container");
+
+          if (data.success && data.recomendaciones.length > 0) {
+            container.innerHTML = "";
+
+            data.recomendaciones.forEach((outfit) => {
+              const outfitDiv = document.createElement("div");
+              outfitDiv.className = "outfit";
+
+              let prendasHTML = "";
+              if (outfit.prendas && outfit.prendas.length > 0) {
+                prendasHTML = `
                             <div class="prendas-grid">
-                                ${outfit.prendas.map(prenda => `
+                                ${outfit.prendas
+                                  .map(
+                                    (prenda) => `
                                     <div class="prenda-card">
                                         <img src="${prenda.imagen_url}" 
                                              alt="${prenda.tipo}"
                                              onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSI1MCIgeT0iNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7cHJlbmRhLnRpcG99PC90ZXh0Pjwvc3ZnPg=='">
                                         <div><strong>${prenda.tipo}</strong></div>
                                     </div>
-                                `).join('')}
+                                `
+                                  )
+                                  .join("")}
                             </div>
                         `;
-                    }
-                    
-                    outfitDiv.innerHTML = `
+              }
+
+              outfitDiv.innerHTML = `
                         <h2>${outfit.nombre}</h2>
                         <p>📅 ${outfit.fecha_creacion} | 🌤️ ${outfit.clima} | 👕 ${outfit.total_prendas} prendas</p>
                         ${prendasHTML}
                     `;
-                    
-                    container.appendChild(outfitDiv);
-                });
-            } else {
-                container.innerHTML = '<p>No hay outfits guardados.</p>';
-            }
+
+              container.appendChild(outfitDiv);
+            });
+          } else {
+            container.innerHTML = "<p>No hay outfits guardados.</p>";
+          }
         })
-        .catch(error => {
-            document.getElementById('outfits-container').innerHTML = 
-                '<p>Error al cargar las prendas: ' + error + '</p>';
+        .catch((error) => {
+          document.getElementById("outfits-container").innerHTML =
+            "<p>Error al cargar las prendas: " + error + "</p>";
         });
     </script>
-</body>
+  </body>
 </html>

@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<html>
+  <head>
+    <title>Outfits Favoritos</title>
+    <link rel="stylesheet" href="{% static 'css/outfits_favoritos.css' %}" />
+  </head>
+  <body>
+    <h1>✨ Tus Outfits Favoritos ✨</h1>
+
+    <div class="acciones">
+      <a href="{% url 'ver_prendas_temp' %}" class="btn-volver">
+        <i class="fas fa-tshirt"></i> Volver a Mis Outfits
+      </a>
+    </div>
+
+    <div id="favoritos-container" class="loading">Cargando favoritos...</div>
+
+     <script src="{% static 'js/outfits_favoritos.js' %}"></script>
+  </body>
+</html>
