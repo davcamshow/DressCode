@@ -176,3 +176,56 @@ def crear_perfil_usuario(sender, instance, created, **kwargs):
 def guardar_perfil_usuario(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+
+class PrendaDetalle(models.Model):
+    # Relación con Armario
+    prenda = models.OneToOneField(
+        Armario,
+        on_delete=models.CASCADE,
+        related_name='detalles',
+        db_column='id_prenda'
+    )
+    
+    # Detalles básicos adicionales
+    material_principal = models.CharField(max_length=100, blank=True, null=True)
+    material_secundario = models.CharField(max_length=100, blank=True, null=True)
+    marca = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Estado de la prenda
+    ESTADO_OPCIONES = [
+        ('nuevo', 'Nuevo'),
+        ('muy_bueno', 'Muy bueno'),
+        ('bueno', 'Bueno'),
+        ('regular', 'Regular'),
+        ('necesita_reparacion', 'Necesita reparación'),
+    ]
+    estado = models.CharField(
+        max_length=50,
+        choices=ESTADO_OPCIONES,
+        blank=True,
+        null=True
+    )
+    
+    # JSON para TODOS los detalles específicos
+    detalles_especificos = models.JSONField(default=dict, blank=True)
+    
+    # Fechas
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'prendas_detalles'
+        verbose_name = 'Detalle de prenda'
+        verbose_name_plural = 'Detalles de prendas'
+    
+    def __str__(self):
+        return f"Detalles de {self.prenda.tipo} - {self.prenda.color}"
+    
+    def actualizar_detalles(self, nuevos_detalles):
+        """Método para actualizar los detalles específicos"""
+        if self.detalles_especificos:
+            self.detalles_especificos.update(nuevos_detalles)
+        else:
+            self.detalles_especificos = nuevos_detalles
+        self.save()
