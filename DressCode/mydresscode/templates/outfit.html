@@ -124,7 +124,7 @@
         {% if outfit.accesorios.items %}
           {% for tipo, accesorio in outfit.accesorios.items %}
             <div class="outfit-card">
-               <img src="{{ outfit.accesorio.imagen_segmentada }}" alt="{{ outfit.accesorio.tipo }}">
+               <img src="{{ accesorio.imagen_segmentada }}" alt="{{ accesorio.tipo }}">
 
               <span>{{ accesorio.tipo  }}</span>
             </div>
