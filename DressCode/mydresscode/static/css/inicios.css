@@ -280,22 +280,25 @@ button:hover {
   color: #e7e1d9;
 }
 
-.right-image-container {
+/* Contenedor principal */
+#container {
   flex: 1;
   position: relative;
-  max-width: 480px;
-  min-height: 420px;
+  width: 400px; /* Ancho específico */
+  height: 550px; /* Alto específico basado en tus imágenes */
+  margin: 0 auto;
 }
 
-/* Segmented Model Styles - MODIFICADO PARA CARRUSEL */
 .model-container {
   position: relative;
-  width: 100%;
-  height: 500px;
+  width: 400px; /* Ancho fijo */
+  height: 550px; /* Alto fijo */
+  top: 0;
+  left: 0;
   overflow: hidden;
   border-radius: 120px 120px 0 0;
+  background-color: #e7e1d9;
 }
-
 .model-segment {
   position: absolute;
   overflow: hidden;
@@ -305,28 +308,28 @@ button:hover {
 
 .segment-1 {
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
+  left: 200px;
+  width: 150px;
+  height: 150px;
   border-radius: 120px 120px 0 0;
   z-index: 10;
   background: linear-gradient(135deg, #e7e1d9 0%, #d4cdc3 100%);
 }
 
 .segment-2 {
-  top: 40%;
-  left: 0;
-  width: 100%;
-  height: 30%;
+  top: 160px;
+  left: 225px;
+  width: 100px;
+  height: 250px;
   z-index: 9;
   background: linear-gradient(135deg, #d4cdc3 0%, #c2baad 100%);
 }
 
 .segment-3 {
-  top: 70%;
-  left: 0;
-  width: 100%;
-  height: 30%;
+  top: 420px;
+  left: 237px;
+  width: 75px;
+  height: 75px;
   z-index: 8;
   background: linear-gradient(135deg, #c2baad 0%, #b0a797 100%);
 }
@@ -340,7 +343,9 @@ button:hover {
   top: 0;
   left: 0;
   opacity: 0;
-  transition: all 0.8s ease;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background-attachment: scroll;
+  background-clip: border-box;
 }
 
 /* Animaciones específicas para cada segmento */
@@ -405,12 +410,13 @@ button:hover {
 }
 
 .carousel-dot.active {
-  background-color: #fff;
-  transform: scale(1.2);
+  background-color: #5b9b9d !important;
+  transform: scale(1.3);
 }
 
 .carousel-dot:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(91, 155, 157, 0.8) !important;
+  transform: scale(1.2);
 }
 
 /* Abstract shapes from the design */
@@ -488,7 +494,7 @@ button:hover {
     max-width: 100%;
   }
 
-  .right-image-container {
+  #container {
     max-width: 100%;
   }
 
@@ -533,6 +539,10 @@ button:hover {
   .carousel-dot {
     width: 6px;
     height: 6px;
+  }
+
+  .model-container {
+    height: 400px;
   }
 }
 
@@ -793,7 +803,6 @@ button:hover {
   }
 }
 
-
 /* Estilos para el botón de cambio de tema */
 .theme-button:hover {
   background: #ffffff00;
@@ -826,7 +835,6 @@ button:hover {
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-
 
 .theme-button span:hover {
   transform: scale(1.1);
@@ -985,7 +993,32 @@ body.dark-mode .carousel-dot {
 }
 
 body.dark-mode .carousel-dot.active {
-  background: #df8a50;
+  background: #df8a50 !important;
+}
+
+body.dark-mode .carousel-dot:hover {
+  background-color: rgba(223, 138, 80, 0.8) !important;
+}
+
+/* ===== #container ===== */
+body.dark-mode #container .model-container {
+  background: linear-gradient(135deg, #2A2A2A, #1C1A17);
+}
+
+body.dark-mode .model-segment {
+  background: #2A2A2A;
+}
+
+body.dark-mode .segment-1 {
+  background: linear-gradient(135deg, #2A2A2A 0%, #3B2F2F 100%);
+}
+
+body.dark-mode .segment-2 {
+  background: linear-gradient(135deg, #3B2F2F 0%, #4A3C3C 100%);
+}
+
+body.dark-mode .segment-3 {
+  background: linear-gradient(135deg, #4A3C3C 0%, #5A4848 100%);
 }
 
 /* ===== Menú móvil ===== */
@@ -1019,3 +1052,667 @@ body.dark-mode .menu-content span {
   color: #c9b09a;
 }
 
+/* ===== SECCIÓN DE ACCESORIOS ===== */
+.accessories-section {
+    top:1000;
+    position: relative;
+    left: 250px;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.accessories-toggle-btn {
+    top:1000;
+    background: linear-gradient(135deg, #5b9b9d 0%, #3a7a7c 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(91, 155, 157, 0.3);
+}
+
+.accessories-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(91, 155, 157, 0.4);
+    background: linear-gradient(135deg, #6aabac 0%, #4a8a8c 100%);
+}
+
+.accessories-toggle-btn i {
+    font-size: 16px;
+}
+
+.accessories-panel {
+    display: none;
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(245, 241, 232, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(189, 161, 110, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translate(20px, -50%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+}
+
+.accessories-panel.active {
+    display: block;
+}
+
+.accessories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(189, 161, 110, 0.2);
+}
+
+.accessories-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1c1c1c;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.add-accessory-btn {
+    background: #e91e63;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.add-accessory-btn:hover {
+    background: #d81b60;
+    transform: scale(1.05);
+}
+
+.accessories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.accessory-container {
+    width: 100px;
+    height: 100px;
+    background: white;
+    border: 2px dashed #bda16e;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.accessory-container:hover {
+    border-color: #5b9b9d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.accessory-container .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+    z-index: 10;
+}
+
+.accessory-container .delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.accessory-container:hover .delete-btn {
+    display: flex;
+}
+
+/* Animaciones para los accesorios */
+.accessory-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: grab;
+}
+
+.accessory-container:active {
+    cursor: grabbing;
+}
+
+.accessory-container.dragging {
+    cursor: grabbing !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    transform: scale(1.05) !important;
+    border-style: solid !important;
+}
+
+/* Animación suave para la eliminación */
+@keyframes fadeOutScale {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+.accessory-container.deleting {
+    animation: fadeOutScale 0.3s ease forwards;
+    pointer-events: none;
+}
+
+/* Estilos para el modo oscuro */
+body.dark-mode .accessories-toggle-btn {
+    background: linear-gradient(135deg, #df8a50 0%, #b76a3a 100%);
+    color: #1C1A17;
+    box-shadow: 0 4px 12px rgba(223, 138, 80, 0.3);
+}
+
+body.dark-mode .accessories-toggle-btn:hover {
+    background: linear-gradient(135deg, #e89b60 0%, #c87a4a 100%);
+    box-shadow: 0 6px 16px rgba(223, 138, 80, 0.4);
+}
+
+body.dark-mode .accessories-panel {
+    background: rgba(42, 42, 42, 0.95);
+    border: 1px solid #3B2F2F;
+    color: #F5F5DC;
+}
+
+body.dark-mode .accessories-header h3 {
+    color: #F5F5DC;
+}
+
+body.dark-mode .accessories-header {
+    border-bottom: 1px solid #3B2F2F;
+}
+
+body.dark-mode .add-accessory-btn {
+    background: #e91e63;
+}
+
+body.dark-mode .add-accessory-btn:hover {
+    background: #d81b60;
+}
+
+body.dark-mode .accessory-container {
+    background: rgba(59, 47, 47, 0.8);
+    border: 2px dashed #df8a50;
+}
+
+body.dark-mode .accessory-container:hover {
+    border-color: #e89b60;
+    background: rgba(74, 60, 60, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .accessories-panel {
+        position: fixed;
+        right: 50%;
+        top: 50%;
+        transform: translate(50%, -50%);
+        width: 90%;
+        max-width: 300px;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translate(50%, -40%);
+        }
+        to {
+            opacity: 1;
+            transform: translate(50%, -50%);
+        }
+    }
+}
+
+/* ===== CARRUSEL DE IMÁGENES EN ACCESORIOS ===== */
+.accessory-carousel {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.accessory-carousel-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.accessory-carousel-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+.accessory-carousel-image.active {
+    opacity: 1;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Controles del carrusel de accesorios */
+.accessory-carousel-controls {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    z-index: 5;
+}
+
+.accessory-carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.accessory-carousel-dot.active {
+    background-color: #e91e63 !important;
+    transform: scale(1.2);
+}
+
+.accessory-carousel-dot:hover {
+    background-color: rgba(233, 30, 99, 0.8) !important;
+}
+
+/* Botones de navegación del carrusel */
+.accessory-carousel-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px;
+    transform: translateY(-50%);
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.accessory-container:hover .accessory-carousel-nav {
+    opacity: 1;
+}
+
+.accessory-carousel-prev,
+.accessory-carousel-next {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.accessory-carousel-prev:hover,
+.accessory-carousel-next:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* Indicador de posición del carrusel */
+.accessory-position-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    z-index: 5;
+    font-weight: 600;
+}
+
+/* Texto del accesorio */
+.accessory-text {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: white;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    padding: 8px 4px 4px;
+    z-index: 5;
+    font-weight: 500;
+}
+
+/* Modo oscuro para carruseles de accesorios */
+body.dark-mode .accessory-carousel-dot {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .accessory-carousel-dot.active {
+    background-color: #e96d74 !important;
+}
+
+body.dark-mode .accessory-carousel-prev,
+body.dark-mode .accessory-carousel-next {
+    background: rgba(255, 255, 255, 0.2);
+    color: #df8a50;
+}
+
+body.dark-mode .accessory-carousel-prev:hover,
+body.dark-mode .accessory-carousel-next:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .accessory-position-indicator {
+    background: rgba(59, 47, 47, 0.8);
+    color: #df8a50;
+}
+
+body.dark-mode .accessory-text {
+    color: #df8a50;
+    background: linear-gradient(transparent, rgba(59, 47, 47, 0.8));
+}
+
+/* Animación para cambio de imágenes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.accessory-carousel-image.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Asegurar que el botón de eliminar sea visible */
+.accessory-container .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+    z-index: 1000;
+}
+
+.accessory-container .delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.accessory-container:hover .delete-btn {
+    display: flex !important;
+}
+
+/* ===== INDICADORES DE PAUSA PARA SEGMENTOS TOTÁLES ===== */
+.segment-pause-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(91, 155, 157, 0.9);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.segment-pause-indicator.show {
+    opacity: 1;
+    animation: segmentPulse 1.5s ease;
+}
+
+@keyframes segmentPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Modo oscuro para indicadores de segmentos */
+body.dark-mode .segment-pause-indicator {
+    background: rgba(223, 138, 80, 0.9);
+}
+
+/* Estilo visual para segmentos pausados */
+.model-segment.paused {
+    opacity: 0.95;
+    border: 2px solid #5b9b9d !important;
+    box-shadow: 0 0 15px rgba(91, 155, 157, 0.3) !important;
+    z-index: 20 !important;
+}
+
+body.dark-mode .model-segment.paused {
+    border-color: #df8a50 !important;
+    box-shadow: 0 0 15px rgba(223, 138, 80, 0.3) !important;
+}
+
+/* Hover effect para segmentos */
+.model-segment:hover {
+    cursor: pointer;
+    transform: translateY(-3px) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.model-segment.paused:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+}
+
+/* Feedback visual al hacer clic en segmentos */
+.model-segment:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease !important;
+}
+
+/* Mejorar visibilidad de segmentos pausados */
+.model-segment.paused img.active {
+    filter: brightness(1.1);
+}
+
+/* ===== SEGMENTOS CON DIFERENTES VELOCIDADES ===== */
+.segment-1 {
+    animation-duration: 3.5s;
+}
+
+.segment-2 {
+    animation-duration: 4s;
+}
+
+.segment-3 {
+    animation-duration: 3s;
+}
+
+/* ===== INDICADORES DE PAUSA PARA ACCESORIOS ===== */
+.pause-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(233, 30, 99, 0.9);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.pause-indicator.active {
+    opacity: 1;
+    visibility: visible;
+    animation: pulse 2s ease;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Modo oscuro para indicadores de accesorios */
+body.dark-mode .pause-indicator {
+    background: rgba(233, 109, 116, 0.9);
+}
+
+/* ===== ESTILOS PARA ACCESORIOS ===== */
+.accessory-carousel-dot.active {
+    background-color: #e91e63 !important;
+    transform: scale(1.2);
+}
+
+.accessory-carousel-dot:hover {
+    background-color: rgba(233, 30, 99, 0.8) !important;
+}
+
+/* Estado pausado para accesorios */
+.accessory-container.paused .accessory-carousel-dot.active {
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ===== RESPONSIVE PARA SEGMENTOS ===== */
+@media (max-width: 768px) {
+    .segment-pause-indicator {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .model-segment.paused {
+        border-width: 1px !important;
+    }
+    
+    .model-segment:hover {
+        transform: translateY(-2px) !important;
+    }
+    
+    .accessory-carousel-nav {
+        opacity: 1;
+    }
+    
+    .accessory-carousel-prev,
+    .accessory-carousel-next {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+}

@@ -365,9 +365,9 @@ body {
 
 /* Controles del carrusel */
 .carousel-controls {
-  position: absolute;
+  position: relative;
   bottom: 20px;
-  left: 0;
+  left: 0px;
   right: 0;
   display: flex;
   justify-content: center;

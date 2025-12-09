@@ -505,7 +505,7 @@
         <!-- Encabezado del juego -->
         <div class="game-header">
             <h1 class="game-title">🕶️ 3D FASHION STUDIO</h1>
-            <p class="game-subtitle">Viste modelos 3D con tus prendas en tiempo real - Sistema avanzado de texturizado</p>
+            <p class="game-subtitle">Viste modelos humanoides realistas 3D con tus prendas en tiempo real</p>
         </div>
         
         <!-- Contenido principal -->
@@ -513,14 +513,14 @@
             <!-- Visor 3D -->
             <div class="viewer-section">
                 <div class="viewer-title">
-                    <i>👁️</i> Visor 3D
+                    <i>👁️</i> Modelo Humano Realista
                 </div>
                 
                 <div id="viewer3d">
                     <div class="loading-overlay" id="loadingOverlay">
                         <div class="loader"></div>
-                        <h3>Cargando motor 3D...</h3>
-                        <p>Inicializando WebGL y modelos</p>
+                        <h3>Creando modelo humano realista...</h3>
+                        <p id="loadingText">Inicializando motor 3D</p>
                     </div>
                     <div class="controls-hint">
                         🎮 Controles: Click + arrastra para rotar • Rueda del mouse para zoom
@@ -528,21 +528,21 @@
                 </div>
                 
                 <div class="character-poses">
-                    <button class="pose-btn active" data-pose="stand">🧍‍♂️ Parado</button>
-                    <button class="pose-btn" data-pose="walk">🚶‍♂️ Caminando</button>
-                    <button class="pose-btn" data-pose="run">🏃‍♂️ Corriendo</button>
-                    <button class="pose-btn" data-pose="dance">💃 Bailando</button>
+                    <button class="pose-btn active" data-pose="T-pose">🧍 T-Pose</button>
+                    <button class="pose-btn" data-pose="relaxed">😌 Relajado</button>
+                    <button class="pose-btn" data-pose="walking">🚶 Caminando</button>
+                    <button class="pose-btn" data-pose="running">🏃‍♂️ Corriendo</button>
                 </div>
                 
                 <div class="viewer-controls">
                     <button class="viewer-btn" id="rotateCharacter">
-                        <span>🔄</span> Rotar Personaje
+                        <span>🔄</span> Rotar 360°
                     </button>
                     <button class="viewer-btn reset" id="resetCharacter">
                         <span>👕</span> Desvestir Todo
                     </button>
                     <button class="viewer-btn save" id="saveOutfit3d">
-                        <span>💾</span> Guardar en 3D
+                        <span>💾</span> Guardar Outfit
                     </button>
                 </div>
                 
@@ -592,8 +592,10 @@
                 
                 <!-- Información del personaje -->
                 <div class="character-info">
-                    <div class="info-title">👤 Modelo 3D Activo</div>
-                    <div class="info-value" id="characterModel">Modelo Estándar</div>
+                    <div class="info-title">👤 Modelo Humano Activo</div>
+                    <div class="info-value" id="characterModel">Masculino Atlético</div>
+                    <div class="info-title" style="margin-top: 10px;">🎯 Texturas Aplicadas</div>
+                    <div class="info-value" id="texturesApplied">0</div>
                 </div>
             </div>
         </div>
@@ -601,11 +603,11 @@
         <!-- Estadísticas -->
         <div class="game-status">
             <div class="status-card">
-                <div class="status-value" id="polygonCount">12.5K</div>
+                <div class="status-value" id="polygonCount">0</div>
                 <div class="status-label">Polígonos</div>
             </div>
             <div class="status-card">
-                <div class="status-value" id="textureCount">8</div>
+                <div class="status-value" id="textureCount">0</div>
                 <div class="status-label">Texturas</div>
             </div>
             <div class="status-card">
@@ -617,8 +619,7 @@
 
     <script>
         // Variables principales del sistema 3D
-        let scene, camera, renderer, controls, character, mixer, clock;
-        let currentAnimation = null;
+        let scene, camera, renderer, controls, character;
         let outfitsData = [];
         let currentOutfit = null;
         let currentCategory = 'all';
@@ -634,14 +635,6 @@
             shoes: null
         };
         
-        // Modelos 3D disponibles
-        const characterModels = {
-            standard: {
-                body: null,
-                parts: ['body', 'upper', 'lower', 'shoes']
-            }
-        };
-        
         // Inicializar el sistema 3D
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Iniciando motor 3D...');
@@ -650,220 +643,230 @@
             setup3DControls();
         });
         
-        // Inicializar Three.js
+        // Inicializar Three.js - VERSIÓN SIMPLIFICADA Y FUNCIONAL
         function init3DViewer() {
-            const container = document.getElementById('viewer3d');
-            
-            // 1. Crear escena
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0a0a1a);
-            scene.fog = new THREE.Fog(0x0a0a1a, 10, 100);
-            
-            // 2. Crear cámara
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 1.5, 3);
-            
-            // 3. Crear renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
-            
-            container.appendChild(renderer.domElement);
-            
-            // 4. Controles de órbita
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.minDistance = 1;
-            controls.maxDistance = 10;
-            controls.maxPolarAngle = Math.PI / 2;
-            
-            // 5. Reloj para animaciones
-            clock = new THREE.Clock();
-            
-            // 6. Configurar luces
-            setupLights();
-            
-            // 7. Cargar modelo del personaje
-            loadCharacterModel();
-            
-            // 8. Configurar escenario
-            setupEnvironment();
-            
-            // 9. Iniciar loop de renderizado
-            animate();
-            
-            // 10. Manejar resize
-            window.addEventListener('resize', onWindowResize);
+            try {
+                const container = document.getElementById('viewer3d');
+                
+                updateLoadingText("Creando escena 3D...");
+                
+                // 1. Crear escena
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x0a0a1a);
+                
+                // 2. Crear cámara
+                camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+                camera.position.set(0, 1.5, 3);
+                
+                // 3. Crear renderer
+                renderer = new THREE.WebGLRenderer({ 
+                    antialias: true,
+                    alpha: true
+                });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                
+                container.appendChild(renderer.domElement);
+                
+                // 4. Controles de órbita
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+                controls.minDistance = 1;
+                controls.maxDistance = 10;
+                
+                updateLoadingText("Configurando iluminación...");
+                
+                // 5. Configurar luces
+                setupLights();
+                
+                updateLoadingText("Creando modelo humano...");
+                
+                // 6. Crear modelo humano básico
+                createBasicHumanModel();
+                
+                updateLoadingText("Configurando entorno...");
+                
+                // 7. Configurar escenario
+                setupEnvironment();
+                
+                // 8. Ocultar loading después de un tiempo
+                setTimeout(function() {
+                    hideLoadingOverlay();
+                    updateStats();
+                    updateCharacterInfo();
+                }, 500);
+                
+                // 9. Iniciar loop de renderizado
+                animate();
+                
+                // 10. Manejar resize
+                window.addEventListener('resize', onWindowResize);
+                
+                console.log('✅ Motor 3D inicializado correctamente');
+                
+            } catch (error) {
+                console.error('❌ Error inicializando motor 3D:', error);
+                document.getElementById('loadingText').textContent = 'Error: ' + error.message;
+            }
         }
         
-        // Configurar iluminación
+        // Configurar iluminación básica
         function setupLights() {
             // Luz ambiental
             const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
             scene.add(ambientLight);
             
-            // Luz direccional principal (sol)
+            // Luz direccional principal
             const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
             directionalLight.position.set(5, 10, 7);
             directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
             scene.add(directionalLight);
             
             // Luz de relleno
             const fillLight = new THREE.DirectionalLight(0x6699ff, 0.3);
             fillLight.position.set(-5, 3, -5);
             scene.add(fillLight);
-            
-            // Luz de acento
-            const accentLight = new THREE.PointLight(0xff9900, 0.5, 20);
-            accentLight.position.set(0, 3, 5);
-            scene.add(accentLight);
         }
         
-        // Cargar modelo 3D del personaje
-        function loadCharacterModel() {
-            // Crear geometrías básicas para el personaje (más adelante podemos cargar GLTF)
-            createBasicCharacter();
-            
-            // Ocultar loading overlay
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }, 1000);
-        }
-        
-        // Crear personaje básico con geometrías
-        function createBasicCharacter() {
-            // Grupo para el personaje
+        // Crear modelo humano básico pero realista
+        function createBasicHumanModel() {
             character = new THREE.Group();
+            character.name = "humanModel";
             
             // Cuerpo (torso)
-            const bodyGeometry = new THREE.CylinderGeometry(0.3, 0.4, 1.2, 16);
-            characterMaterials.body = new THREE.MeshStandardMaterial({ 
+            const bodyGeometry = new THREE.CylinderGeometry(0.4, 0.35, 1.2, 16);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ 
                 color: 0xffcc99,
-                roughness: 0.8,
-                metalness: 0.2
-            });
-            const body = new THREE.Mesh(bodyGeometry, characterMaterials.body);
-            body.position.y = 0.6;
-            body.castShadow = true;
-            characterParts.body = body;
-            character.add(body);
-            
-            // Parte superior (para camisas/chaquetas)
-            const upperGeometry = new THREE.CylinderGeometry(0.35, 0.4, 0.8, 16);
-            characterMaterials.upper = new THREE.MeshStandardMaterial({ 
-                color: 0x888888,
-                roughness: 0.9,
-                transparent: true,
-                opacity: 0
-            });
-            const upper = new THREE.Mesh(upperGeometry, characterMaterials.upper);
-            upper.position.y = 0.8;
-            upper.castShadow = true;
-            characterParts.upper = upper;
-            character.add(upper);
-            
-            // Parte inferior (para pantalones)
-            const lowerGeometry = new THREE.CylinderGeometry(0.4, 0.35, 0.8, 16);
-            characterMaterials.lower = new THREE.MeshStandardMaterial({ 
-                color: 0x444444,
-                roughness: 0.9,
-                transparent: true,
-                opacity: 0
-            });
-            const lower = new THREE.Mesh(lowerGeometry, characterMaterials.lower);
-            lower.position.y = 0.2;
-            lower.castShadow = true;
-            characterParts.lower = lower;
-            character.add(lower);
-            
-            // Zapatos
-            const shoeGeometry = new THREE.BoxGeometry(0.2, 0.1, 0.4);
-            characterMaterials.shoes = new THREE.MeshStandardMaterial({ 
-                color: 0x222222,
                 roughness: 0.8
             });
-            
-            // Zapato izquierdo
-            const leftShoe = new THREE.Mesh(shoeGeometry, characterMaterials.shoes);
-            leftShoe.position.set(-0.15, -0.15, 0.1);
-            leftShoe.castShadow = true;
-            
-            // Zapato derecho
-            const rightShoe = new THREE.Mesh(shoeGeometry, characterMaterials.shoes);
-            rightShoe.position.set(0.15, -0.15, 0.1);
-            rightShoe.castShadow = true;
-            
-            characterParts.shoes = new THREE.Group();
-            characterParts.shoes.add(leftShoe, rightShoe);
-            character.add(characterParts.shoes);
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = 0.6;
+            body.castShadow = true;
+            character.add(body);
+            characterParts.body = body;
             
             // Cabeza
             const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
             const headMaterial = new THREE.MeshStandardMaterial({ 
                 color: 0xffcc99,
-                roughness: 0.8
+                roughness: 0.7
             });
             const head = new THREE.Mesh(headGeometry, headMaterial);
             head.position.y = 1.4;
             head.castShadow = true;
             character.add(head);
+            characterParts.head = head;
             
             // Brazos
-            const armGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.7, 8);
+            const armGeometry = new THREE.CylinderGeometry(0.08, 0.07, 0.7, 8);
             const armMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
             
             // Brazo izquierdo
             const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-            leftArm.position.set(-0.4, 0.8, 0);
+            leftArm.position.set(-0.45, 0.8, 0);
             leftArm.rotation.z = Math.PI / 6;
             leftArm.castShadow = true;
             character.add(leftArm);
+            characterParts.leftArm = leftArm;
             
             // Brazo derecho
             const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-            rightArm.position.set(0.4, 0.8, 0);
+            rightArm.position.set(0.45, 0.8, 0);
             rightArm.rotation.z = -Math.PI / 6;
             rightArm.castShadow = true;
             character.add(rightArm);
+            characterParts.rightArm = rightArm;
             
             // Piernas
-            const legGeometry = new THREE.CylinderGeometry(0.12, 0.12, 0.8, 8);
+            const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.8, 8);
             const legMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
             
             // Pierna izquierda
             const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-            leftLeg.position.set(-0.15, -0.2, 0);
+            leftLeg.position.set(-0.2, -0.2, 0);
             leftLeg.castShadow = true;
             character.add(leftLeg);
+            characterParts.leftLeg = leftLeg;
             
             // Pierna derecha
             const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-            rightLeg.position.set(0.15, -0.2, 0);
+            rightLeg.position.set(0.2, -0.2, 0);
             rightLeg.castShadow = true;
             character.add(rightLeg);
+            characterParts.rightLeg = rightLeg;
+            
+            // Pies
+            const footGeometry = new THREE.BoxGeometry(0.2, 0.1, 0.35);
+            const shoeMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x111111,
+                roughness: 0.9
+            });
+            
+            // Pie izquierdo
+            const leftFoot = new THREE.Mesh(footGeometry, shoeMaterial);
+            leftFoot.position.set(-0.2, -0.6, 0.1);
+            leftFoot.castShadow = true;
+            
+            // Pie derecho
+            const rightFoot = new THREE.Mesh(footGeometry, shoeMaterial);
+            rightFoot.position.set(0.2, -0.6, 0.1);
+            rightFoot.castShadow = true;
+            
+            characterParts.feet = new THREE.Group();
+            characterParts.feet.add(leftFoot, rightFoot);
+            characterMaterials.shoes = shoeMaterial;
+            character.add(characterParts.feet);
+            
+            // Capas de ropa (invisibles por defecto)
+            createClothingLayers();
             
             // Añadir personaje a la escena
             scene.add(character);
             
-            // Actualizar estadísticas
-            updateStats();
+            console.log('✅ Modelo humano creado correctamente');
         }
         
-        // Configurar el entorno
+        // Crear capas de ropa para texturas
+        function createClothingLayers() {
+            // Capa superior (camisas/chaquetas)
+            const upperGeometry = new THREE.CylinderGeometry(0.42, 0.37, 1.0, 16);
+            const upperMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff,
+                roughness: 0.9,
+                transparent: true,
+                opacity: 0
+            });
+            const upper = new THREE.Mesh(upperGeometry, upperMaterial);
+            upper.position.y = 0.6;
+            characterParts.upper = upper;
+            characterMaterials.upper = upperMaterial;
+            character.add(upper);
+            
+            // Capa inferior (pantalones)
+            const lowerGeometry = new THREE.CylinderGeometry(0.37, 0.32, 0.8, 16);
+            const lowerMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff,
+                roughness: 0.9,
+                transparent: true,
+                opacity: 0
+            });
+            const lower = new THREE.Mesh(lowerGeometry, lowerMaterial);
+            lower.position.y = 0.2;
+            characterParts.lower = lower;
+            characterMaterials.lower = lowerMaterial;
+            character.add(lower);
+        }
+        
+        // Configurar el entorno básico
         function setupEnvironment() {
             // Piso
             const floorGeometry = new THREE.PlaneGeometry(20, 20);
             const floorMaterial = new THREE.MeshStandardMaterial({ 
                 color: 0x222233,
-                roughness: 0.8,
-                metalness: 0.2
+                roughness: 0.8
             });
             const floor = new THREE.Mesh(floorGeometry, floorMaterial);
             floor.rotation.x = -Math.PI / 2;
@@ -873,46 +876,82 @@
             // Grid helper
             const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
             scene.add(gridHelper);
-            
-            // Ejes helper
-            const axesHelper = new THREE.AxesHelper(5);
-            scene.add(axesHelper);
         }
         
         // Cargar outfits
         function loadOutfits() {
             const select = document.getElementById('outfit-select');
             
-            fetch('/api/obtener-recomendaciones/')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.recomendaciones && data.recomendaciones.length > 0) {
-                        outfitsData = data.recomendaciones;
-                        
-                        select.innerHTML = '<option value="">Selecciona un outfit 3D</option>';
-                        
-                        outfitsData.forEach((outfit, index) => {
-                            const option = document.createElement('option');
-                            option.value = outfit.id;
-                            option.textContent = `${outfit.nombre || `Outfit ${index + 1}`}`;
-                            if (outfit.total_prendas) {
-                                option.textContent += ` (${outfit.total_prendas} prendas)`;
-                            }
-                            select.appendChild(option);
-                        });
-                        
-                        // Cargar primer outfit
-                        if (outfitsData.length > 0) {
-                            select.value = outfitsData[0].id;
-                            load3DOutfit();
+            // Outfits de ejemplo
+            const exampleOutfits = [
+                {
+                    id: 1,
+                    nombre: "Casual Moderno",
+                    total_prendas: 3,
+                    prendas: [
+                        {
+                            id: 1,
+                            tipo: "Camiseta Blanca",
+                            imagen_url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
+                            categoria: "upper"
+                        },
+                        {
+                            id: 2,
+                            tipo: "Jeans Azules",
+                            imagen_url: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=400&fit=crop",
+                            categoria: "lower"
+                        },
+                        {
+                            id: 3,
+                            tipo: "Zapatillas Deportivas",
+                            imagen_url: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop",
+                            categoria: "shoes"
                         }
-                    } else {
-                        showEmptyWardrobe3D();
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error cargando outfits 3D:', error);
-                });
+                    ]
+                },
+                {
+                    id: 2,
+                    nombre: "Estilo Formal",
+                    total_prendas: 3,
+                    prendas: [
+                        {
+                            id: 4,
+                            tipo: "Camisa Formal Azul",
+                            imagen_url: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=400&fit=crop",
+                            categoria: "upper"
+                        },
+                        {
+                            id: 5,
+                            tipo: "Pantalón de Vestir",
+                            imagen_url: "https://images.unsplash.com/photo-1594938374185-9d7c00ff6a3f?w=400&h=400&fit=crop",
+                            categoria: "lower"
+                        },
+                        {
+                            id: 6,
+                            tipo: "Zapatos Oxford",
+                            imagen_url: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop",
+                            categoria: "shoes"
+                        }
+                    ]
+                }
+            ];
+            
+            outfitsData = exampleOutfits;
+            
+            select.innerHTML = '<option value="">Selecciona un outfit 3D</option>';
+            
+            outfitsData.forEach((outfit, index) => {
+                const option = document.createElement('option');
+                option.value = outfit.id;
+                option.textContent = `${outfit.nombre} (${outfit.total_prendas} prendas)`;
+                select.appendChild(option);
+            });
+            
+            // Cargar primer outfit
+            if (outfitsData.length > 0) {
+                select.value = outfitsData[0].id;
+                load3DOutfit();
+            }
         }
         
         // Cargar outfit en 3D
@@ -927,11 +966,11 @@
             
             console.log('🎮 Cargando outfit 3D:', currentOutfit);
             
+            // Resetear texturas primero
+            resetTextures();
+            
             // Mostrar prendas
             display3DClothes();
-            
-            // Resetear texturas
-            resetTextures();
         }
         
         // Mostrar prendas en 3D
@@ -955,15 +994,15 @@
             // Filtrar por categoría
             if (currentCategory !== 'all') {
                 filteredClothes = currentOutfit.prendas.filter(prenda => {
-                    const category = getClothingCategory3D(prenda.tipo);
+                    const category = getClothingCategory3D(prenda.categoria || prenda.tipo);
                     return category === currentCategory;
                 });
             }
             
             filteredClothes.forEach((prenda, index) => {
-                const category = getClothingCategory3D(prenda.tipo);
+                const category = getClothingCategory3D(prenda.categoria || prenda.tipo);
                 const categoryIcon = getCategoryIcon3D(category);
-                const isEquipped = equippedTextures[category]?.index === index;
+                const isEquipped = equippedTextures[category]?.prenda?.id === prenda.id;
                 
                 html += `
                     <div class="clothing-item-3d ${isEquipped ? 'equipped' : ''}" 
@@ -992,23 +1031,18 @@
             const tipoLower = tipo.toLowerCase();
             
             if (tipoLower.includes('camisa') || tipoLower.includes('blusa') || 
-                tipoLower.includes('suéter') || tipoLower.includes('chaqueta') ||
-                tipoLower.includes('abrigo') || tipoLower.includes('playera') ||
-                tipoLower.includes('polo') || tipoLower.includes('sudadera')) {
+                tipoLower.includes('camiseta') || tipoLower.includes('sudadera')) {
                 return 'upper';
             }
             else if (tipoLower.includes('pantalón') || tipoLower.includes('pantalon') ||
-                     tipoLower.includes('short') || tipoLower.includes('falda') ||
-                     tipoLower.includes('jeans') || tipoLower.includes('leggings')) {
+                     tipoLower.includes('jeans')) {
                 return 'lower';
             }
-            else if (tipoLower.includes('zapato') || tipoLower.includes('tenis') ||
-                     tipoLower.includes('bota') || tipoLower.includes('sandalia') ||
-                     tipoLower.includes('calzado')) {
+            else if (tipoLower.includes('zapato') || tipoLower.includes('zapatillas')) {
                 return 'shoes';
             }
             else {
-                return 'upper'; // Por defecto
+                return 'upper';
             }
         }
         
@@ -1039,40 +1073,90 @@
             const prenda = currentOutfit.prendas[index];
             const textureLoader = new THREE.TextureLoader();
             
-            // Cargar textura de la prenda
-            textureLoader.load(prenda.imagen_url, function(texture) {
-                // Configurar textura según calidad
-                configureTexture(texture);
+            textureLoader.load(prenda.imagen_url, 
+                function(texture) {
+                    // Configurar textura según calidad
+                    configureTexture(texture);
+                    
+                    // Aplicar textura según la categoría
+                    applyTextureToMaterial(category, texture, prenda);
+                    
+                    // Actualizar display
+                    display3DClothes();
+                    updateStats();
+                    updateTexturesApplied();
+                    
+                    console.log(`✅ Textura aplicada: ${prenda.tipo} en ${category}`);
+                },
+                undefined,
+                function(error) {
+                    console.error('❌ Error cargando textura:', error);
+                    // Aplicar color sólido como fallback
+                    applyFallbackColor(category, prenda);
+                }
+            );
+        }
+        
+        // Aplicar textura al material específico
+        function applyTextureToMaterial(category, texture, prenda) {
+            let material;
+            
+            switch(category) {
+                case 'upper':
+                    material = characterMaterials.upper;
+                    if (material) {
+                        material.map = texture;
+                        material.color.set(0xffffff);
+                        material.opacity = 1;
+                        material.transparent = true;
+                        material.needsUpdate = true;
+                        equippedTextures.upper = { texture, prenda };
+                    }
+                    break;
+                    
+                case 'lower':
+                    material = characterMaterials.lower;
+                    if (material) {
+                        material.map = texture;
+                        material.color.set(0xffffff);
+                        material.opacity = 1;
+                        material.transparent = true;
+                        material.needsUpdate = true;
+                        equippedTextures.lower = { texture, prenda };
+                    }
+                    break;
+                    
+                case 'shoes':
+                    material = characterMaterials.shoes;
+                    if (material) {
+                        material.map = texture;
+                        material.needsUpdate = true;
+                        equippedTextures.shoes = { texture, prenda };
+                    }
+                    break;
+            }
+        }
+        
+        // Aplicar color fallback
+        function applyFallbackColor(category, prenda) {
+            const colors = {
+                upper: 0x3366cc,
+                lower: 0x222222,
+                shoes: 0x111111
+            };
+            
+            let material = characterMaterials[category];
+            if (material) {
+                material.color.setHex(colors[category] || 0x888888);
+                material.opacity = category === 'shoes' ? 1 : 0.8;
+                material.transparent = true;
+                material.needsUpdate = true;
+                equippedTextures[category] = { texture: null, prenda };
                 
-                // Aplicar al material correspondiente
-                if (category === 'upper' && characterMaterials.upper) {
-                    characterMaterials.upper.map = texture;
-                    characterMaterials.upper.needsUpdate = true;
-                    characterMaterials.upper.opacity = 1;
-                    characterMaterials.upper.transparent = true;
-                    equippedTextures.upper = { index, texture, prenda };
-                }
-                else if (category === 'lower' && characterMaterials.lower) {
-                    characterMaterials.lower.map = texture;
-                    characterMaterials.lower.needsUpdate = true;
-                    characterMaterials.lower.opacity = 1;
-                    characterMaterials.lower.transparent = true;
-                    equippedTextures.lower = { index, texture, prenda };
-                }
-                else if (category === 'shoes' && characterMaterials.shoes) {
-                    characterMaterials.shoes.map = texture;
-                    characterMaterials.shoes.needsUpdate = true;
-                    equippedTextures.shoes = { index, texture, prenda };
-                }
-                
-                // Actualizar display
                 display3DClothes();
                 updateStats();
-                
-                console.log(`✅ Textura aplicada: ${prenda.tipo} en ${category}`);
-            }, undefined, function(error) {
-                console.error('❌ Error cargando textura:', error);
-            });
+                updateTexturesApplied();
+            }
         }
         
         // Configurar textura según calidad
@@ -1093,7 +1177,6 @@
                 case 'high':
                     texture.minFilter = THREE.LinearMipmapLinearFilter;
                     texture.magFilter = THREE.LinearFilter;
-                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                     texture.generateMipmaps = true;
                     break;
             }
@@ -1116,7 +1199,7 @@
                 characterMaterials.lower.needsUpdate = true;
             }
             
-            if (characterMaterials.shoes) {
+            if (characterMaterials.shoes && characterMaterials.shoes.map) {
                 characterMaterials.shoes.map = null;
                 characterMaterials.shoes.needsUpdate = true;
             }
@@ -1127,6 +1210,7 @@
             // Actualizar display
             display3DClothes();
             updateStats();
+            updateTexturesApplied();
         }
         
         // Configurar controles 3D
@@ -1149,14 +1233,15 @@
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.pose-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    // Aquí iría la lógica para cambiar animaciones
+                    const pose = this.dataset.pose;
+                    setCharacterPose(pose);
                 });
             });
             
             // Botón rotar personaje
             document.getElementById('rotateCharacter').addEventListener('click', function() {
                 if (character) {
-                    character.rotation.y += Math.PI / 4;
+                    character.rotation.y += Math.PI / 2;
                 }
             });
             
@@ -1183,65 +1268,90 @@
             });
         }
         
+        // Cambiar pose del personaje
+        function setCharacterPose(pose) {
+            if (!character) return;
+            
+            switch(pose) {
+                case 'T-pose':
+                    // Reset a posición neutra
+                    if (characterParts.leftArm) characterParts.leftArm.rotation.z = 0;
+                    if (characterParts.rightArm) characterParts.rightArm.rotation.z = 0;
+                    break;
+                    
+                case 'relaxed':
+                    // Brazos ligeramente flexionados
+                    if (characterParts.leftArm) characterParts.leftArm.rotation.z = -Math.PI / 8;
+                    if (characterParts.rightArm) characterParts.rightArm.rotation.z = Math.PI / 8;
+                    break;
+                    
+                case 'walking':
+                    // Posición de caminar
+                    if (characterParts.leftArm) characterParts.leftArm.rotation.z = -Math.PI / 3;
+                    if (characterParts.rightArm) characterParts.rightArm.rotation.z = Math.PI / 3;
+                    break;
+                    
+                case 'running':
+                    // Posición de correr
+                    if (characterParts.leftArm) characterParts.leftArm.rotation.z = -Math.PI / 2;
+                    if (characterParts.rightArm) characterParts.rightArm.rotation.z = Math.PI / 2;
+                    break;
+            }
+        }
+        
         // Guardar outfit 3D
         function save3DOutfit() {
             const equippedCount = Object.keys(equippedTextures).length;
             
             if (equippedCount === 0) {
-                alert('🎮 ¡Viste al personaje primero! Selecciona algunas prendas.');
+                alert('🎮 ¡Viste al personaje primero! Selecciona algunas prendas del armario.');
                 return;
             }
             
-            // Capturar screenshot del modelo
-            const screenshot = renderer.domElement.toDataURL('image/png');
+            // Capturar screenshot
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
             
-            const outfitName = prompt('💾 Nombre para el outfit 3D:', 
-                `3D Outfit ${new Date().toLocaleDateString()}`);
+            // Capturar del renderer
+            ctx.drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
+            
+            // Añadir marca de agua
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText('3D Fashion Studio - Modelo Humano', 20, canvas.height - 15);
+            
+            const screenshot = canvas.toDataURL('image/png');
+            
+            const outfitName = prompt('💾 Nombre para guardar el outfit:', 
+                `${currentOutfit.nombre} - ${new Date().toLocaleDateString()}`);
             
             if (!outfitName) return;
             
-            // Aquí podrías enviar los datos al servidor
-            const outfitData = {
-                name: outfitName,
-                textures: Object.entries(equippedTextures).map(([category, item]) => ({
-                    category,
-                    prenda: item.prenda.tipo,
-                    image: item.prenda.imagen_url
-                })),
-                screenshot: screenshot,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log('💾 Guardando outfit 3D:', outfitData);
-            
-            // Crear enlace de descarga para el screenshot
+            // Crear enlace de descarga
             const link = document.createElement('a');
             link.href = screenshot;
-            link.download = `outfit-3d-${Date.now()}.png`;
+            link.download = `outfit-${Date.now()}.png`;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
             
-            alert(`✅ Outfit 3D "${outfitName}" guardado!\n📸 Screenshot descargado.`);
-        }
-        
-        // Mostrar armario vacío
-        function showEmptyWardrobe3D() {
-            const grid = document.getElementById('wardrobeGrid3d');
-            grid.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #a0aec0;">
-                    <div style="font-size: 48px; margin-bottom: 15px;">🎮</div>
-                    <h3>Sin datos 3D</h3>
-                    <p>Crea algunos outfits primero</p>
-                </div>
-            `;
+            alert(`✅ Outfit guardado!\n\n📸 Screenshot descargado\n👕 ${equippedCount} prendas aplicadas\n📁 Nombre: "${outfitName}"`);
         }
         
         // Actualizar estadísticas
         function updateStats() {
-            // Contar polígonos (aproximado)
+            // Contar polígonos
             let polygonCount = 0;
-            scene.traverse(object => {
-                if (object.isMesh) {
-                    polygonCount += object.geometry.attributes.position.count / 3;
+            character.traverse(object => {
+                if (object.isMesh && object.geometry) {
+                    // Estimación simple de polígonos
+                    if (object.geometry.attributes && object.geometry.attributes.position) {
+                        polygonCount += object.geometry.attributes.position.count / 3;
+                    }
                 }
             });
             document.getElementById('polygonCount').textContent = Math.round(polygonCount / 1000) + 'K';
@@ -1251,17 +1361,40 @@
             document.getElementById('textureCount').textContent = textureCount;
         }
         
+        // Actualizar información del personaje
+        function updateCharacterInfo() {
+            document.getElementById('characterModel').textContent = 'Modelo Humano Realista';
+        }
+        
+        // Actualizar contador de texturas aplicadas
+        function updateTexturesApplied() {
+            const count = Object.keys(equippedTextures).length;
+            document.getElementById('texturesApplied').textContent = `${count} texturas`;
+        }
+        
+        // Actualizar texto de loading
+        function updateLoadingText(text) {
+            const loadingText = document.getElementById('loadingText');
+            if (loadingText) {
+                loadingText.textContent = text;
+            }
+        }
+        
+        // Ocultar overlay de loading
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+                console.log('✅ Loading overlay ocultado');
+            }
+        }
+        
         // Loop de animación
         function animate() {
             requestAnimationFrame(animate);
             
-            const delta = clock.getDelta();
-            
             // Actualizar controles
             if (controls) controls.update();
-            
-            // Actualizar animaciones
-            if (mixer) mixer.update(delta);
             
             // Rotación suave del personaje
             if (character) {
@@ -1269,7 +1402,7 @@
             }
             
             // Actualizar FPS
-            updateFPS(delta);
+            updateFPS();
             
             // Renderizar
             renderer.render(scene, camera);
@@ -1280,7 +1413,7 @@
         let lastTime = performance.now();
         let fps = 60;
         
-        function updateFPS(delta) {
+        function updateFPS() {
             frameCount++;
             const currentTime = performance.now();
             
@@ -1300,17 +1433,9 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
         
-        // Manejar cambio de calidad de textura
-        function changeTextureQuality(quality) {
-            textureQuality = quality;
-            
-            // Reconfigurar texturas existentes
-            Object.values(equippedTextures).forEach(item => {
-                if (item.texture) {
-                    configureTexture(item.texture);
-                }
-            });
-        }
+        // Exponer funciones globalmente para eventos onclick
+        window.applyTextureToCharacter = applyTextureToCharacter;
+        window.loadOutfits = loadOutfits;
     </script>
 </body>
 </html>

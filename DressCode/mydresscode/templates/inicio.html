@@ -29,17 +29,17 @@
             }
         }
     </script>
-     
 </head>
 <body>
+    <!-- Botón de cambio de tema -->
     <div class="theme-toggle-wrapper">
         <button id="theme-toggle" class="theme-button">
             <span class="icon-moon">🌙</span>
             <span class="icon-sun">☀️</span>
         </button>
-
     </div>
-    <!-- Side Menu MEJORADO -->
+
+    <!-- Menú lateral -->
     <button class="menu-toggle">☰</button>
     <div class="side-menu">
         <nav>
@@ -47,17 +47,9 @@
                 <i class="fas fa-home"></i>
                 Inicio
             </a>
-            <a href="{% url 'visioncomputer' %}">
-                <i class="fas fa-user"></i>
-                Reconocimiento de corporalidad
-            </a>
             <a href="{% url 'ver_prendas_temp' %}">
                 <i class="fas fa-tshirt"></i>
                 Mis outfits
-            </a>
-            <a href="#">
-                <i class="fas fa-palette"></i>
-                Maquillaje
             </a>
             <a href="{% url 'configurationsystem' %}">
                 <i class="fas fa-cog"></i>
@@ -71,7 +63,7 @@
     </div>
     <div class="menu-overlay"></div>
 
-    <!-- Header centrado -->
+    <!-- Header -->
     <header>
         <nav class="header-nav">
             <a href="{% url 'my_closet' %}">Armario</a>
@@ -82,11 +74,10 @@
             <a href="javascript:void(0)" class="favorites-trigger">Favoritos</a>
         </nav>
         
-        <!-- NUEVO: Icono de usuario con dropdown -->
+        <!-- Perfil de usuario -->
         <div class="user-profile">
             <div class="profile-dropdown" id="profileDropdown">
                 <div class="user-icon" id="userIcon">
-                    <!-- La foto de perfil se cargará aquí dinámicamente -->
                     <i class="fas fa-user default-icon"></i>
                 </div>
                 <div class="profile-dropdown-content">
@@ -106,17 +97,20 @@
             </div>
         </div>
         
+        <!-- Logo -->
         <div class="logo" aria-label="logo">
             <img src="{% static 'img/logo.png' %}" alt="DressCode Logo">
         </div>
     </header>
 
+    <!-- Contenido principal -->
     <main>
+        <!-- Sección de texto -->
         <section class="left-text">
             <h1>¡TU ROPA Y ESTILO, AL MÁXIMO!</h1>
             <p>Captura, combina y guarda tus looks para cada ocasión, aprovechando al máximo cada prenda.</p>
             
-            <!-- Grupo de dos botones -->
+            <!-- Botones de acción -->
             <div class="button-group">
                 <a href="{% url 'recomendar_outfit' %}" class="action-button btn-generate">
                     <i class="fas fa-bolt"></i>
@@ -129,27 +123,12 @@
             </div>
         </section>
         
-        <section class="right-image-container">
-            <!-- Imagen segmentada del index.html - MODIFICADA PARA CARRUSEL CON 5 IMÁGENES FEMENINAS -->
+        <!-- Container principal con modelo segmentado -->
+        <div id="container">
+            <!-- Contenedor del modelo -->
             <div class="model-container">
+                <!-- Segmento 1 - Superior -->
                 <div class="model-segment segment-1">
-                    <!-- 5 imágenes femeninas para el segmento superior - entrada desde la derecha -->
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
-                </div>
-                <div class="model-segment segment-2">
-                    <!-- 5 imágenes femeninas para el segmento medio - entrada desde la izquierda -->
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
-                </div>
-                <div class="model-segment segment-3">
-                    <!-- 5 imágenes femeninas para el segmento inferior - entrada desde la derecha -->
                     <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
                     <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
@@ -157,7 +136,25 @@
                     <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
                 </div>
                 
-                <!-- Controles del carrusel - 5 puntos -->
+                <!-- Segmento 2 - Medio -->
+                <div class="model-segment segment-2">
+                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
+                </div>
+                
+                <!-- Segmento 3 - Inferior -->
+                <div class="model-segment segment-3">
+                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
+                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
+                </div>
+                
+                <!-- Controles del carrusel -->
                 <div class="carousel-controls">
                     <div class="carousel-dot active" data-slide="0"></div>
                     <div class="carousel-dot" data-slide="1"></div>
@@ -166,14 +163,39 @@
                     <div class="carousel-dot" data-slide="4"></div>
                 </div>
             </div>
+            
+            <!-- Formas decorativas -->
             <div class="shape shape1"></div>
             <div class="shape shape2"></div>
             <div class="shape shape3"></div>
             <div class="shape shape4"></div>
             <div class="shape shape5"></div>
             <div class="shape shape6"></div>
-        </section>
+        </div>
     </main>
+
+    <!-- Botón para activar accesorios -->
+<div class="accessories-section">
+    <button id="toggle-accessories" class="accessories-toggle-btn">
+        <i class="fas fa-plus-circle"></i>
+        Activar accesorios
+    </button>
+    
+    <!-- Panel de accesorios -->
+    <div class="accessories-panel" id="accessoriesPanel">
+        <div class="accessories-header">
+            <h3>Accesorios</h3>
+            <button class="add-accessory-btn" id="addAccessoryBtn">
+                <i class="fas fa-plus"></i>
+                Añadir
+            </button>
+        </div>
+        
+        <div class="accessories-grid" id="accessoriesGrid">
+            <!-- Los contenedores se agregarán dinámicamente aquí -->
+        </div>
+    </div>
+</div>
 
     <!-- Menú móvil -->
     <div class="mobile-menu">
