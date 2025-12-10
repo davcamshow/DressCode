@@ -127,41 +127,75 @@
         <div id="container">
             <!-- Contenedor del modelo -->
             <div class="model-container">
-                <!-- Segmento 1 - Superior -->
-                <div class="model-segment segment-1">
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
+                <!-- Segmento 1 - Superior (Camisas, tops, sudaderas, chalecos) -->
+                <div class="model-segment segment-1" id="segmento-1">
+                    {% for prenda in prendas_segmento_1 %}
+                        <img src="{{ prenda.imagen }}" 
+                             alt="{{ prenda.tipo }} - {{ prenda.color }}"
+                             class="segment-image {% if forloop.first %}active{% endif %}"
+                             data-id="{{ prenda.id|default:'0' }}"
+                             data-tipo="{{ prenda.tipo }}"
+                             data-color="{{ prenda.color }}"
+                             data-index="{{ forloop.counter0 }}">
+                    {% empty %}
+                        <!-- Si no hay prendas, mostrar mensaje -->
+                        <div class="segment-empty-message">
+                            <i class="fas fa-tshirt"></i>
+                            <span>No tienes prendas superiores</span>
+                        </div>
+                    {% endfor %}
                 </div>
                 
-                <!-- Segmento 2 - Medio -->
-                <div class="model-segment segment-2">
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
+                <!-- Segmento 2 - Medio (Pantalones, faldas, shorts) -->
+                <div class="model-segment segment-2" id="segmento-2">
+                    {% for prenda in prendas_segmento_2 %}
+                        <img src="{{ prenda.imagen }}" 
+                             alt="{{ prenda.tipo }} - {{ prenda.color }}"
+                             class="segment-image {% if forloop.first %}active{% endif %}"
+                             data-id="{{ prenda.id|default:'0' }}"
+                             data-tipo="{{ prenda.tipo }}"
+                             data-color="{{ prenda.color }}"
+                             data-index="{{ forloop.counter0 }}">
+                    {% empty %}
+                        <!-- Si no hay prendas, mostrar mensaje -->
+                        <div class="segment-empty-message">
+                            <i class="fas fa-tshirt"></i>
+                            <span>No tienes prendas inferiores</span>
+                        </div>
+                    {% endfor %}
                 </div>
                 
-                <!-- Segmento 3 - Inferior -->
-                <div class="model-segment segment-3">
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" alt="Outfit Casual Femenino" class="active">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Outfit Elegante Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="Outfit Verano Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" alt="Outfit Oficina Femenino" class="">
-                    <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Outfit Noche Femenino" class="">
+                <!-- Segmento 3 - Inferior (Calzado) -->
+                <div class="model-segment segment-3" id="segmento-3">
+                    {% for prenda in prendas_segmento_3 %}
+                        <img src="{{ prenda.imagen }}" 
+                             alt="{{ prenda.tipo }} - {{ prenda.color }}"
+                             class="segment-image {% if forloop.first %}active{% endif %}"
+                             data-id="{{ prenda.id|default:'0' }}"
+                             data-tipo="{{ prenda.tipo }}"
+                             data-color="{{ prenda.color }}"
+                             data-index="{{ forloop.counter0 }}">
+                    {% empty %}
+                        <!-- Si no hay prendas, mostrar mensaje -->
+                        <div class="segment-empty-message">
+                            <i class="fas fa-shoe-prints"></i>
+                            <span>No tienes calzado</span>
+                        </div>
+                    {% endfor %}
                 </div>
                 
-                <!-- Controles del carrusel -->
+                <!-- Controles del carrusel - Solo se muestran si hay al menos 2 prendas -->
+                {% if prendas_segmento_1|length > 1 or prendas_segmento_2|length > 1 or prendas_segmento_3|length > 1 %}
                 <div class="carousel-controls">
-                    <div class="carousel-dot active" data-slide="0"></div>
-                    <div class="carousel-dot" data-slide="1"></div>
-                    <div class="carousel-dot" data-slide="2"></div>
-                    <div class="carousel-dot" data-slide="3"></div>
-                    <div class="carousel-dot" data-slide="4"></div>
+                    {% with max_slides=prendas_segmento_1|length|add:prendas_segmento_2|length|add:prendas_segmento_3|length|divisibleby:3|default:5 %}
+                    {% for i in "01234"|make_list %}
+                        {% if forloop.counter0 < max_slides %}
+                        <div class="carousel-dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}"></div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endwith %}
                 </div>
+                {% endif %}
             </div>
             
             <!-- Formas decorativas -->
@@ -254,21 +288,53 @@
         </div>
     </div>
 
+    <!-- Datos para JavaScript -->
     {{ imagenes_accesorios|json_script:"accesorios_json" }}
+    {{ prendas_segmento_1|json_script:"prendas_segmento_1_json" }}
+    {{ prendas_segmento_2|json_script:"prendas_segmento_2_json" }}
+    {{ prendas_segmento_3|json_script:"prendas_segmento_3_json" }}
 
     <script>
+        console.log("=== INICIALIZACIÓN CARRUSEL ===");
+        
+        // Cargar datos de prendas desde Django
+        try {
+            window.prendasSegmento1 = JSON.parse(
+                document.getElementById("prendas_segmento_1_json").textContent
+            ) || [];
+            
+            window.prendasSegmento2 = JSON.parse(
+                document.getElementById("prendas_segmento_2_json").textContent
+            ) || [];
+            
+            window.prendasSegmento3 = JSON.parse(
+                document.getElementById("prendas_segmento_3_json").textContent
+            ) || [];
+            
+            console.log("✅ Segmento 1 (Superior):", window.prendasSegmento1.length, "prendas");
+            console.log("✅ Segmento 2 (Medio):", window.prendasSegmento2.length, "prendas");
+            console.log("✅ Segmento 3 (Inferior):", window.prendasSegmento3.length, "prendas");
+            
+        } catch (error) {
+            console.error("❌ Error cargando datos de prendas:", error);
+            window.prendasSegmento1 = [];
+            window.prendasSegmento2 = [];
+            window.prendasSegmento3 = [];
+        }
+        
+        // Cargar accesorios
         try {
             window.accesoriosImagenes = JSON.parse(
                 document.getElementById("accesorios_json").textContent
-            );
-            console.log("IMAGENES EN FRONTEND:", window.accesoriosImagenes);
+            ) || [];
+            console.log("✅ Accesorios:", window.accesoriosImagenes.length, "imágenes");
         } catch (error) {
             console.error("Error leyendo accesorios:", error);
             window.accesoriosImagenes = [];
         }
+        
+        console.log("=== FIN INICIALIZACIÓN ===");
     </script>
-
-
 
     <script src="{% static 'js/inicio.js' %}"></script>
     

@@ -244,29 +244,137 @@ def logout_view(request):
     
     return redirect('login')
 
+
+# ... imports y código anterior se mantienen igual ...
+
 @configuracion_requerida
 def dashboard_view(request):
     usuario_id = request.session.get("usuario_id")
 
+    # Obtener accesorios
     accesorios = Armario.objects.filter(
         idUsuario=usuario_id,
         clasificacion="accesorio"
     )
 
-    # SOLO USAR LAS IMÁGENES SEGMENTADAS
+    # SOLO USAR LAS IMÁGENES SEGMENTADAS para accesorios
     imagenes_accesorios = [
         acc.imagen_segmentada
         for acc in accesorios
-        if acc.imagen_segmentada  # solo si existe
+        if acc.imagen_segmentada
     ]
 
+    # OBTENER PRENDAS DEL USUARIO PARA EL CARRUSEL
+    prendas_usuario = Armario.objects.filter(idUsuario=usuario_id)
+    
+    # Preparar datos para el carrusel
+    def preparar_datos_carrusel():
+        segmento_1 = []  # Camisas, tops, sudaderas, chalecos
+        segmento_2 = []  # Pantalones, faldas, shorts
+        segmento_3 = []  # Calzado
+        
+        # Palabras clave para cada categoría (en español e inglés)
+        keywords_segmento_1 = [
+            'camisa', 'blusa', 'top', 't-shirt', 'camiseta', 'playera', 
+            'sudadera', 'hoodie', 'sudader', 'chaleco', 'chaqueta ligera',
+            'shirt', 'blouse', 'tank', 'tank top', 'tank-top', 'sweatshirt',
+            'tshirt', 't shirt', 'tee', 't-shirt', 'camiset', 'suéter ligero',
+            'polo', 'camisa manga larga', 'camisa manga corta', 'blusón',
+            'top corto', 'crop top', 'body', 'bodies'
+        ]
+        
+        keywords_segmento_2 = [
+            'pantalón', 'pantalon', 'jeans', 'pantalones', 'falda', 
+            'skirt', 'shorts', 'bermuda', 'short', 'pants', 'leggings',
+            'trousers', 'slacks', 'jean', 'legging', 'shorts', 'bermudas',
+            'falda larga', 'falda corta', 'minifalda', 'midi', 'maxi',
+            'pantalón corto', 'pantalones cortos', 'pantalón largo',
+            'pantalón de vestir', 'pantalón deportivo'
+        ]
+        
+        keywords_segmento_3 = [
+            'zapato', 'zapatos', 'shoe', 'shoes', 'tenis', 'sneaker', 
+            'sandalias', 'sandalia', 'botas', 'bota', 'tacón', 'tacon',
+            'sneakers', 'boot', 'boots', 'sandals', 'heels', 'flats',
+            'zapatilla', 'zapatillas', 'tacones', 'plataforma', 'mocasín',
+            'zapato deportivo', 'zapato casual', 'zapato formal',
+            'zapato de tacón', 'zapato plano', 'alpargata', 'chancla'
+        ]
+        
+        for prenda in prendas_usuario:
+            tipo_lower = prenda.tipo.lower() if prenda.tipo else ""
+            imagen = prenda.imagen_segmentada if prenda.imagen_segmentada else prenda.imagen
+            
+            if not imagen:
+                continue  # Saltar prendas sin imagen
+                
+            prenda_data = {
+                'imagen': imagen,
+                'tipo': prenda.tipo or "Prenda sin nombre",
+                'color': prenda.color or "Color no especificado",
+                'id': prenda.idPrenda
+            }
+            
+            # Verificar a qué segmento pertenece
+            encontrada = False
+            
+            # Segmento 1: Camisas, tops, sudaderas, chalecos
+            for keyword in keywords_segmento_1:
+                if keyword in tipo_lower:
+                    segmento_1.append(prenda_data)
+                    encontrada = True
+                    break
+            
+            if not encontrada:
+                # Segmento 2: Pantalones, faldas, shorts
+                for keyword in keywords_segmento_2:
+                    if keyword in tipo_lower:
+                        segmento_2.append(prenda_data)
+                        encontrada = True
+                        break
+            
+            if not encontrada:
+                # Segmento 3: Calzado
+                for keyword in keywords_segmento_3:
+                    if keyword in tipo_lower:
+                        segmento_3.append(prenda_data)
+                        encontrada = True
+                        break
+            
+            # Si no coincide con ninguna categoría específica, asignar por defecto al segmento 1
+            if not encontrada:
+                segmento_1.append(prenda_data)
+        
+        # Ordenar por ID para consistencia
+        segmento_1.sort(key=lambda x: x['id'] or 0)
+        segmento_2.sort(key=lambda x: x['id'] or 0)
+        segmento_3.sort(key=lambda x: x['id'] or 0)
+        
+        return segmento_1, segmento_2, segmento_3
+    
+    segmento_1, segmento_2, segmento_3 = preparar_datos_carrusel()
+    
+    # DEBUG: Imprimir información
+    print(f"=== DEBUG CARRUSEL - Usuario: {usuario_id} ===")
+    print(f"Segmento 1 (Superior): {len(segmento_1)} prendas")
+    for p in segmento_1:
+        print(f"  - {p['tipo']} ({p['color']})")
+    
+    print(f"Segmento 2 (Medio): {len(segmento_2)} prendas")
+    for p in segmento_2:
+        print(f"  - {p['tipo']} ({p['color']})")
+    
+    print(f"Segmento 3 (Inferior): {len(segmento_3)} prendas")
+    for p in segmento_3:
+        print(f"  - {p['tipo']} ({p['color']})")
+    print("=" * 50)
+    
     return render(request, "inicio.html", {
-        "imagenes_accesorios": imagenes_accesorios
+        "imagenes_accesorios": imagenes_accesorios,
+        "prendas_segmento_1": segmento_1,
+        "prendas_segmento_2": segmento_2,
+        "prendas_segmento_3": segmento_3
     })
-
-
-
-
 
 
 @configuracion_requerida

@@ -54,34 +54,58 @@ const WEATHER_API_KEY = "8a33fa8635d6adf10672a0fa18b68316";
 const WEATHER_CITY = "Morelia";
 const WEATHER_UNITS = "metric";
 
-// Carrusel de imágenes segmentadas con segmentos TOTAMENTE independientes
+// CARRUSEL DE TRES SEGMENTOS CON IMÁGENES REALES DEL USUARIO
 class SegmentedCarousel {
   constructor() {
-    this.segments = []; // Cada segmento es un carrusel independiente
+    this.segments = [];
     this.init();
   }
 
   init() {
     this.setupSegments();
     this.setupEventListeners();
+    this.adjustCarouselControls();
   }
 
   setupSegments() {
-    // Crear carruseles independientes para cada segmento
-    const segments = [
-      { element: '.segment-1', name: 'Segmento 1' },
-      { element: '.segment-2', name: 'Segmento 2' },
-      { element: '.segment-3', name: 'Segmento 3' }
+    console.log("🔄 Configurando segmentos del carrusel...");
+    
+    const segmentsData = [
+      { 
+        element: '.segment-1', 
+        name: 'Segmento 1 - Superior',
+        imagenes: window.prendasSegmento1 || [],
+        segmentId: 0
+      },
+      { 
+        element: '.segment-2', 
+        name: 'Segmento 2 - Medio',
+        imagenes: window.prendasSegmento2 || [],
+        segmentId: 1
+      },
+      { 
+        element: '.segment-3', 
+        name: 'Segmento 3 - Inferior',
+        imagenes: window.prendasSegmento3 || [],
+        segmentId: 2
+      }
     ];
     
-    segments.forEach((segmentInfo, index) => {
+    segmentsData.forEach((segmentInfo) => {
       const segmentElement = document.querySelector(segmentInfo.element);
       if (segmentElement) {
-        // Crear un carrusel independiente para este segmento
-        const segmentCarousel = new IndependentSegmentCarousel(segmentElement, index);
+        console.log(`🎯 Creando carrusel para ${segmentInfo.name}: ${segmentInfo.imagenes.length} prendas`);
+        
+        const segmentCarousel = new IndependentSegmentCarousel(
+          segmentElement, 
+          segmentInfo.segmentId,
+          segmentInfo.imagenes
+        );
         this.segments.push(segmentCarousel);
       }
     });
+    
+    console.log("✅ Segmentos configurados:", this.segments.length);
   }
 
   setupEventListeners() {
@@ -91,112 +115,229 @@ class SegmentedCarousel {
         e.stopPropagation();
         // Cambiar TODOS los segmentos a este slide
         this.segments.forEach(segment => {
-          segment.goToSlide(index);
-          segment.resume(); // Reanudar si estaba pausado
+          if (segment.totalSlides > 0) {
+            const actualIndex = index % segment.totalSlides;
+            segment.goToSlide(actualIndex);
+            segment.resume(); // Reanudar si estaba pausado
+          }
         });
       });
     });
   }
+
+  adjustCarouselControls() {
+    // Ocultar controles si ningún segmento tiene más de 1 prenda
+    const anySegmentHasMultiple = this.segments.some(segment => segment.totalSlides > 1);
+    const carouselControls = document.querySelector('.carousel-controls');
+    
+    if (carouselControls) {
+      if (!anySegmentHasMultiple) {
+        carouselControls.style.display = 'none';
+      } else {
+        // Ajustar número de puntos según el máximo de prendas
+        const maxSlides = Math.max(
+          ...this.segments.map(segment => segment.totalSlides)
+        );
+        
+        const dots = carouselControls.querySelectorAll('.carousel-dot');
+        dots.forEach((dot, index) => {
+          if (index < maxSlides) {
+            dot.style.display = 'block';
+          } else {
+            dot.style.display = 'none';
+          }
+        });
+      }
+    }
+  }
 }
 
-// Carrusel INDEPENDIENTE para cada segmento
+// CARRUSEL INDEPENDIENTE PARA CADA SEGMENTO
 class IndependentSegmentCarousel {
-  constructor(segmentElement, segmentId) {
+  constructor(segmentElement, segmentId, imagenes = []) {
     this.segment = segmentElement;
     this.segmentId = segmentId;
-    this.currentSlide = Math.floor(Math.random() * 5); // Slide inicial aleatorio
-    this.totalSlides = 5;
+    this.imagenes = imagenes;
+    this.currentSlide = 0;
+    this.totalSlides = this.imagenes.length;
     this.autoPlayInterval = null;
-    this.isPaused = false; // Estado de pausa
+    this.isPaused = false;
     this.isHovering = false;
-    this.init();
+    
+    console.log(`🎨 Segmento ${segmentId}: ${this.totalSlides} prendas cargadas`);
+    
+    if (this.totalSlides > 0) {
+      this.init();
+    } else {
+      this.showEmptyState();
+    }
   }
 
   init() {
     this.setupSegment();
     this.setupEventListeners();
-    this.startAutoPlay();
+    
+    // Solo iniciar autoplay si hay más de 1 prenda
+    if (this.totalSlides > 1) {
+      this.startAutoPlay();
+    }
   }
 
   setupSegment() {
     // Configurar atributos del segmento
     this.segment.dataset.segmentId = this.segmentId;
     this.segment.dataset.currentSlide = this.currentSlide;
+    this.segment.dataset.totalSlides = this.totalSlides;
     
-    // Mostrar la imagen inicial correcta
-    this.updateSegmentDisplay();
+    // Si ya hay imágenes en el DOM (desde Django), solo configurarlas
+    const existingImages = this.segment.querySelectorAll('.segment-image');
     
-    // Agregar indicador de pausa
-    const pauseIndicator = document.createElement('div');
-    pauseIndicator.className = 'segment-pause-indicator';
-    pauseIndicator.innerHTML = '<i class="fas fa-pause"></i>';
-    this.segment.appendChild(pauseIndicator);
+    if (existingImages.length > 0) {
+      console.log(`✅ Segmento ${this.segmentId}: Usando ${existingImages.length} imágenes existentes`);
+      this.updateSegmentDisplay();
+    } else {
+      console.log(`⚠️ Segmento ${this.segmentId}: No se encontraron imágenes en el DOM`);
+    }
+    
+    // Agregar indicador de pausa solo si hay más de 1 prenda
+    if (this.totalSlides > 1) {
+      let pauseIndicator = this.segment.querySelector('.segment-pause-indicator');
+      if (!pauseIndicator) {
+        pauseIndicator = document.createElement('div');
+        pauseIndicator.className = 'segment-pause-indicator';
+        pauseIndicator.innerHTML = '<i class="fas fa-pause"></i>';
+        this.segment.appendChild(pauseIndicator);
+      }
+    }
+  }
+
+  showEmptyState() {
+    // Verificar si ya existe un mensaje de vacío
+    let emptyMessage = this.segment.querySelector('.segment-empty-message');
+    if (!emptyMessage) {
+      emptyMessage = document.createElement('div');
+      emptyMessage.className = 'segment-empty-message';
+      
+      const icon = document.createElement('i');
+      icon.className = 'fas fa-tshirt';
+      
+      const text = document.createElement('span');
+      text.textContent = 'Agrega prendas a tu armario';
+      
+      emptyMessage.appendChild(icon);
+      emptyMessage.appendChild(text);
+      this.segment.appendChild(emptyMessage);
+    }
+    
+    console.log(`📭 Segmento ${this.segmentId}: Mostrando estado vacío`);
   }
 
   setupEventListeners() {
-    // Click en el segmento para pausar/reanudar
-    this.segment.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.togglePause();
-    });
+    // Solo agregar eventos si hay prendas
+    if (this.totalSlides === 0) return;
     
-    // Click en imágenes del segmento
-    const images = this.segment.querySelectorAll('img');
-    images.forEach(img => {
-      img.addEventListener('click', (e) => {
+    // Click en el segmento para pausar/reanudar (solo si hay más de 1 prenda)
+    if (this.totalSlides > 1) {
+      this.segment.addEventListener('click', (e) => {
         e.stopPropagation();
         this.togglePause();
       });
+    }
+    
+    // Click en imágenes del segmento
+    const images = this.segment.querySelectorAll('.segment-image');
+    images.forEach(img => {
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.totalSlides > 1) {
+          this.togglePause();
+        }
+      });
     });
     
-    // Hover
-    this.segment.addEventListener('mouseenter', () => {
-      this.isHovering = true;
-      this.stopAutoPlay();
-    });
-    
-    this.segment.addEventListener('mouseleave', () => {
-      this.isHovering = false;
-      if (!this.isPaused) {
-        this.startAutoPlay();
-      }
-    });
+    // Hover solo si hay más de 1 prenda
+    if (this.totalSlides > 1) {
+      this.segment.addEventListener('mouseenter', () => {
+        this.isHovering = true;
+        this.stopAutoPlay();
+      });
+      
+      this.segment.addEventListener('mouseleave', () => {
+        this.isHovering = false;
+        if (!this.isPaused) {
+          this.startAutoPlay();
+        }
+      });
+    }
   }
 
   goToSlide(slideIndex) {
+    if (this.totalSlides === 0) return;
+    
+    // Asegurarse de que el índice esté dentro del rango
+    slideIndex = slideIndex % this.totalSlides;
+    if (slideIndex < 0) slideIndex = this.totalSlides - 1;
+    
     this.currentSlide = slideIndex;
     this.segment.dataset.currentSlide = slideIndex;
     this.updateSegmentDisplay();
   }
 
   nextSlide() {
+    if (this.totalSlides <= 1) return;
+    
     this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
     this.segment.dataset.currentSlide = this.currentSlide;
     this.updateSegmentDisplay();
   }
 
   updateSegmentDisplay() {
-    const images = this.segment.querySelectorAll("img");
+    const images = this.segment.querySelectorAll(".segment-image");
+    
+    if (images.length === 0) {
+      console.log(`⚠️ Segmento ${this.segmentId}: No hay imágenes para mostrar`);
+      return;
+    }
+    
     images.forEach((img, index) => {
-      img.classList.toggle("active", index === this.currentSlide);
+      if (index === this.currentSlide) {
+        img.style.display = "block";
+        img.classList.add("active");
+        img.classList.add("fade-in");
+        
+        // Remover clase fade-in después de la animación
+        setTimeout(() => {
+          img.classList.remove("fade-in");
+        }, 500);
+        
+        // Actualizar información en tooltip
+        const tipo = img.dataset.tipo || 'Prenda';
+        const color = img.dataset.color || 'Color no especificado';
+        this.segment.title = `${tipo} - ${color}`;
+      } else {
+        img.style.display = "none";
+        img.classList.remove("active");
+      }
     });
   }
 
   startAutoPlay() {
-    // No iniciar si está pausado
-    if (this.isPaused) return;
+    // No iniciar si está pausado o no hay suficientes imágenes
+    if (this.isPaused || this.totalSlides <= 1) return;
     
     // Limpiar intervalo anterior si existe
     if (this.autoPlayInterval) {
       clearInterval(this.autoPlayInterval);
     }
     
-    // Intervalo aleatorio para cada segmento (entre 2.5 y 4 segundos)
-    const interval = Math.floor(Math.random() * 1500) + 2500;
+    // Intervalo aleatorio para cada segmento (entre 3 y 5 segundos)
+    const interval = Math.floor(Math.random() * 2000) + 3000;
     
     this.autoPlayInterval = setInterval(() => {
       this.nextSlide();
     }, interval);
+    
+    console.log(`▶️ Segmento ${this.segmentId}: Autoplay iniciado (${interval}ms)`);
   }
 
   stopAutoPlay() {
@@ -207,17 +348,22 @@ class IndependentSegmentCarousel {
   }
 
   togglePause() {
+    // Si no hay suficientes imágenes, no hacer nada
+    if (this.totalSlides <= 1) return;
+    
     this.isPaused = !this.isPaused;
     
     if (this.isPaused) {
       this.stopAutoPlay();
       this.segment.classList.add('paused');
       this.showPauseIndicator();
+      console.log(`⏸️ Segmento ${this.segmentId}: Pausado`);
     } else {
       this.segment.classList.remove('paused');
       if (!this.isHovering) {
         this.startAutoPlay();
       }
+      console.log(`▶️ Segmento ${this.segmentId}: Reanudado`);
     }
   }
 
@@ -247,7 +393,7 @@ class IndependentSegmentCarousel {
   }
 }
 
-// Clase para manejar carruseles individuales en accesorios (MANTENIDO IGUAL)
+// Clase para manejar carruseles individuales en accesorios
 class AccessoryCarousel {
   constructor(containerElement) {
     this.container = containerElement;
@@ -261,15 +407,18 @@ class AccessoryCarousel {
 
   init() {
     this.images = this.generateRandomImages();
-    this.render();
-    this.setupEventListeners();
-    this.startAutoPlay();
+    if (this.images.length > 0) {
+      this.render();
+      this.setupEventListeners();
+      if (this.images.length > 1) {
+        this.startAutoPlay();
+      }
+    }
   }
 
   generateRandomImages() {
     return window.accesoriosImagenes || [];
-}
-
+  }
 
   render() {
     const carouselHTML = `
@@ -281,6 +430,7 @@ class AccessoryCarousel {
                  class="accessory-carousel-image ${index === 0 ? 'active' : ''}">
           `).join('')}
         </div>
+        ${this.images.length > 1 ? `
         <div class="accessory-carousel-nav">
           <button class="accessory-carousel-prev">
             <i class="fas fa-chevron-left"></i>
@@ -295,11 +445,10 @@ class AccessoryCarousel {
                  data-index="${index}"></div>
           `).join('')}
         </div>
+        ` : ''}
         <div class="accessory-position-indicator">1/${this.images.length}</div>
         <div class="accessory-text">Accesorio ${this.container.dataset.id}</div>
-        <div class="pause-indicator">
-          <i class="fas fa-pause"></i>
-        </div>
+        ${this.images.length > 1 ? '<div class="pause-indicator"><i class="fas fa-pause"></i></div>' : ''}
       </div>
       <button class="delete-btn" data-id="${this.container.dataset.id}">
         <i class="fas fa-times"></i>
@@ -310,6 +459,9 @@ class AccessoryCarousel {
   }
 
   setupEventListeners() {
+    // Solo agregar eventos si hay más de 1 imagen
+    if (this.images.length <= 1) return;
+    
     const prevBtn = this.container.querySelector('.accessory-carousel-prev');
     const nextBtn = this.container.querySelector('.accessory-carousel-next');
     
@@ -371,6 +523,8 @@ class AccessoryCarousel {
   }
 
   goToSlide(index) {
+    if (this.images.length === 0) return;
+    
     if (index < 0) index = this.images.length - 1;
     if (index >= this.images.length) index = 0;
     
@@ -406,7 +560,7 @@ class AccessoryCarousel {
   }
 
   startAutoPlay() {
-    if (this.isPausedByClick) return;
+    if (this.isPausedByClick || this.images.length <= 1) return;
     
     if (this.autoPlayInterval) {
       clearInterval(this.autoPlayInterval);
@@ -427,6 +581,8 @@ class AccessoryCarousel {
   }
 
   pauseByClick() {
+    if (this.images.length <= 1) return;
+    
     if (this.isPausedByClick) {
       this.isPausedByClick = false;
       if (!this.isHovering) {
@@ -485,8 +641,22 @@ function initializeDefaultAccessories() {
   accessories = [];
   accessoryCarousels = [];
   
-  for (let i = 0; i < 3; i++) {
-    addAccessory();
+  // Solo crear accesorios si hay imágenes
+  if (window.accesoriosImagenes && window.accesoriosImagenes.length > 0) {
+    // Crear un accesorio por cada imagen
+    window.accesoriosImagenes.forEach((img, index) => {
+      if (index < 3) { // Máximo 3 accesorios
+        const accessory = addAccessory();
+        if (accessory) {
+          // Reemplazar las imágenes del accesorio con la imagen real
+          const carouselIndex = accessoryCarousels.length - 1;
+          if (carouselIndex >= 0) {
+            accessoryCarousels[carouselIndex].images = [img];
+            accessoryCarousels[carouselIndex].render();
+          }
+        }
+      }
+    });
   }
 }
 
@@ -494,15 +664,12 @@ function addAccessory() {
   const accessoriesGrid = document.getElementById("accessoriesGrid");
   if (!accessoriesGrid) return;
   
-  // Nuevo ID correcto
   const accessoryId = accessories.length + 1;
-  
   const accessory = document.createElement("div");
   accessory.className = "accessory-container";
   accessory.dataset.id = accessoryId;
   
   accessoriesGrid.appendChild(accessory);
-  
   accessories.push({
     id: accessoryId,
     element: accessory
@@ -526,7 +693,6 @@ function addAccessory() {
 
   return accessory;
 }
-
 
 function makeDraggable(element) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -627,13 +793,11 @@ function updateAccessoryNumbers() {
   accessories.forEach((accessory, index) => {
     const newId = index + 1;
 
-    // Cambiar texto del accesorio
     const accessoryText = accessory.element.querySelector('.accessory-text');
     if (accessoryText) {
       accessoryText.textContent = `Accesorio ${newId}`;
     }
 
-    // Cambiar ID del botón X
     const deleteBtn = accessory.element.querySelector('.delete-btn');
     if (deleteBtn) {
       deleteBtn.dataset.id = newId;
@@ -643,7 +807,6 @@ function updateAccessoryNumbers() {
     accessory.element.dataset.id = newId;
   });
 }
-
 
 async function loadWeather() {
   const weatherElement = document.getElementById("weather-display");
@@ -739,6 +902,8 @@ function getIconColor(iconCode) {
 
 // Inicialización principal
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 Inicializando aplicación DressCode...");
+
   // Menú lateral
   const menuToggle = document.querySelector(".menu-toggle");
   const sideMenu = document.querySelector(".side-menu");
@@ -779,38 +944,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cargar clima
   loadWeather();
 
-  // Inicializar carrusel principal con segmentos TOTALMENTE independientes
+  // INICIALIZAR CARRUSEL PRINCIPAL
+  console.log("🔄 Inicializando carrusel principal...");
   mainCarousel = new SegmentedCarousel();
+  console.log("✅ Carrusel principal inicializado");
 
-  // Inicializar accesorios
+  // INICIALIZAR ACCESORIOS
   const toggleAccessoriesBtn = document.getElementById("toggle-accessories");
   const accessoriesPanel = document.getElementById("accessoriesPanel");
   const addAccessoryBtn = document.getElementById("addAccessoryBtn");
   const accessoriesGrid = document.getElementById("accessoriesGrid");
 
   if (toggleAccessoriesBtn && accessoriesPanel && addAccessoryBtn && accessoriesGrid) {
-
-    // Si hay accesorios reales en BD, mostramos solo esos
-    if (window.accesoriosImagenes && window.accesoriosImagenes.length > 0) {
-
-        accessoriesGrid.innerHTML = "";  // limpiar
-
-        const acc = document.createElement("div");
-        acc.className = "accessory-container";
-        acc.dataset.id = 1;
-        accessoriesGrid.appendChild(acc);
-
-        new AccessoryCarousel(acc);
-
-    } else {
-        // Si no hay accesorios en BD, cargar accesorios de prueba
-        initializeDefaultAccessories();
-    }
+    // Inicializar accesorios con imágenes reales del usuario
+    initializeDefaultAccessories();
 
     // Toggle del panel de accesorios
     toggleAccessoriesBtn.addEventListener("click", function () {
         accessoriesPanel.classList.toggle("active");
-        
         const icon = this.querySelector("i");
         if (accessoriesPanel.classList.contains("active")) {
             this.innerHTML = '<i class="fas fa-minus-circle"></i> Ocultar accesorios';
@@ -823,7 +974,6 @@ document.addEventListener("DOMContentLoaded", () => {
     addAccessoryBtn.addEventListener("click", addAccessory);
   }
 
-
   // Botón de favoritos
   document.querySelectorAll(".favorites-trigger").forEach((trigger) => {
     trigger.addEventListener("click", function (e) {
@@ -832,4 +982,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "{% url 'my_closet' %}";
     });
   });
+
+  console.log("✅ Aplicación inicializada correctamente");
 });
