@@ -188,8 +188,8 @@ def register_password_view(request):
             if 'email' in request.session:
                 del request.session['email']
             
-            messages.success(request, "¡Cuenta creada con éxito! ¡Bienvenido fashionista!")
-            return redirect('login')
+            # ✅ MODIFICADO: Redirigir a login con parámetro en URL
+            return redirect(reverse('login') + '?registration_success=true')
     
     return render(request, 'Password.html')
 
@@ -201,15 +201,10 @@ def login_view(request):
     error = None 
     show_success_modal = False
 
-    # Verificar si debemos mostrar el modal de éxito
-    if request.COOKIES.get('show_success_modal') == 'true':
+    # ✅ VERIFICAR PARÁMETRO EN LA URL
+    registration_success = request.GET.get('registration_success')
+    if registration_success == 'true':
         show_success_modal = True
-        response = render(request, 'login.html', {
-            'error': error, 
-            'show_success_modal': show_success_modal
-        })
-        response.set_cookie('show_success_modal', '', max_age=0)  
-        return response
 
     if request.method == 'POST':
         email = request.POST.get('email')

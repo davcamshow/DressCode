@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("theme-toggle");
 
@@ -23,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("theme", newTheme);
 
     // Actualizar íconos
-    updateIcons(newTheme); });
+    updateIcons(newTheme); 
+  });
     
   // Función para mostrar/ocultar íconos
   function updateIcons(theme) {
@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
 // Inicializar fondo dinámico con partículas similares al register
 function initDynamicBackground() {
   const canvas = document.getElementById('dynamic-bg');
@@ -228,12 +229,28 @@ function initHoverEffects() {
   });
 }
 
-// Mostrar modal de éxito si hay un mensaje de éxito
+// ✅ NUEVA FUNCIÓN: Verificar parámetro en la URL para mostrar modal
 function checkSuccessMessages() {
-  const successMessages = document.querySelectorAll('.alert-success');
-  if (successMessages.length > 0) {
+  // Obtener parámetros de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const registrationSuccess = urlParams.get('registration_success');
+  
+  console.log("🔍 Parámetros URL:", urlParams.toString());
+  console.log("🔍 registration_success:", registrationSuccess);
+  
+  // SOLO mostrar el modal si el parámetro es 'true'
+  if (registrationSuccess === 'true') {
+    console.log("✅ Detectado registro exitoso desde Password.html");
     setTimeout(function() {
-      document.getElementById('successModal').style.display = 'flex';
+      const modal = document.getElementById('successModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        console.log("✅ Modal de éxito mostrado");
+        
+        // Limpiar la URL sin recargar la página
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }
     }, 500);
   }
 }
@@ -257,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initDynamicBackground();
   createFloatingParticles();
   initHoverEffects();
-  checkSuccessMessages();
+  checkSuccessMessages(); // ✅ IMPORTANTE: Llamar esta función
   autoCloseMessages();
   
   // Cerrar modal al hacer clic fuera
