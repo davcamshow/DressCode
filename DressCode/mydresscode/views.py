@@ -249,12 +249,24 @@ def logout_view(request):
     
     return redirect('login')
 
-
-# Vistas protegidas
 @configuracion_requerida
 def dashboard_view(request):
-    """Destino después del login exitoso/onboarding."""
-    return render(request, 'inicio.html', {'message': '¡Bienvenido a tu Armario Digital!'})
+    usuario_id = request.session.get("usuario_id")
+
+    # Obtener los accesorios del usuario
+    accesorios = Armario.objects.filter(
+        idUsuario=usuario_id,
+        clasificacion="accesorio"
+    )
+
+    # Extraer URLs reales de imágenes
+    imagenes_accesorios = [a.imagen for a in accesorios]
+
+    # Renderizar inicio.html con las imágenes
+    return render(request, "inicio.html", {
+        "imagenes_accesorios": imagenes_accesorios
+    })
+
 
 
 @configuracion_requerida
@@ -528,6 +540,7 @@ def segmentar_todas_las_prendas(request):
 
 def vision_computer(request):
     return render(request, 'visioncomputer.html')
+
 def outfit(request):
     return render(request, 'outfit.html')
 

@@ -254,6 +254,22 @@
         </div>
     </div>
 
+    {{ imagenes_accesorios|json_script:"accesorios_json" }}
+
+    <script>
+        try {
+            window.accesoriosImagenes = JSON.parse(
+                document.getElementById("accesorios_json").textContent
+            );
+            console.log("IMAGENES EN FRONTEND:", window.accesoriosImagenes);
+        } catch (error) {
+            console.error("Error leyendo accesorios:", error);
+            window.accesoriosImagenes = [];
+        }
+    </script>
+
+
+
     <script src="{% static 'js/inicio.js' %}"></script>
     
 </body>

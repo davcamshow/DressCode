@@ -267,44 +267,9 @@ class AccessoryCarousel {
   }
 
   generateRandomImages() {
-    const accessoryImageSets = [
-      [
-        "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      ],
-      [
-        "https://images.unsplash.com/photo-1491553895911-0055eca6402d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      ],
-      [
-        "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1592921870789-04563d55041c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1539185441755-769473a23570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      ],
-      [
-        "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1588117260148-b47818741c74?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      ],
-      [
-        "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-        "https://images.unsplash.com/photo-1556305078-9cbbd5a2d2f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      ]
-    ];
+    return window.accesoriosImagenes || [];
+}
 
-    const randomSet = accessoryImageSets[Math.floor(Math.random() * accessoryImageSets.length)];
-    const numImages = Math.floor(Math.random() * 3) + 3;
-    
-    let selectedImages = [];
-    for (let i = 0; i < numImages; i++) {
-      selectedImages.push(randomSet[i % randomSet.length]);
-    }
-    
-    return selectedImages;
-  }
 
   render() {
     const carouselHTML = `
@@ -814,45 +779,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleAccessoriesBtn = document.getElementById("toggle-accessories");
   const accessoriesPanel = document.getElementById("accessoriesPanel");
   const addAccessoryBtn = document.getElementById("addAccessoryBtn");
+  const accessoriesGrid = document.getElementById("accessoriesGrid");
 
-  if (toggleAccessoriesBtn && accessoriesPanel && addAccessoryBtn) {
-    // Inicializar accesorios por defecto
-    initializeDefaultAccessories();
-    
+  if (toggleAccessoriesBtn && accessoriesPanel && addAccessoryBtn && accessoriesGrid) {
+
+    // Si hay accesorios reales en BD, mostramos solo esos
+    if (window.accesoriosImagenes && window.accesoriosImagenes.length > 0) {
+
+        accessoriesGrid.innerHTML = "";  // limpiar
+
+        const acc = document.createElement("div");
+        acc.className = "accessory-container";
+        acc.dataset.id = 1;
+        accessoriesGrid.appendChild(acc);
+
+        new AccessoryCarousel(acc);
+
+    } else {
+        // Si no hay accesorios en BD, cargar accesorios de prueba
+        initializeDefaultAccessories();
+    }
+
     // Toggle del panel de accesorios
     toggleAccessoriesBtn.addEventListener("click", function () {
-      accessoriesPanel.classList.toggle("active");
-      
-      const icon = this.querySelector("i");
-      if (accessoriesPanel.classList.contains("active")) {
-        icon.className = "fas fa-minus-circle";
-        this.innerHTML = '<i class="fas fa-minus-circle"></i> Ocultar accesorios';
-      } else {
-        icon.className = "fas fa-plus-circle";
-        this.innerHTML = '<i class="fas fa-plus-circle"></i> Activar accesorios';
-      }
+        accessoriesPanel.classList.toggle("active");
+        
+        const icon = this.querySelector("i");
+        if (accessoriesPanel.classList.contains("active")) {
+            this.innerHTML = '<i class="fas fa-minus-circle"></i> Ocultar accesorios';
+        } else {
+            this.innerHTML = '<i class="fas fa-plus-circle"></i> Activar accesorios';
+        }
     });
-    
+
     // Añadir nuevo accesorio
     addAccessoryBtn.addEventListener("click", addAccessory);
-    
-    // Cerrar panel al hacer clic fuera
-    document.addEventListener("click", function (e) {
-      if (!accessoriesPanel.contains(e.target) && 
-          !toggleAccessoriesBtn.contains(e.target) && 
-          accessoriesPanel.classList.contains("active")) {
-        accessoriesPanel.classList.remove("active");
-        const icon = toggleAccessoriesBtn.querySelector("i");
-        icon.className = "fas fa-plus-circle";
-        toggleAccessoriesBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Activar accesorios';
-      }
-    });
-    
-    // Prevenir que los clicks dentro del panel cierren el panel
-    accessoriesPanel.addEventListener("click", function (e) {
-      e.stopPropagation();
-    });
   }
+
 
   // Botón de favoritos
   document.querySelectorAll(".favorites-trigger").forEach((trigger) => {
