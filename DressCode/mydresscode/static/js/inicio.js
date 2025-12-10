@@ -494,6 +494,7 @@ function addAccessory() {
   const accessoriesGrid = document.getElementById("accessoriesGrid");
   if (!accessoriesGrid) return;
   
+  // Nuevo ID correcto
   const accessoryId = accessories.length + 1;
   
   const accessory = document.createElement("div");
@@ -501,29 +502,31 @@ function addAccessory() {
   accessory.dataset.id = accessoryId;
   
   accessoriesGrid.appendChild(accessory);
+  
   accessories.push({
     id: accessoryId,
     element: accessory
   });
-  
+
+  // Crear carrusel
   const carousel = new AccessoryCarousel(accessory);
   accessoryCarousels.push(carousel);
   
+  // Activar botón de eliminar
   setTimeout(() => {
     const deleteBtn = accessory.querySelector('.delete-btn');
     if (deleteBtn) {
-      deleteBtn.addEventListener('click', function(e) {
+      deleteBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         e.preventDefault();
         removeAccessory(parseInt(this.dataset.id));
       });
     }
   }, 100);
-  
-  makeDraggable(accessory);
-  
+
   return accessory;
 }
+
 
 function makeDraggable(element) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -623,20 +626,24 @@ function removeAccessory(id) {
 function updateAccessoryNumbers() {
   accessories.forEach((accessory, index) => {
     const newId = index + 1;
+
+    // Cambiar texto del accesorio
     const accessoryText = accessory.element.querySelector('.accessory-text');
     if (accessoryText) {
       accessoryText.textContent = `Accesorio ${newId}`;
     }
-    
+
+    // Cambiar ID del botón X
     const deleteBtn = accessory.element.querySelector('.delete-btn');
     if (deleteBtn) {
       deleteBtn.dataset.id = newId;
     }
-    
+
     accessory.id = newId;
     accessory.element.dataset.id = newId;
   });
 }
+
 
 async function loadWeather() {
   const weatherElement = document.getElementById("weather-display");

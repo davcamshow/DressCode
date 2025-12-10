@@ -253,19 +253,24 @@ def logout_view(request):
 def dashboard_view(request):
     usuario_id = request.session.get("usuario_id")
 
-    # Obtener los accesorios del usuario
     accesorios = Armario.objects.filter(
         idUsuario=usuario_id,
         clasificacion="accesorio"
     )
 
-    # Extraer URLs reales de imágenes
-    imagenes_accesorios = [a.imagen for a in accesorios]
+    # SOLO USAR LAS IMÁGENES SEGMENTADAS
+    imagenes_accesorios = [
+        acc.imagen_segmentada
+        for acc in accesorios
+        if acc.imagen_segmentada  # solo si existe
+    ]
 
-    # Renderizar inicio.html con las imágenes
     return render(request, "inicio.html", {
         "imagenes_accesorios": imagenes_accesorios
     })
+
+
+
 
 
 
