@@ -1,123 +1,869 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Prendas Guardadas</title>
+    <title>Mis Outfits Guardados</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         padding: 20px;
+        background-color: #f5f5f5;
       }
-      .outfit {
-        border: 2px solid #a47968;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 20px 0;
+      
+      .outfit-container {
+        max-width: 1200px;
+        margin: 0 auto;
       }
-      .prendas-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
         gap: 15px;
-        margin-top: 15px;
       }
-      .prenda-card {
-        text-align: center;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 10px;
+      
+      .page-title {
+        font-size: 28px;
+        color: #333;
+        margin: 0;
       }
-      .prenda-card img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 5px;
+      
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
       }
-      .loading {
-        color: #666;
-        font-style: italic;
-      }
-
-      .acciones {
-        margin-bottom: 20px;
-      }
-
-      .btn-favoritos {
-        display: inline-block;
+      
+      .btn-favoritos, .btn-refresh {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         padding: 10px 18px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(8px);
-        border-radius: 8px;
-        color: #3e2c1c; /* café */
+        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        color: white;
         font-weight: 600;
         text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      .btn-refresh {
+        background: linear-gradient(135deg, #5b9b9d 0%, #3a7a7c 100%);
+      }
+      
+      .btn-favoritos:hover, .btn-refresh:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      
+      .outfits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      
+      .outfit-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+      }
+      
+      .outfit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+      
+      .outfit-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      
+      .outfit-info {
+        padding: 15px;
+      }
+      
+      .outfit-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .outfit-id {
+        font-size: 12px;
+        color: #666;
+        background: #f0f0f0;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+      
+      .outfit-details {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      
+      .prendas-count {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      
+      .prendas-preview {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+      }
+      
+      .prenda-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+      }
+      
+      .loading {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+        font-size: 18px;
+      }
+      
+      .loading i {
+        margin-right: 10px;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .no-outfits {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+        font-size: 16px;
+        grid-column: 1 / -1;
+      }
+      
+      .no-outfits i {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: #ddd;
+        display: block;
+      }
+      
+      .outfit-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+      
+      .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .btn-view {
+        background: #4caf50;
+        color: white;
+      }
+      
+      .btn-view:hover {
+        background: #45a049;
+        transform: translateY(-1px);
+      }
+      
+      .btn-favorite {
+        background: #ff9800;
+        color: white;
+      }
+      
+      .btn-favorite:hover {
+        background: #f57c00;
+        transform: translateY(-1px);
+      }
+      
+      .btn-favorite.active {
+        background: #f44336;
+      }
+      
+      .btn-delete {
+        background: #f44336;
+        color: white;
+      }
+      
+      .btn-delete:hover {
+        background: #d32f2f;
+        transform: translateY(-1px);
+      }
+      
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        max-width: 350px;
+      }
+      
+      .notification.error {
+        background: #f44336;
+      }
+      
+      .notification.info {
+        background: #2196f3;
+      }
+      
+      .notification.warning {
+        background: #ff9800;
+      }
+      
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+      
+      .delete-confirmation-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .delete-modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        animation: modalIn 0.3s ease;
+      }
+      
+      @keyframes modalIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      
+      .delete-modal-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      
+      .delete-modal-message {
+        margin-bottom: 20px;
+        color: #666;
+        line-height: 1.5;
+      }
+      
+      .delete-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      
+      .modal-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
         transition: all 0.3s ease;
       }
-
-      .btn-favoritos:hover {
-        background: linear-gradient(135deg, #f5e6d3, #e0c097);
-        color: #000;
+      
+      .modal-btn-cancel {
+        background: #f0f0f0;
+        color: #333;
+      }
+      
+      .modal-btn-cancel:hover {
+        background: #e0e0e0;
+      }
+      
+      .modal-btn-delete {
+        background: #f44336;
+        color: white;
+      }
+      
+      .modal-btn-delete:hover {
+        background: #d32f2f;
+      }
+      
+      .outfit-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      
+      .stat-item {
+        text-align: center;
+      }
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #e91e63;
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
     </style>
   </head>
   <body>
-    <h1>Prendas de tus Outfits Guardados</h1>
-    <!-- Botón para ver favoritos -->
-    <div class="acciones">
-      <a href="{% url 'ver_outfits_favoritos' %}" class="btn-favoritos">
-        <i class="fas fa-star"></i> Ver Favoritos
-      </a>
+    <div class="outfit-container">
+      <!-- Modal de confirmación para eliminar -->
+      <div id="deleteConfirmationModal" class="delete-confirmation-modal">
+        <div class="delete-modal-content">
+          <div class="delete-modal-title">⚠️ Confirmar Eliminación</div>
+          <div class="delete-modal-message" id="deleteModalMessage">
+            ¿Estás seguro de que quieres eliminar este outfit? Esta acción no se puede deshacer.
+          </div>
+          <div class="delete-modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
+              Cancelar
+            </button>
+            <button class="modal-btn modal-btn-delete" id="confirmDeleteBtn">
+              Sí, Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notificación -->
+      <div id="notification" class="notification" style="display: none;">
+        <span id="notification-message"></span>
+      </div>
+      
+      <!-- Header de página -->
+      <div class="page-header">
+        <h1 class="page-title">👗 Mis Outfits Guardados</h1>
+        <div class="header-buttons">
+          <a href="{% url 'ver_outfits_favoritos' %}" class="btn-favoritos">
+            <i class="fas fa-star"></i> Ver Favoritos
+          </a>
+          <button class="btn-refresh" onclick="loadOutfits()">
+            <i class="fas fa-sync-alt"></i> Actualizar
+          </button>
+        </div>
+      </div>
+      
+      <!-- Estadísticas -->
+      <div id="outfitStats" class="outfit-stats" style="display: none;">
+        <div class="stat-item">
+          <div class="stat-value" id="totalOutfits">0</div>
+          <div class="stat-label">Total Outfits</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="totalPrendas">0</div>
+          <div class="stat-label">Total Prendas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="favoriteOutfits">0</div>
+          <div class="stat-label">Favoritos</div>
+        </div>
+      </div>
+      
+      <!-- Grid de outfits -->
+      <div id="outfits-grid" class="outfits-grid">
+        <div class="loading">
+          <i class="fas fa-spinner"></i> Cargando outfits...
+        </div>
+      </div>
     </div>
 
-    <div id="outfits-container" class="loading">Cargando prendas...</div>
-
     <script>
-      fetch("/api/obtener-recomendaciones/")
-        .then((r) => r.json())
-        .then((data) => {
-          const container = document.getElementById("outfits-container");
-
-          if (data.success && data.recomendaciones.length > 0) {
-            container.innerHTML = "";
-
-            data.recomendaciones.forEach((outfit) => {
-              const outfitDiv = document.createElement("div");
-              outfitDiv.className = "outfit";
-
-              let prendasHTML = "";
-              if (outfit.prendas && outfit.prendas.length > 0) {
-                prendasHTML = `
-                            <div class="prendas-grid">
-                                ${outfit.prendas
-                                  .map(
-                                    (prenda) => `
-                                    <div class="prenda-card">
-                                        <img src="${prenda.imagen_url}" 
-                                             alt="${prenda.tipo}"
-                                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSI1MCIgeT0iNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7cHJlbmRhLnRpcG99PC90ZXh0Pjwvc3ZnPg=='">
-                                        <div><strong>${prenda.tipo}</strong></div>
-                                    </div>
-                                `
-                                  )
-                                  .join("")}
-                            </div>
-                        `;
-              }
-
-              outfitDiv.innerHTML = `
-                        <h2>${outfit.nombre}</h2>
-                        <p>📅 ${outfit.fecha_creacion} | 🌤️ ${outfit.clima} | 👕 ${outfit.total_prendas} prendas</p>
-                        ${prendasHTML}
-                    `;
-
-              container.appendChild(outfitDiv);
-            });
+      // Variables globales
+      let currentOutfitToDelete = null;
+      let outfitsData = [];
+      
+      // Cargar outfits al cargar la página
+      document.addEventListener("DOMContentLoaded", function() {
+        loadOutfits();
+        
+        // Verificar si hay parámetros en la URL para mostrar notificaciones
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('saved') === 'true') {
+          showNotification('✅ Outfit guardado exitosamente', 'success');
+        }
+        if (urlParams.get('deleted') === 'true') {
+          showNotification('🗑️ Outfit eliminado exitosamente', 'info');
+        }
+      });
+      
+      function loadOutfits() {
+        const outfitsGrid = document.getElementById("outfits-grid");
+        outfitsGrid.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Cargando outfits...</div>';
+        
+        fetch("/api/obtener-recomendaciones/")
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            outfitsData = data.recomendaciones || [];
+            renderOutfits(outfitsData);
+            updateStats(outfitsData);
+          })
+          .catch(error => {
+            outfitsGrid.innerHTML = `
+              <div class="no-outfits error">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error al cargar los outfits: ${error.message}</p>
+                <button onclick="loadOutfits()" style="margin-top: 15px; padding: 8px 16px; background: #5b9b9d; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                  <i class="fas fa-redo"></i> Reintentar
+                </button>
+              </div>
+            `;
+            console.error("Error loading outfits:", error);
+          });
+      }
+      
+      function renderOutfits(outfits) {
+        const outfitsGrid = document.getElementById("outfits-grid");
+        outfitsGrid.innerHTML = '';
+        
+        if (outfits && outfits.length > 0) {
+          outfits.forEach(outfit => {
+            const outfitCard = createOutfitCard(outfit);
+            outfitsGrid.appendChild(outfitCard);
+          });
+        } else {
+          outfitsGrid.innerHTML = `
+            <div class="no-outfits">
+              <i class="fas fa-tshirt"></i>
+              <p>No tienes outfits guardados aún.</p>
+              <p>¡Crea tu primer outfit en la página principal!</p>
+              <a href="/inicio/" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #e91e63; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                <i class="fas fa-plus"></i> Crear Outfit
+              </a>
+            </div>
+          `;
+        }
+      }
+      
+      function updateStats(outfits) {
+        const statsDiv = document.getElementById("outfitStats");
+        if (outfits.length > 0) {
+          statsDiv.style.display = 'flex';
+          
+          // Calcular estadísticas
+          const totalOutfits = outfits.length;
+          const totalPrendas = outfits.reduce((sum, outfit) => sum + (outfit.total_prendas || 0), 0);
+          const favoriteOutfits = outfits.filter(outfit => outfit.es_favorito).length;
+          
+          document.getElementById('totalOutfits').textContent = totalOutfits;
+          document.getElementById('totalPrendas').textContent = totalPrendas;
+          document.getElementById('favoriteOutfits').textContent = favoriteOutfits;
+        } else {
+          statsDiv.style.display = 'none';
+        }
+      }
+      
+      function createOutfitCard(outfit) {
+        const card = document.createElement("div");
+        card.className = "outfit-card";
+        card.dataset.outfitId = outfit.id;
+        
+        // Crear imagen principal
+        const mainImage = outfit.imagen_url || (outfit.prendas && outfit.prendas[0]?.imagen_url) || '';
+        
+        // Contar total de prendas
+        const totalPrendas = outfit.total_prendas || (outfit.prendas ? outfit.prendas.length : 0);
+        
+        // Preparar miniaturas de prendas
+        const previewImages = outfit.prendas ? outfit.prendas.slice(0, 4).map(p => p.imagen_url) : [];
+        
+        card.innerHTML = `
+          <img src="${mainImage}" alt="${outfit.nombre}" class="outfit-image" 
+               onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+${encodeURIComponent(outfit.nombre)}</dtext></svg>'">
+          <div class="outfit-info">
+            <h3 class="outfit-name">
+              ${outfit.nombre}
+              <span class="outfit-id">#${outfit.id}</span>
+            </h3>
+            <div class="outfit-details">
+              <span><i class="fas fa-calendar"></i> ${outfit.fecha_creacion}</span>
+              <span><i class="fas fa-cloud"></i> ${outfit.clima || 'Templado'}</span>
+              <span class="prendas-count"><i class="fas fa-tshirt"></i> ${totalPrendas}</span>
+            </div>
+            
+            ${previewImages.length > 0 ? `
+              <div class="prendas-preview">
+                ${previewImages.map((img, index) => `
+                  <img src="${img}" alt="Prenda ${index + 1}" class="prenda-thumb"
+                       onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                `).join('')}
+                ${totalPrendas > 4 ? `<div class="prenda-thumb" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:12px; color:#666;">
+                  +${totalPrendas - 4}
+                </div>` : ''}
+              </div>
+            ` : ''}
+            
+            <div class="outfit-actions">
+              <button class="action-btn btn-view" onclick="viewOutfit(${outfit.id})">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              <button class="action-btn btn-favorite ${outfit.es_favorito ? 'active' : ''}" 
+                      onclick="toggleFavorite(${outfit.id}, this, '${outfit.nombre}')">
+                <i class="fas fa-star"></i> ${outfit.es_favorito ? 'Quitar' : 'Fav'}
+              </button>
+              <button class="action-btn btn-delete" onclick="confirmDeleteOutfit(${outfit.id}, '${outfit.nombre}')">
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+        
+        return card;
+      }
+      
+      function viewOutfit(outfitId) {
+        showNotification(`👗 Cargando detalles del outfit #${outfitId}...`, 'info');
+        
+        // Aquí puedes implementar la vista detallada del outfit
+        // Por ahora, redirigimos a una página de detalles o mostramos un modal
+        fetch(`/api/debug-outfit/${outfitId}/`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Mostrar información del outfit
+              const outfit = data.outfit;
+              const message = `
+                Outfit: ${outfit.estilo}<br>
+                ID: ${outfit.id}<br>
+                Clima: ${outfit.clima}<br>
+                Fecha: ${outfit.fecha}<br>
+                Prendas: ${data.total_prendas}
+              `;
+              
+              // Crear modal para ver detalles
+              const modal = document.createElement('div');
+              modal.className = 'delete-confirmation-modal';
+              modal.style.display = 'flex';
+              modal.innerHTML = `
+                <div class="delete-modal-content" style="max-width: 500px;">
+                  <div class="delete-modal-title">
+                    <i class="fas fa-tshirt"></i> Detalles del Outfit
+                  </div>
+                  <div class="delete-modal-message">
+                    <strong>${outfit.estilo}</strong><br><br>
+                    <strong>ID:</strong> ${outfit.id}<br>
+                    <strong>Clima recomendado:</strong> ${outfit.clima}<br>
+                    <strong>Fecha creación:</strong> ${outfit.fecha}<br>
+                    <strong>Total prendas:</strong> ${data.total_prendas}<br><br>
+                    <strong>Prendas:</strong>
+                    <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+                      ${data.prendas.map((p, i) => `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 5px; border-bottom: 1px solid #eee;">
+                          <img src="${p.imagen_url}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover;"
+                               onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                          <span>${p.tipo || 'Prenda ' + (i + 1)}</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                  <div class="delete-modal-actions">
+                    <button class="modal-btn modal-btn-cancel" onclick="this.parentElement.parentElement.parentElement.remove()">
+                      <i class="fas fa-times"></i> Cerrar
+                    </button>
+                  </div>
+                </div>
+              `;
+              
+              document.body.appendChild(modal);
+              
+              // Cerrar modal al hacer clic fuera
+              modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                  modal.remove();
+                }
+              });
+            }
+          })
+          .catch(error => {
+            showNotification(`❌ Error al cargar detalles: ${error.message}`, 'error');
+          });
+      }
+      
+      function toggleFavorite(outfitId, button, outfitName) {
+        const isFavorite = button.classList.contains('active');
+        
+        fetch(`/api/guardar-valoracion/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+          },
+          body: JSON.stringify({
+            recomendacion_id: outfitId,
+            favorito: !isFavorite
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            button.classList.toggle('active');
+            button.innerHTML = `
+              <i class="fas fa-star"></i> ${!isFavorite ? 'Quitar' : 'Fav'}
+            `;
+            
+            // Actualizar estadísticas
+            loadOutfits();
+            
+            showNotification(
+              isFavorite ? `⭐ Quitado de favoritos: ${outfitName}` : `⭐ Agregado a favoritos: ${outfitName}`, 
+              'success'
+            );
           } else {
-            container.innerHTML = "<p>No hay outfits guardados.</p>";
+            throw new Error(data.error || 'Error desconocido');
           }
         })
-        .catch((error) => {
-          document.getElementById("outfits-container").innerHTML =
-            "<p>Error al cargar las prendas: " + error + "</p>";
+        .catch(error => {
+          showNotification(`❌ Error: ${error.message}`, 'error');
         });
+      }
+      
+      function confirmDeleteOutfit(outfitId, outfitName) {
+        currentOutfitToDelete = outfitId;
+        
+        // Actualizar mensaje del modal
+        document.getElementById('deleteModalMessage').innerHTML = `
+          ¿Estás seguro de que quieres eliminar el outfit <strong>"${outfitName}"</strong>?<br><br>
+          Esta acción <strong>no se puede deshacer</strong> y se eliminarán todas las prendas asociadas.
+        `;
+        
+        // Mostrar modal
+        document.getElementById('deleteConfirmationModal').style.display = 'flex';
+        
+        // Configurar botón de confirmación
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        confirmBtn.onclick = function() {
+          deleteOutfit(outfitId, outfitName);
+        };
+      }
+      
+      function closeDeleteModal() {
+        document.getElementById('deleteConfirmationModal').style.display = 'none';
+        currentOutfitToDelete = null;
+      }
+      
+      function deleteOutfit(outfitId, outfitName) {
+        // Mostrar indicador de carga
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+        confirmBtn.disabled = true;
+        
+        fetch(`/api/eliminar-outfit/${outfitId}/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Cerrar modal
+            closeDeleteModal();
+            
+            // Mostrar notificación de éxito
+            showNotification(`🗑️ Outfit eliminado: ${outfitName}`, 'info');
+            
+            // Recargar la lista de outfits después de 1 segundo
+            setTimeout(() => {
+              loadOutfits();
+            }, 1000);
+            
+            // Si quieres redirigir con parámetro en URL
+            // window.location.href = window.location.pathname + '?deleted=true';
+          } else {
+            throw new Error(data.error || 'Error al eliminar el outfit');
+          }
+        })
+        .catch(error => {
+          showNotification(`❌ Error al eliminar: ${error.message}`, 'error');
+          
+          // Restaurar botón
+          confirmBtn.innerHTML = originalText;
+          confirmBtn.disabled = false;
+        });
+      }
+      
+      // Función alternativa si no tienes endpoint DELETE
+      function deleteOutfitAlternative(outfitId, outfitName) {
+        // Mostrar indicador de carga
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+        confirmBtn.disabled = true;
+        
+        // Enviar solicitud POST para eliminar
+        fetch('/eliminar-outfit/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+          },
+          body: JSON.stringify({
+            outfit_id: outfitId
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            closeDeleteModal();
+            showNotification(`🗑️ Outfit eliminado: ${outfitName}`, 'info');
+            
+            // Eliminar tarjeta del DOM
+            const outfitCard = document.querySelector(`[data-outfit-id="${outfitId}"]`);
+            if (outfitCard) {
+              outfitCard.style.animation = 'slideOut 0.3s ease';
+              setTimeout(() => {
+                outfitCard.remove();
+                loadOutfits(); // Recargar para actualizar estadísticas
+              }, 300);
+            }
+          } else {
+            throw new Error(data.error);
+          }
+        })
+        .catch(error => {
+          showNotification(`❌ Error: ${error.message}`, 'error');
+          confirmBtn.innerHTML = originalText;
+          confirmBtn.disabled = false;
+        });
+      }
+      
+      function showNotification(message, type = 'info') {
+        // Eliminar notificación anterior si existe
+        const oldNotification = document.getElementById("notification");
+        if (oldNotification && oldNotification.style.display === 'block') {
+          oldNotification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => {
+            oldNotification.style.display = 'none';
+          }, 300);
+        }
+        
+        // Crear nueva notificación
+        setTimeout(() => {
+          const notification = document.getElementById("notification");
+          const messageSpan = document.getElementById("notification-message");
+          
+          notification.className = `notification ${type}`;
+          messageSpan.textContent = message;
+          notification.style.display = 'flex';
+          notification.style.animation = 'slideIn 0.3s ease';
+          
+          // Ocultar después de 3 segundos
+          setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+              notification.style.display = 'none';
+            }, 300);
+          }, 3000);
+        }, 300);
+      }
+      
+      function getCSRFToken() {
+        // Obtener token CSRF de las cookies
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      
+      // Cerrar modal al hacer clic fuera
+      document.getElementById('deleteConfirmationModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+      
+      // Cerrar modal con tecla Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeDeleteModal();
+        }
+      });
     </script>
+    
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   </body>
 </html>
