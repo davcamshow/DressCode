@@ -791,3 +791,296 @@ h2::after {
     padding: 10px 12px;
   }
 }
+
+/* =========================================== */
+/* ESTILOS PARA GOOGLE LOGIN - AGREGAR AL FINAL */
+/* =========================================== */
+
+/* Estilos para el botón de Google */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(107, 68, 35, 0.2);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  color: #3a2b1f;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-google::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-google:hover::before {
+  left: 100%;
+}
+
+.btn-google:hover {
+  background: white;
+  border-color: #DB4437;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(219, 68, 55, 0.15);
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.btn-google:hover .google-icon {
+  transform: scale(1.1);
+}
+
+/* Divisor */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #5a4a3a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(107, 68, 35, 0.3);
+}
+
+.divider span {
+  padding: 0 12px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.pantalla-login:hover .divider::before,
+.pantalla-login:hover .divider::after {
+  border-bottom-color: rgba(107, 68, 35, 0.4);
+}
+
+/* Enlace de registro */
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #8b6c4d;
+}
+
+.register-link a {
+  color: #6b4423;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.register-link a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #6b4423;
+  transition: width 0.3s ease;
+}
+
+.register-link a:hover {
+  color: #8c5b35;
+}
+
+.register-link a:hover::after {
+  width: 100%;
+}
+
+/* Overlay de carga para Google */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(107, 68, 35, 0.1);
+  border-top-color: #6b4423;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 20px;
+  color: #6b4423;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Efecto loading para botón de Google */
+.btn-google.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn-google.loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  left: 50%;
+  margin-left: -9px;
+  margin-top: -9px;
+  border: 2px solid #DB4437;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+/* Efecto loading para botón de login tradicional */
+.btn-amarillo.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn-amarillo.loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  left: 50%;
+  margin-left: -9px;
+  margin-top: -9px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: transparent;
+}
+
+/* Animaciones */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================== */
+/* ESTILOS PARA MODO OSCURO */
+/* =========================================== */
+
+body.dark-mode .btn-google {
+  background-color: #333333;
+  color: #f0f0f0;
+  border-color: #555555;
+}
+
+body.dark-mode .btn-google:hover {
+  background-color: #444444;
+  border-color: #DB4437;
+}
+
+body.dark-mode .divider span {
+  color: #ccc;
+}
+
+body.dark-mode .register-link {
+  color: #dcdcdc;
+}
+
+body.dark-mode .register-link a {
+  color: #f0a500;
+}
+
+body.dark-mode .register-link a::after {
+  background-color: #f0a500;
+}
+
+body.dark-mode .loading-overlay {
+  background: rgba(30, 30, 30, 0.95);
+}
+
+body.dark-mode .loading-spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: #f0a500;
+}
+
+body.dark-mode .loading-text {
+  color: #f0f0f0;
+}
+
+/* Responsive adicional para el botón de Google */
+@media (max-width: 480px) {
+  .btn-google {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .google-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .divider span {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+  
+  .register-link {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .btn-google {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .google-icon {
+    width: 16px;
+    height: 16px;
+  }
+}

@@ -199,17 +199,19 @@ function initHoverEffects() {
   const labels = document.querySelectorAll('.login-form label');
   
   // Efecto sutil en el contenedor principal al hacer hover
-  loginContainer.addEventListener('mouseenter', function() {
-    if (!document.body.classList.contains('dark-mode')) {
-        document.body.style.background = 'linear-gradient(135deg, #f9f6f2 0%, #eae2d9 50%, #d9ccbd 100%)';
+  if (loginContainer) {
+    loginContainer.addEventListener('mouseenter', function() {
+      if (!document.body.classList.contains('dark-mode')) {
+          document.body.style.background = 'linear-gradient(135deg, #f9f6f2 0%, #eae2d9 50%, #d9ccbd 100%)';
+        }
+      });
+
+    loginContainer.addEventListener('mouseleave', function() {
+      if (!document.body.classList.contains('dark-mode')) {
+        document.body.style.background = 'linear-gradient(135deg, #f8f4f0 0%, #e8dfd4 50%, #d4c4b0 100%)';
       }
     });
-
-  loginContainer.addEventListener('mouseleave', function() {
-    if (!document.body.classList.contains('dark-mode')) {
-      document.body.style.background = 'linear-gradient(135deg, #f8f4f0 0%, #e8dfd4 50%, #d4c4b0 100%)';
-    }
-  });
+  }
   
   // Efectos en labels al interactuar con inputs
   inputs.forEach((input, index) => {
@@ -229,7 +231,63 @@ function initHoverEffects() {
   });
 }
 
-// ✅ NUEVA FUNCIÓN: Verificar parámetro en la URL para mostrar modal
+// ✅ FUNCIÓN PARA EL BOTÓN DE GOOGLE
+function setupGoogleLogin() {
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  const googleLoading = document.getElementById('googleLoading');
+  
+  if (!googleLoginBtn) {
+    console.log("⚠️ Botón de Google no encontrado");
+    return;
+  }
+  
+  googleLoginBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const btn = this;
+    
+    // Mostrar overlay de carga
+    if (googleLoading) {
+      googleLoading.classList.add('active');
+    }
+    
+    console.log("🔄 Iniciando sesión con Google...");
+    
+    // Redirigir a la vista de Google Login después de un breve delay para mostrar el loading
+    setTimeout(() => {
+      window.location.href = '/google-login/';
+    }, 500);
+    
+    // Si hay algún error, ocultar el loading después de 5 segundos
+    setTimeout(() => {
+      if (googleLoading) {
+        googleLoading.classList.remove('active');
+      }
+      btn.classList.remove('loading');
+    }, 5000);
+  });
+}
+
+// ✅ FUNCIÓN PARA VERIFICAR SI YA HAY SESIÓN DE GOOGLE
+function checkGoogleSession() {
+  // Verificar si hay parámetros de Google en la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  const state = urlParams.get('state');
+  
+  if (code) {
+    console.log("🔍 Detectados parámetros de Google OAuth");
+    console.log(`Code: ${code.substring(0, 20)}...`);
+    console.log(`State: ${state}`);
+    
+    // Mostrar overlay de carga
+    const googleLoading = document.getElementById('googleLoading');
+    if (googleLoading) {
+      googleLoading.classList.add('active');
+    }
+  }
+}
+
+// ✅ FUNCIÓN: Verificar parámetro en la URL para mostrar modal
 function checkSuccessMessages() {
   // Obtener parámetros de la URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -256,7 +314,10 @@ function checkSuccessMessages() {
 }
 
 function closeSuccessModal() {
-  document.getElementById('successModal').style.display = 'none';
+  const modal = document.getElementById('successModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 }
 
 // Auto-cerrar mensajes después de 5 segundos
@@ -274,15 +335,30 @@ document.addEventListener('DOMContentLoaded', function() {
   initDynamicBackground();
   createFloatingParticles();
   initHoverEffects();
-  checkSuccessMessages(); // ✅ IMPORTANTE: Llamar esta función
+  checkSuccessMessages();
   autoCloseMessages();
+  setupGoogleLogin();
+  checkGoogleSession();
   
   // Cerrar modal al hacer clic fuera
-  document.getElementById('successModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-      closeSuccessModal();
-    }
-  });
+  const successModal = document.getElementById('successModal');
+  if (successModal) {
+    successModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSuccessModal();
+      }
+    });
+  }
+  
+  // Cerrar overlay de carga de Google al hacer clic
+  const googleLoading = document.getElementById('googleLoading');
+  if (googleLoading) {
+    googleLoading.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('active');
+      }
+    });
+  }
   
   // Efecto de aparición suave para el formulario
   const loginForm = document.querySelector('.pantalla-login');
@@ -295,5 +371,17 @@ document.addEventListener('DOMContentLoaded', function() {
       loginForm.style.opacity = '1';
       loginForm.style.transform = 'translateY(0)';
     }, 100);
+  }
+  
+  // Efecto de carga para el formulario tradicional
+  const traditionalForm = document.querySelector('.login-form');
+  if (traditionalForm) {
+    traditionalForm.addEventListener('submit', function(e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<span class="loading-text">Verificando...</span>';
+      }
+    });
   }
 });
