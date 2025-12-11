@@ -342,7 +342,39 @@
     </script>
 
     <script src="{% static 'js/inicio.js' %}"></script>
+<!-- Instrucciones para el usuario -->
+<div class="instructions" id="instructions">
+    <i class="fas fa-info-circle"></i>
+    <span id="instruction-text">Haz clic en una prenda o accesorio para pausarla y poder guardarla</span>
+</div>
 
+<script>
+    // Actualizar instrucciones basadas en selección
+    function actualizarInstrucciones() {
+        const instructionText = document.getElementById('instruction-text');
+        const prendas = obtenerPrendasActivas();
+        const accesorios = obtenerAccesoriosActivos();
+        const total = prendas.length + accesorios.length;
+        
+        if (total > 0) {
+            instructionText.innerHTML = `Listo para guardar ${total} elemento(s). Haz clic en "Guardar Outfit"`;
+        } else {
+            instructionText.innerHTML = 'Haz clic en una prenda o accesorio para pausarla y poder guardarla';
+        }
+    }
+    
+    // Escuchar cambios
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.model-segment') || e.target.closest('.accessory-container')) {
+            setTimeout(() => {
+                actualizarInstrucciones();
+            }, 100);
+        }
+    });
+    
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', actualizarInstrucciones);
+</script>
     
 </body>
 </html>

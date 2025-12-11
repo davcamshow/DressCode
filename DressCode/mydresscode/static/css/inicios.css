@@ -1978,3 +1978,215 @@ body.dark-mode .guardar-outfit-btn:hover {
     background: linear-gradient(135deg, #e89b60 0%, #c87a4a 100%);
     box-shadow: 0 6px 16px rgba(223, 138, 80, 0.4);
 }
+/* ===== ESTILOS PARA GUARDADO SELECTIVO ===== */
+
+/* Indicador visual para segmentos pausados */
+.model-segment.paused {
+    box-shadow: 0 0 0 3px #5b9b9d !important;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+    z-index: 20 !important;
+}
+
+.accessory-container.paused {
+    border: 3px solid #e91e63 !important;
+    border-radius: 8px;
+    z-index: 20 !important;
+}
+
+/* Modo oscuro para pausados */
+body.dark-mode .model-segment.paused {
+    box-shadow: 0 0 0 3px #df8a50 !important;
+}
+
+body.dark-mode .accessory-container.paused {
+    border-color: #e96d74 !important;
+}
+
+/* Botón guardar con contador */
+.guardar-outfit-btn {
+    margin-top: 15px;
+    background: linear-gradient(135deg, #5b9b9d 0%, #3a7a7c 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 230px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(91, 155, 157, 0.3);
+    transition: all 0.3s ease;
+}
+
+.guardar-outfit-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #6aabac 0%, #4a8a8c 100%);
+    box-shadow: 0 6px 16px rgba(91, 155, 157, 0.4);
+}
+
+/* Botón con elementos seleccionados */
+.guardar-outfit-btn.has-selection {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.guardar-outfit-btn.has-selection:hover {
+    background: linear-gradient(135deg, #66bb6a 0%, #5cb85c 100%);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* Modo oscuro para botón */
+body.dark-mode .guardar-outfit-btn {
+    background: linear-gradient(135deg, #df8a50 0%, #b76a3a 100%);
+    color: #1C1A17;
+    box-shadow: 0 4px 12px rgba(223, 138, 80, 0.3);
+}
+
+body.dark-mode .guardar-outfit-btn:hover {
+    background: linear-gradient(135deg, #e89b60 0%, #c87a4a 100%);
+    box-shadow: 0 6px 16px rgba(223, 138, 80, 0.4);
+}
+
+body.dark-mode .guardar-outfit-btn.has-selection {
+    background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+    color: #1C1A17;
+    box-shadow: 0 4px 12px rgba(129, 199, 132, 0.3);
+}
+
+/* Tooltip para segmentos */
+.model-segment::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.model-segment:hover::after {
+    opacity: 1;
+}
+
+/* Indicador de selección para imágenes */
+.segment-image.active::before {
+    content: "✓";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #4CAF50;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.model-segment.paused .segment-image.active::before {
+    opacity: 1;
+}
+
+.accessory-carousel-image.active::before {
+    content: "✓";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #4CAF50;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.accessory-container.paused .accessory-carousel-image.active::before {
+    opacity: 1;
+}
+
+/* Animación para cambios */
+@keyframes pulseSelection {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.model-segment.paused,
+.accessory-container.paused {
+    animation: pulseSelection 0.5s ease;
+}
+
+/* Instrucciones para el usuario */
+.instructions {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: center;
+    max-width: 300px;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instructions i {
+    color: #5b9b9d;
+    margin-right: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .guardar-outfit-btn {
+        width: 200px;
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+    
+    .model-segment::after {
+        font-size: 10px;
+        bottom: -25px;
+        padding: 3px 6px;
+        max-width: 100px;
+    }
+    
+    .instructions {
+        width: 90%;
+        font-size: 11px;
+        padding: 8px 15px;
+    }
+}
