@@ -1,25 +1,61 @@
-/* 🌙 BOTÓN DE MODO OSCURO */
-.dark-toggle {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid #D4AF37;
-    color: #D4AF37;
-    font-size: 22px;
-    cursor: pointer;
-    transition: 0.3s ease;
-    z-index: 9999;
-    backdrop-filter: blur(5px);
+/* Estilos para el botón de cambio de tema */
+.theme-button:hover {
+  background: #ffffff00;
+  transform: scale(1.05);
+}
+.theme-toggle-wrapper {
+  position: fixed;
+  top: 8px;
+  right: 90px;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
-.dark-toggle:hover {
-    background: #D4AF37;
-    color: #1C1A17;
+.theme-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
+
+.theme-button span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Modo claro → botón transparente */
+.icon-moon,
+.icon-sun {
+  background-color: transparent !important;
+  border: none !important;   /* QUITA EL BORDE */
+  color: #1C1A17;
+  box-shadow: none !important; /* QUITA LA SOMBRA */
+}
+.theme-button span:hover {
+  transform: scale(1.1);
+}
+
+/* Mostrar solo un ícono según el tema */
+
+/* Por defecto (tema claro) */
+.icon-sun {
+  display: none;
+}
+.icon-moon {
+  display: inline-flex;
+}
+
+/* Por defecto (tema claro) */
+.icon-sun { display: none; }
+.icon-moon { display: inline-flex; }
 
 /* 🌙 VARIABLES DEL MODO OSCURO */
 body.dark-mode {

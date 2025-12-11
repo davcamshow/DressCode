@@ -1,30 +1,40 @@
-/* ======================================
-   MODO OSCURO – (AÑADIDO SIN ROMPER NADA)
-====================================== */
-function initDarkMode() {
-  const btnDark = document.getElementById("darkModeBtn");
-  if (!btnDark) return;
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("theme-toggle");
 
-  // Cargar preferencia
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark");
-    btnDark.textContent = "☀️";
-  } else {
-    btnDark.textContent = "🌙";
+  function updateIcons(theme) {
+    const moon = document.querySelector(".icon-moon");
+    const sun = document.querySelector(".icon-sun");
+
+    if (theme === "dark") {
+      moon.style.display = "none";
+      sun.style.display = "inline-flex";
+    } else {
+      moon.style.display = "inline-flex";
+      sun.style.display = "none";
+    }
   }
 
-  btnDark.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
+  const savedTheme = localStorage.getItem("theme") || "light";
 
-    if (document.body.classList.contains("dark")) {
-      localStorage.setItem("darkMode", "enabled");
-      btnDark.textContent = "☀️";
-    } else {
-      localStorage.setItem("darkMode", "disabled");
-      btnDark.textContent = "🌙";
-    }
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark"); // ← AQUÍ CAMBIADO
+  }
+
+  updateIcons(savedTheme);
+
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark"); // ← AQUÍ CAMBIADO
+
+    const isDark = document.body.classList.contains("dark");
+    const newTheme = isDark ? "dark" : "light";
+
+    localStorage.setItem("theme", newTheme);
+    updateIcons(newTheme);
   });
-}
+});
+
+
+
 
 /* ======================================
    TU CÓDIGO ORIGINAL COMPLETO
