@@ -405,23 +405,43 @@ def my_closet(request):
         # ✅ CONTAR LOS OUTFITS DEL USUARIO
         outfits_count = Outfit.objects.filter(idUsuario=usuario).count()
         
-        # DEBUG: Verificar imágenes segmentadas
+        # ✅ CONTAR OUTFITS FAVORITOS
+        outfits_favoritos_count = Outfit.objects.filter(
+            idUsuario=usuario, 
+            esFavorito=True
+        ).count()
+        
+        # ✅ CONTAR EVENTOS DEL CALENDARIO
+        eventos_count = CalendarEventos.objects.filter(
+            id_usuario=usuario
+        ).count()
+        
+        # ✅ CONTAR EVENTOS PRÓXIMOS (en los próximos 7 días)
+        from datetime import date, timedelta
+        hoy = date.today()
+        proxima_semana = hoy + timedelta(days=7)
+        
+        eventos_proximos_count = CalendarEventos.objects.filter(
+            id_usuario=usuario,
+            event_date__gte=hoy,
+            event_date__lte=proxima_semana
+        ).count()
+        
+        # DEBUG: Verificar información
         print(f"=== DEBUG MY_CLOSET ===")
         print(f"Usuario: {usuario}")
         print(f"Número de prendas: {prendas.count()}")
-        print(f"Número de outfits: {outfits_count}")
+        print(f"Número total de outfits: {outfits_count}")
+        print(f"Número de outfits favoritos: {outfits_favoritos_count}")
+        print(f"Número total de eventos: {eventos_count}")
+        print(f"Eventos próximos (7 días): {eventos_proximos_count}")
         
-        for prenda in prendas:
-            print(f"Prenda ID: {prenda.idPrenda}")
-            print(f"  - Tipo: {prenda.tipo}")
-            print(f"  - Imagen original: {prenda.imagen}")
-            print(f"  - Imagen segmentada: {prenda.imagen_segmentada}")
-            print(f"  - ¿Tiene segmentada?: {'SÍ' if prenda.imagen_segmentada else 'NO'}")
-            print("---")
-
         context = {
             'prendas_del_armario': prendas,
-            'outfits_count': outfits_count  # ✅ Añadir al contexto
+            'outfits_count': outfits_count,
+            'outfits_favoritos_count': outfits_favoritos_count,
+            'eventos_count': eventos_count,  # ✅ Nuevo
+            'eventos_proximos_count': eventos_proximos_count,  # ✅ Nuevo
         }
         return render(request, 'myCloset.html', context)
 
@@ -2367,5 +2387,49 @@ def toggle_favorite_outfit(request):
             'success': False, 
             'error': f'Error al actualizar favorito: {str(e)}'
         }, status=500)
+        
+
+# En views.py
+@configuracion_requerida
+def obtener_contador_eventos(request):
+    """API para obtener estadísticas de eventos del usuario"""
+    if 'usuario_id' not in request.session:
+        return JsonResponse({'error': 'No autenticado'}, status=401)
+    
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        from datetime import date, timedelta
+        
+        # Conteos
+        eventos_count = CalendarEventos.objects.filter(id_usuario=usuario).count()
+        
+        hoy = date.today()
+        proxima_semana = hoy + timedelta(days=7)
+        eventos_proximos = CalendarEventos.objects.filter(
+            id_usuario=usuario,
+            event_date__gte=hoy,
+            event_date__lte=proxima_semana
+        ).count()
+        
+        # Eventos de hoy
+        eventos_hoy = CalendarEventos.objects.filter(
+            id_usuario=usuario,
+            event_date=hoy
+        ).count()
+        
+        return JsonResponse({
+            'success': True,
+            'eventos_count': eventos_count,
+            'eventos_proximos': eventos_proximos,
+            'eventos_hoy': eventos_hoy,
+            'message': f'Tienes {eventos_count} eventos en tu calendario'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
     
     

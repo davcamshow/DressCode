@@ -1005,6 +1005,38 @@
     padding-top: 25px; /* Más espacio para los botones */
 }
 
+
+
+/* Añade estos estilos en la sección CSS */
+
+/* --- Indicador de eventos próximos --- */
+.eventos-proximos-indicator {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(207, 142, 113, 0.9); /* color-favorito con transparencia */
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 6px;
+    border-radius: 10px;
+    z-index: 1;
+    animation: pulse-events 2s infinite;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 5px rgba(207, 142, 113, 0.3);
+}
+
+@keyframes pulse-events {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Ajustar posición del botón cuando hay indicador */
+.stat-box:has(.eventos-proximos-indicator) .events-calendar-btn {
+    top: 35px; /* Bajar un poco el botón */
+}
+
     /* --- Responsive Mejorado --- */
     @media (min-width: 768px) {
       .photo-grid, .favorites-grid {
@@ -1161,6 +1193,7 @@
 
     <!-- En la sección de estadísticas (alrededor de la línea 110) -->
 <!-- En la sección de estadísticas (actualiza la caja de outfits) -->
+<!-- En la sección de estadísticas (actualiza la caja de eventos) -->
 <section class="stats-section">
   <div class="stat-box">
     <span class="stat-number">
@@ -1177,12 +1210,28 @@
     <span class="stat-label">Favoritos</span>
   </div>
   <div class="stat-box">
-    <span class="stat-number">0</span>
+    <!-- ✅ ACTUALIZADO: Mostrar número real de eventos -->
+    <span class="stat-number" id="eventos-count">
+      {% if eventos_count %}
+        {{ eventos_count }}
+      {% else %}
+        0
+      {% endif %}
+    </span>
     <span class="stat-label">Eventos</span>
-    <a href="{% url 'calendar' %}" class="events-calendar-btn" title="Ver calendario de eventos">📅</a>
+    
+    <!-- Mini indicador de eventos próximos -->
+    {% if eventos_proximos_count > 0 %}
+    <div class="eventos-proximos-indicator" title="{{ eventos_proximos_count }} evento(s) próximo(s)">
+      ⏰ {{ eventos_proximos_count }}
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'calendar' %}" class="events-calendar-btn" title="Ver calendario de eventos">
+      📅
+    </a>
   </div>
   <div class="stat-box">
-    <!-- ✅ ACTUALIZADO: Mostrar número real de outfits con botón -->
     <span class="stat-number" id="outfits-count">
       {% if outfits_count %}
         {{ outfits_count }}
@@ -1191,7 +1240,6 @@
       {% endif %}
     </span>
     <span class="stat-label">Outfits</span>
-    <!-- ✅ BOTÓN PARA VER OUTFITS (igual que el de calendario) -->
     <a href="{% url 'ver_prendas_temp' %}" 
        class="events-calendar-btn outfits-btn" 
        title="Ver mis outfits guardados">
@@ -1704,6 +1752,63 @@ async function actualizarContadorOutfits() {
   }
 }
 
+async function actualizarContadorEventos() {
+  try {
+    const response = await fetch('/api/obtener-contador-eventos/');
+    if (response.ok) {
+      const data = await response.json();
+      
+      // Actualizar contador principal
+      const eventosCountElement = document.getElementById('eventos-count');
+      if (eventosCountElement) {
+        eventosCountElement.textContent = data.eventos_count;
+      }
+      
+      // Mostrar/ocultar indicador de eventos próximos
+      const eventosProximosIndicator = document.querySelector('.eventos-proximos-indicator');
+      const statBox = document.querySelector('.stat-box:nth-child(3)'); // Caja de eventos
+      
+      if (data.eventos_proximos > 0) {
+        if (!eventosProximosIndicator) {
+          // Crear indicador si no existe
+          const indicator = document.createElement('div');
+          indicator.className = 'eventos-proximos-indicator';
+          indicator.title = `${data.eventos_proximos} evento(s) próximo(s)`;
+          indicator.textContent = `⏰ ${data.eventos_proximos}`;
+          
+          if (statBox) {
+            statBox.appendChild(indicator);
+            
+            // Ajustar posición del botón
+            const calendarBtn = statBox.querySelector('.events-calendar-btn');
+            if (calendarBtn) {
+              calendarBtn.style.top = '35px';
+            }
+          }
+        } else {
+          // Actualizar indicador existente
+          eventosProximosIndicator.textContent = `⏰ ${data.eventos_proximos}`;
+          eventosProximosIndicator.title = `${data.eventos_proximos} evento(s) próximo(s)`;
+        }
+      } else {
+        // Eliminar indicador si no hay eventos próximos
+        if (eventosProximosIndicator) {
+          eventosProximosIndicator.remove();
+          
+          // Restaurar posición del botón
+          const calendarBtn = statBox.querySelector('.events-calendar-btn');
+          if (calendarBtn) {
+            calendarBtn.style.top = '8px';
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error actualizando contador de eventos:', error);
+  }
+}
+
+
 
 // Llamar la función cuando se cargue la página
 document.addEventListener('DOMContentLoaded', function() {
@@ -1715,10 +1820,13 @@ document.addEventListener('DOMContentLoaded', function() {
     outfitsBtn.addEventListener('click', handleOutfitsButton);
   }
   
-  // Actualizar contadores
-  setTimeout(actualizarContadorOutfits, 100);
-  
+    // Actualizar contadores
+  setTimeout(() => {
+    actualizarContadorEventos();
+    actualizarContadorOutfits();
+  }, 100);
 
+   setInterval(actualizarContadorEventos, 30000);
 });
 
 // También podrías actualizar después de guardar un outfit

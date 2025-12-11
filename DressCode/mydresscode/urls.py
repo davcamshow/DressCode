@@ -65,6 +65,8 @@ urlpatterns = [
 path('api/eliminar-outfit/<int:outfit_id>/', views.eliminar_outfit, name='eliminar_outfit'),
 path('api/toggle-favorite/', views.toggle_favorite_outfit, name='toggle_favorite_outfit'),
 path('eliminar-outfit/', views.eliminar_outfit, name='eliminar_outfit_post'),
+
+ path('api/obtener-contador-eventos/', views.obtener_contador_eventos, name='obtener_contador_eventos'),
 ]
 
 
