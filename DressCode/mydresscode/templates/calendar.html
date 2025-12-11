@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Calendario de Outfits | DressCode</title>
-    {% load static %}
     <style>
         :root {
             --color-fondo-principal: #fbfbe9;
@@ -194,7 +194,7 @@
             transform: none;
         }
 
-        /* DÍOS PASADOS - ESTILOS DESHABILITADOS */
+        /* DÍAS PASADOS - ESTILOS DESHABILITADOS */
         .calendar-day.past-day {
             background: #f8f8f8;
             color: var(--color-texto-claro);
@@ -321,7 +321,6 @@
             gap: 8px;
         }
 
-        /* ICONOS SIN COLOR - SOLO CONTORNO */
         .event-action-btn {
             background: none;
             border: none;
@@ -395,7 +394,7 @@
             background: var(--color-blanco);
             border-radius: 20px;
             padding: 30px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             box-shadow: var(--sombra-media);
             transform: scale(0.9);
@@ -479,7 +478,6 @@
             box-shadow: var(--sombra-suave);
         }
 
-        /* BOTÓN FLOTANTE MEJORADO */
         .floating-add-btn {
             position: fixed;
             bottom: 30px;
@@ -539,7 +537,6 @@
             font-weight: 600;
         }
 
-        /* LISTA DE EVENTOS EN PANEL DERECHO */
         .events-list {
             max-height: 500px;
             overflow-y: auto;
@@ -574,110 +571,249 @@
             font-weight: 600;
         }
 
+        .calendar-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            gap: 15px;
+        }
 
-/* Estilos para el header superior del calendario */
-.calendar-header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 0 15px;
-    gap: 15px;
-}
+        .calendar-title-section {
+            flex: 1;
+            text-align: center;
+        }
 
-.calendar-title-section {
-    flex: 1;
-    text-align: center;
-}
+        .calendar-home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            background: rgba(255, 204, 128, 0.15);
+            border: 1.5px solid rgba(255, 182, 77, 0.25);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
+        }
 
-/* Botón de inicio específico para el calendario */
-.calendar-home-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    
-    /* Contorno sutil por defecto */
-    background: rgba(255, 204, 128, 0.15); /* Naranja muy transparente */
-    border: 1.5px solid rgba(255, 182, 77, 0.25);
-    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
-}
+        .calendar-home-btn .header-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
 
-.calendar-home-btn .header-icon {
-    width: 28px; /* Un poco más grande para mejor visibilidad */
-    height: 28px;
-    object-fit: contain;
-    vertical-align: middle;
-    transition: all 0.3s ease;
-}
+        .calendar-home-btn:hover {
+            background: linear-gradient(135deg, #ffcc80, #f8bbd9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 111, 0, 0.25);
+            border: 1.5px solid rgba(255, 182, 77, 0.4);
+        }
 
-/* Efecto hover para el botón de inicio */
-.calendar-home-btn:hover {
-    background: linear-gradient(135deg, #ffcc80, #f8bbd9); /* Naranja a rosa */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.25);
-    border: 1.5px solid rgba(255, 182, 77, 0.4);
-}
+        .calendar-home-btn:hover .header-icon {
+            transform: translateY(-3px) scale(1.1);
+            opacity: 0.9;
+            filter: brightness(1.2) saturate(1.2);
+        }
 
-.calendar-home-btn:hover .header-icon {
-    transform: translateY(-3px) scale(1.1);
-    opacity: 0.9;
-    filter: brightness(1.2) saturate(1.2);
-}
+        .theme-toggle-wrapper {
+            flex-shrink: 0;
+        }
 
-/* Asegurar que el botón de tema se mantenga a la derecha */
-.theme-toggle-wrapper {
-    flex-shrink: 0;
-}
+        .theme-button {
+            background: var(--gradiente-primario);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .calendar-header-top {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-    }
-    
-    .calendar-home-btn {
-        order: 1;
-    }
-    
-    .calendar-title-section {
-        order: 3;
-        flex-basis: 100%;
-        margin-top: 10px;
-    }
-    
-    .theme-toggle-wrapper {
-        order: 2;
-    }
-}
+        .outfit-option {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .outfit-option:hover {
+            background: var(--color-acento-claro);
+        }
+
+        .outfit-option.selected {
+            background: var(--gradiente-primario);
+            border-left: 4px solid var(--color-secundario);
+        }
+
+        .outfit-option-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        .outfit-option-info {
+            flex: 1;
+        }
+
+        .outfit-option-name {
+            font-weight: 600;
+            color: var(--color-primario);
+            font-size: 14px;
+        }
+
+        .outfit-option-details {
+            font-size: 12px;
+            color: var(--color-texto-claro);
+            margin-top: 2px;
+        }
+
+        .no-outfits-message {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        .no-outfits-message i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .outfit-selector-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 5px;
+            background: white;
+            z-index: 1000;
+            position: absolute;
+            width: 100%;
+            box-shadow: var(--sombra-media);
+        }
+
+        .outfit-selector-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border: 2px solid var(--color-acento-claro);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .outfit-selector-toggle:hover {
+            border-color: var(--color-secundario);
+        }
+
+        .selected-outfit-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .outfit-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+        }
+
+        .outfit-preview-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .outfit-preview-name {
+            font-weight: 500;
+            color: var(--color-primario);
+            font-size: 14px;
+        }
+
+        .outfit-preview-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .outfit-preview-remove {
+            margin-left: auto;
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .outfit-preview-remove:hover {
+            background: #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header-top {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .calendar-home-btn {
+                order: 1;
+            }
+            
+            .calendar-title-section {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 10px;
+            }
+            
+            .theme-toggle-wrapper {
+                order: 2;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="calendar-header-top">
-    <!-- Botón de inicio a la izquierda -->
-    <a href="{% url 'inicio' %}" class="header-btn calendar-home-btn" title="Inicio">
-        <img src="{% static 'img/icononicio.png' %}" alt="Inicio" class="header-icon">
-    </a>
-    
-    <!-- Título centrado -->
-    <div class="calendar-title-section">
-        <h1>Calendario de Outfits</h1>
-        <p class="page-subtitle">Planifica tus outfits para eventos especiales</p>
+    <div class="calendar-header-top">
+        <a href="{% url 'inicio' %}" class="header-btn calendar-home-btn" title="Inicio">
+            <img src="{% static 'img/icononicio.png' %}" alt="Inicio" class="header-icon">
+        </a>
+        
+        <div class="calendar-title-section">
+            <h1>Calendario de Outfits</h1>
+            <p class="page-subtitle">Planifica tus outfits para eventos especiales</p>
+        </div>
+        
+        <div class="theme-toggle-wrapper">
+            <button id="theme-toggle" class="theme-button">
+                <span class="icon-moon">🌙</span>
+                <span class="icon-sun">☀️</span>
+            </button>
+        </div>
     </div>
     
-    <!-- Botón de tema a la derecha -->
-    <div class="theme-toggle-wrapper">
-        <button id="theme-toggle" class="theme-button">
-            <span class="icon-moon">🌙</span>
-            <span class="icon-sun">☀️</span>
-        </button>
-    </div>
-</div>
     <div class="calendar-container">
         <!-- Vista de calendario mensual -->
         <div class="calendar-month">
@@ -690,7 +826,6 @@
             </div>
             
             <div class="calendar-grid">
-                <!-- Encabezados de días -->
                 <div class="calendar-day-header">Dom</div>
                 <div class="calendar-day-header">Lun</div>
                 <div class="calendar-day-header">Mar</div>
@@ -699,7 +834,6 @@
                 <div class="calendar-day-header">Vie</div>
                 <div class="calendar-day-header">Sáb</div>
                 
-                <!-- Días del mes generados por Django -->
                 {% for week in weeks %}
                     {% for day in week %}
                         <div class="calendar-day 
@@ -721,33 +855,34 @@
         </div>
         
         <!-- Panel de detalles -->
-            <div class="calendar-details">
-                <div class="details-header">
-                    <h2 class="details-title" id="detailsTitle">Próximos Outfits Planificados</h2>
-                </div>
-                
-                <div class="event-date" id="selectedDate">Selecciona una fecha</div>
-                
-                <!-- ✅ CAMBIO: Inicialmente vacío, se llenará con JavaScript -->
-                <div class="events-list" id="eventsList">
-                    <!-- El contenido se cargará dinámicamente con JavaScript -->
-                </div>
-
-                <!-- LISTA DE TODOS LOS EVENTOS -->
-                <div class="all-events-section" style="margin-top: 30px; border-top: 2px solid var(--color-fondo-principal); padding-top: 20px;">
-                    <h3 style="font-size: 18px; font-weight: 600; color: var(--color-primario); margin-bottom: 15px;">
-                        📅 Todos mis eventos
-                    </h3>
-                    <div id="allEventsList">
-                        <!-- El contenido se cargará dinámicamente con JavaScript -->
-                    </div>
+        <div class="calendar-details">
+            <div class="details-header">
+                <h2 class="details-title" id="detailsTitle">Próximos Outfits Planificados</h2>
+            </div>
+            
+            <div class="event-date" id="selectedDate">Selecciona una fecha</div>
+            
+            <div class="events-list" id="eventsList">
+                <div class="no-events">
+                    <p>Selecciona una fecha en el calendario</p>
+                    <small>Haz clic en cualquier día para ver o agregar eventos</small>
                 </div>
             </div>
+
+            <div class="all-events-section" style="margin-top: 30px; border-top: 2px solid var(--color-fondo-principal); padding-top: 20px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: var(--color-primario); margin-bottom: 15px;">
+                    📅 Todos mis eventos
+                </h3>
+                <div id="allEventsList">
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal para agregar/editar eventos -->
     <div class="modal-overlay" id="eventModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <h2 class="modal-title" id="modalTitle">Agregar Evento</h2>
             <form id="eventForm">
                 <input type="hidden" id="eventId">
@@ -758,9 +893,42 @@
                     <input type="text" id="eventTitle" class="form-input" required>
                 </div>
                 
+                <!-- Selector de Outfit -->
                 <div class="form-group">
-                    <label class="form-label" for="eventOutfit">Outfit Planeado</label>
-                    <input type="text" id="eventOutfit" class="form-input" placeholder="Ej: Vestido Floral + Zapatos Negros">
+                    <label class="form-label" for="eventOutfitSelect">Seleccionar Outfit</label>
+                    <div class="outfit-selector-container" style="position: relative;">
+                        <div class="outfit-selector-toggle" onclick="toggleOutfitSelector()" id="outfitSelectorToggle">
+                            <span id="selectedOutfitText">Seleccionar outfit...</span>
+                            <i class="fas fa-chevron-down" id="outfitSelectorIcon"></i>
+                        </div>
+                        
+                        <div class="outfit-selector-dropdown" id="outfitSelectorDropdown" style="display: none;">
+                            <div style="padding: 10px; border-bottom: 1px solid #f0f0f0; background: #f8f9fa;">
+                                <input type="text" id="outfitSearch" class="form-input" 
+                                       style="padding: 8px; font-size: 14px;" 
+                                       placeholder="Buscar outfits..." 
+                                       onkeyup="searchOutfits(this.value)">
+                            </div>
+                            <div id="outfitsList" style="max-height: 250px; overflow-y: auto;">
+                                <div style="padding: 15px; text-align: center; color: #666;">
+                                    <i class="fas fa-spinner fa-spin"></i> Cargando outfits...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="selectedOutfitId">
+                    <input type="hidden" id="selectedOutfitData">
+                </div>
+                
+                <!-- Vista previa del outfit seleccionado -->
+                <div class="selected-outfit-preview" id="selectedOutfitPreview" style="display: none;">
+                    <h4 style="margin-bottom: 10px; color: var(--color-primario); display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-tshirt"></i> Outfit Seleccionado
+                    </h4>
+                    <div id="outfitPreviewContent">
+                        <!-- La vista previa se cargará aquí -->
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -783,14 +951,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log(' Calendario de Outfits Cargado');
+            console.log('📅 Calendario de Outfits Cargado');
 
             // Elementos del DOM
             const calendarDays = document.querySelectorAll('.calendar-day:not(.empty)');
             const selectedDateElement = document.getElementById('selectedDate');
             const eventsList = document.getElementById('eventsList');
             const allEventsList = document.getElementById('allEventsList');
-            const addEventBtn = document.getElementById('addEventBtn');
             const eventModal = document.getElementById('eventModal');
             const eventForm = document.getElementById('eventForm');
             const modalTitle = document.getElementById('modalTitle');
@@ -801,37 +968,27 @@
             // Estado de la aplicación
             let selectedDate = null;
             let events = [];
-            let isSubmitting = false; // 🔒 VARIABLE PARA EVITAR DOBLE ENVÍO
+            let userOutfits = [];
+            let selectedOutfit = null;
+            let isSubmitting = false;
 
             // Inicializar la aplicación
             initializeCalendar();
 
-                        // En la función initializeCalendar(), añade esto:
-            // En la función initializeCalendar(), CORREGIR esto:
             function initializeCalendar() {
-    setupEventListeners();
-    
-    // ✅ CORRECCIÓN: Mostrar estado inicial sin selección automática
-    selectedDateElement.textContent = "Selecciona una fecha";
-    eventsList.innerHTML = `
-        <div class="no-events">
-            <p>Selecciona una fecha en el calendario</p>
-            <small>Haz clic en cualquier día para ver o agregar eventos</small>
-        </div>
-    `;
-    
-    updateFloatingButton();
-    loadAllEvents();
-    
-    // ✅ DEBUG: Ver qué días tienen el botón "+"
-    console.log("🔍 Días con botón '+':");
-    document.querySelectorAll('.add-event-btn').forEach(btn => {
-        console.log(`- ${btn.dataset.date}`);
-    });
-}
+                setupEventListeners();
+                
+                // Mostrar estado inicial
+                selectedDateElement.textContent = "Selecciona una fecha";
+                updateFloatingButton();
+                loadAllEvents();
+                
+                console.log("🔍 Días con botón '+':");
+                document.querySelectorAll('.add-event-btn').forEach(btn => {
+                    console.log(`- ${btn.dataset.date}`);
+                });
+            }
 
-
-            // Configurar event listeners
             function setupEventListeners() {
                 // Selección de días - SOLO DÍAS FUTUROS
                 calendarDays.forEach(day => {
@@ -842,24 +999,13 @@
                     }
                 });
 
-                // Botones de agregar evento en los días - SOLO DÍAS FUTUROS
+                // Botones de agregar evento en los días
                 document.querySelectorAll('.add-event-btn').forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.stopPropagation();
                         openAddEventModal(this.dataset.date);
                     });
                 });
-
-                // Botón flotante
-                if (addEventBtn) {
-                    addEventBtn.addEventListener('click', function() {
-                        if (!selectedDate) {
-                            alert('Por favor, selecciona una fecha primero');
-                            return;
-                        }
-                        openAddEventModal();
-                    });
-                }
 
                 eventForm.addEventListener('submit', handleEventSubmit);
                 cancelBtn.addEventListener('click', closeEventModal);
@@ -870,144 +1016,121 @@
                         closeEventModal();
                     }
                 });
+
+                // Cerrar selector de outfits al hacer clic fuera
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.getElementById('outfitSelectorDropdown');
+                    const toggle = document.getElementById('outfitSelectorToggle');
+                    
+                    if (dropdown && toggle && 
+                        !dropdown.contains(e.target) && 
+                        !toggle.contains(e.target)) {
+                        closeOutfitSelector();
+                    }
+                });
             }
 
-            // Seleccionar fecha
-       // Seleccionar fecha - FUNCIÓN MEJORADA CON DEBUG
-function selectDate(dateString) {
-    console.log(`🎯 Intentando seleccionar fecha: ${dateString}`);
-    
-    // ✅ CORRECCIÓN: Crear la fecha correctamente sin problemas de timezone
-    const [year, month, day] = dateString.split('-');
-    const selectedDay = new Date(year, month - 1, day); // Meses van de 0-11
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+            function selectDate(dateString) {
+                console.log(`🎯 Seleccionando fecha: ${dateString}`);
+                
+                const [year, month, day] = dateString.split('-');
+                const selectedDay = new Date(year, month - 1, day);
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-    // ✅ DEBUG MEJORADO
-    console.log(`📅 Fecha seleccionada (local): ${selectedDay}`);
-    console.log(`📅 Fecha seleccionada (ISO): ${selectedDay.toISOString()}`);
-    console.log(`📅 Hoy: ${today}`);
-    console.log(`🔍 ¿Es fecha futura?: ${selectedDay >= today}`);
+                selectedDate = selectedDay;
+                selectedDateElement.textContent = formatDateLong(selectedDate);
+                
+                renderEventsForDate(dateString);
+                
+                // Actualizar clases de selección
+                calendarDays.forEach(dayElement => {
+                    dayElement.classList.remove('selected');
+                    if (dayElement.dataset.date === dateString) {
+                        dayElement.classList.add('selected');
+                        console.log(`✅ Día ${dateString} seleccionado visualmente`);
+                    }
+                });
+            }
 
-    selectedDate = selectedDay;
-    selectedDateElement.textContent = formatDateLong(selectedDate);
-    
-    // ✅ CORRECCIÓN: Usar dateString formateado correctamente
-    const formattedDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    console.log(`🔧 Fecha formateada para búsqueda: ${formattedDateString}`);
-    
-    renderEventsForDate(formattedDateString);
-    
-    // Actualizar clases de selección
-    calendarDays.forEach(dayElement => {
-        dayElement.classList.remove('selected');
-        if (dayElement.dataset.date === dateString) {
-            dayElement.classList.add('selected');
-            console.log(`✅ Día ${dateString} seleccionado visualmente`);
-        }
-    });
-
-    updateFloatingButton();
-}
-            // Actualizar estado del botón flotante
-            function updateFloatingButton() {
-                if (!addEventBtn) return;
-
-                if (selectedDate) {
-                    // Fecha seleccionada - botón activo
-                    addEventBtn.classList.remove('disabled');
+            function renderEventsForDate(dateString) {
+                console.log(`🔍 Buscando eventos para: ${dateString}`);
+                
+                const dateEvents = events.filter(event => event.event_date === dateString);
+                
+                console.log(`🎯 Eventos encontrados: ${dateEvents.length}`);
+                
+                if (dateEvents.length === 0) {
+                    eventsList.innerHTML = `
+                        <div class="no-events">
+                            <p>No hay eventos programados para el ${formatDateDisplay(dateString)}</p>
+                            <small>Haz clic en el botón "+" para agregar un evento</small>
+                        </div>
+                    `;
                 } else {
-                    // Sin fecha seleccionada - botón desactivado
-                    addEventBtn.classList.add('disabled');
+                    eventsList.innerHTML = dateEvents.map(event => `
+                        <div class="event-card">
+                            <div class="event-actions">
+                                <button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>
+                                <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
+                            </div>
+                            <h3 class="event-title">${escapeHtml(event.event_title)}</h3>
+                            ${event.event_outfit ? renderOutfitPreview(event.event_outfit) : ''}
+                            ${event.event_location ? `<p class="event-location">📍 ${escapeHtml(event.event_location)}</p>` : ''}
+                            ${event.event_description ? `<p class="event-description">📝 ${escapeHtml(event.event_description)}</p>` : ''}
+                        </div>
+                    `).join('');
                 }
             }
 
-            // Renderizar eventos para una fecha específica
-           // Renderizar eventos para una fecha específica - FUNCIÓN CORREGIDA
-// Renderizar eventos para una fecha específica - CON DEBUG MEJORADO
-function renderEventsForDate(dateString) {
-    console.log(`🔍 Buscando eventos para: ${dateString}`);
-    console.log(`📊 Total de eventos cargados: ${events.length}`);
-    
-    const dateEvents = events.filter(event => {
-        console.log(`   - Evento ${event.id}: ${event.event_date} (¿coincide? ${event.event_date === dateString})`);
-        return event.event_date === dateString;
-    });
-    
-    console.log(`🎯 Eventos encontrados para ${dateString}: ${dateEvents.length}`);
-    
-    if (dateEvents.length === 0) {
-        eventsList.innerHTML = `
-            <div class="no-events">
-                <p>No hay eventos programados para el ${formatDateDisplay(dateString)}</p>
-                <small>Haz clic en el botón "+" para agregar un evento</small>
-            </div>
-        `;
-    } else {
-        eventsList.innerHTML = dateEvents.map(event => `
-            <div class="event-card">
-                <div class="event-actions">
-                    <button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>
-                    <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
-                </div>
-                <h3 class="event-title">${escapeHtml(event.event_title)}</h3>
-                ${event.event_outfit ? `<p class="event-outfit">👗 ${escapeHtml(event.event_outfit)}</p>` : ''}
-                ${event.event_location ? `<p class="event-location">📍 ${escapeHtml(event.event_location)}</p>` : ''}
-                ${event.event_description ? `<p class="event-description">📝 ${escapeHtml(event.event_description)}</p>` : ''}
-            </div>
-        `).join('');
-    }
-}
+            function renderOutfitPreview(outfitData) {
+                try {
+                    const outfit = typeof outfitData === 'string' ? JSON.parse(outfitData) : outfitData;
+                    
+                    let previewHTML = `
+                        <div class="event-outfit" style="margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                                <i class="fas fa-tshirt"></i>
+                                <strong>${escapeHtml(outfit.nombre || 'Outfit')}</strong>
+                            </div>
+                    `;
+                    
+                    if (outfit.prendas && outfit.prendas.length > 0) {
+                        previewHTML += `
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;">
+                        `;
+                        
+                        outfit.prendas.slice(0, 3).forEach(prenda => {
+                            previewHTML += `
+                                <div style="position: relative;">
+                                    <img src="${prenda.imagen_url || ''}" 
+                                         alt="${prenda.tipo || ''}"
+                                         style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #ddd;"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                                    ${prenda.tipo ? `<div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 9px; text-align: center; padding: 1px;">${prenda.tipo.substring(0, 3)}</div>` : ''}
+                                </div>
+                            `;
+                        });
+                        
+                        if (outfit.prendas.length > 3) {
+                            previewHTML += `
+                                <div style="width: 40px; height: 40px; background: var(--color-acento-claro); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--color-primario); font-size: 12px; font-weight: bold;">
+                                    +${outfit.prendas.length - 3}
+                                </div>
+                            `;
+                        }
+                        
+                        previewHTML += `</div>`;
+                    }
+                    
+                    previewHTML += `</div>`;
+                    return previewHTML;
+                } catch (e) {
+                    return `<p class="event-outfit">👗 ${escapeHtml(outfitData)}</p>`;
+                }
+            }
 
-// Renderizar TODOS los eventos en el panel derecho - FUNCIÓN CORREGIDA
-function renderAllEvents() {
-    if (events.length === 0) {
-        allEventsList.innerHTML = `
-            <div class="no-events">
-                <p>No tienes eventos programados</p>
-                <small>Agrega eventos usando los botones "+" en el calendario</small>
-            </div>
-        `;
-    } else {
-        // Ordenar eventos por fecha (más recientes primero)
-        const sortedEvents = [...events].sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
-        
-        const today = new Date().toISOString().split('T')[0];
-        
-        allEventsList.innerHTML = sortedEvents.map(event => {
-            const isPast = event.event_date < today;
-            const dateClass = isPast ? 'event-date-past' : 'event-date-future';
-            
-            return `
-            <div class="event-card" style="margin-bottom: 15px; ${isPast ? 'opacity: 0.8;' : ''}">
-                <div class="event-actions">
-                    ${!isPast ? `<button class="event-action-btn edit" onclick="editEvent(${event.id})">✏️</button>` : ''}
-                    <button class="event-action-btn delete" onclick="deleteEvent(${event.id})">🗑️</button>
-                </div>
-                <div class="${dateClass}" style="font-size: 14px; margin-bottom: 5px;">
-                    📅 ${formatDateDisplay(event.event_date)}
-                </div>
-                <h3 class="event-title" style="font-size: 16px;">${escapeHtml(event.event_title)}</h3>
-                ${event.event_outfit ? `<p class="event-outfit" style="font-size: 14px;">👗 ${escapeHtml(event.event_outfit)}</p>` : ''}
-                ${event.event_location ? `<p class="event-location" style="font-size: 14px;">📍 ${escapeHtml(event.event_location)}</p>` : ''}
-            </div>
-        `}).join('');
-    }
-}
-
-// ✅ NUEVA FUNCIÓN: Para escapar HTML y prevenir XSS
-function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-            // Renderizar TODOS los eventos en el panel derecho
             function renderAllEvents() {
                 if (events.length === 0) {
                     allEventsList.innerHTML = `
@@ -1017,9 +1140,7 @@ function escapeHtml(unsafe) {
                         </div>
                     `;
                 } else {
-                    // Ordenar eventos por fecha (más recientes primero)
                     const sortedEvents = [...events].sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
-                    
                     const today = new Date().toISOString().split('T')[0];
                     
                     allEventsList.innerHTML = sortedEvents.map(event => {
@@ -1035,55 +1156,274 @@ function escapeHtml(unsafe) {
                             <div class="${dateClass}" style="font-size: 14px; margin-bottom: 5px;">
                                 📅 ${formatDateDisplay(event.event_date)}
                             </div>
-                            <h3 class="event-title" style="font-size: 16px;">${event.event_title}</h3>
-                            ${event.event_outfit ? `<p class="event-outfit" style="font-size: 14px;"> ${event.event_outfit}</p>` : ''}
-                            ${event.event_location ? `<p class="event-location" style="font-size: 14px;"> ${event.event_location}</p>` : ''}
+                            <h3 class="event-title" style="font-size: 16px;">${escapeHtml(event.event_title)}</h3>
+                            ${event.event_outfit ? renderOutfitPreview(event.event_outfit) : ''}
+                            ${event.event_location ? `<p class="event-location" style="font-size: 14px;">📍 ${escapeHtml(event.event_location)}</p>` : ''}
                         </div>
                     `}).join('');
                 }
             }
 
-            // Abrir modal para agregar evento
+            // Funciones para manejar outfits
+            async function loadUserOutfits() {
+                try {
+                    console.log('🔄 Cargando outfits del usuario...');
+                    const response = await fetch('/api/obtener-recomendaciones/');
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al cargar outfits');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        userOutfits = data.recomendaciones || [];
+                        console.log(`✅ ${userOutfits.length} outfits cargados`);
+                        renderOutfitsList(userOutfits);
+                    } else {
+                        console.error('❌ Error en la respuesta:', data.error);
+                        showNoOutfitsMessage();
+                    }
+                } catch (error) {
+                    console.error('❌ Error cargando outfits:', error);
+                    showNoOutfitsMessage();
+                }
+            }
+
+            function renderOutfitsList(outfits, searchTerm = '') {
+                const outfitsList = document.getElementById('outfitsList');
+                
+                if (!outfits || outfits.length === 0) {
+                    showNoOutfitsMessage();
+                    return;
+                }
+                
+                let filteredOutfits = outfits;
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredOutfits = outfits.filter(outfit => 
+                        (outfit.nombre && outfit.nombre.toLowerCase().includes(term)) ||
+                        (outfit.estilo && outfit.estilo.toLowerCase().includes(term)) ||
+                        (outfit.clima && outfit.clima.toLowerCase().includes(term))
+                    );
+                }
+                
+                outfitsList.innerHTML = filteredOutfits.map(outfit => `
+                    <div class="outfit-option" 
+                         data-outfit-id="${outfit.id}"
+                         onclick="selectOutfit(${outfit.id})">
+                        ${outfit.imagen_url ? `
+                            <img src="${outfit.imagen_url}" 
+                                 alt="${outfit.nombre}"
+                                 class="outfit-option-img"
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSIyNSIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiPk9VVkZJVDwvdGV4dD48L3N2Zz4='">
+                        ` : `
+                            <div class="outfit-option-img" style="display: flex; align-items: center; justify-content: center; background: #f0f0f0; color: #666;">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                        `}
+                        <div class="outfit-option-info">
+                            <div class="outfit-option-name">${escapeHtml(outfit.nombre || 'Sin nombre')}</div>
+                            <div class="outfit-option-details">
+                                ${outfit.estilo || 'Sin estilo'} • ${outfit.clima || 'Sin clima'} • ${outfit.total_prendas || 0} prendas
+                            </div>
+                        </div>
+                        ${selectedOutfit && selectedOutfit.id === outfit.id ? 
+                            '<i class="fas fa-check" style="color: #4CAF50;"></i>' : ''}
+                    </div>
+                `).join('');
+            }
+
+            function showNoOutfitsMessage() {
+                const outfitsList = document.getElementById('outfitsList');
+                outfitsList.innerHTML = `
+                    <div class="no-outfits-message">
+                        <i class="fas fa-tshirt"></i>
+                        <p>No tienes outfits guardados</p>
+                        <p style="font-size: 12px; margin-top: 5px;">Ve a "Mis Outfits" para crear uno</p>
+                        <button onclick="redirectToOutfits()" style="margin-top: 10px; padding: 8px 15px; background: var(--color-secundario); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-plus"></i> Crear Outfit
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Funciones globales para outfits (accesibles desde HTML)
+            window.selectOutfit = function(outfitId) {
+                const outfit = userOutfits.find(o => o.id == outfitId);
+                if (!outfit) return;
+                
+                selectedOutfit = outfit;
+                
+                // Actualizar interfaz
+                document.getElementById('selectedOutfitText').textContent = outfit.nombre || 'Outfit seleccionado';
+                document.getElementById('selectedOutfitId').value = outfit.id;
+                document.getElementById('selectedOutfitData').value = JSON.stringify(outfit);
+                
+                // Mostrar vista previa
+                showOutfitPreview(outfit);
+                
+                // Marcar como seleccionado
+                document.querySelectorAll('.outfit-option').forEach(option => {
+                    option.classList.remove('selected');
+                    if (parseInt(option.dataset.outfitId) === outfitId) {
+                        option.classList.add('selected');
+                    }
+                });
+                
+                // Cerrar el dropdown
+                closeOutfitSelector();
+            }
+
+            function showOutfitPreview(outfit) {
+                const previewContainer = document.getElementById('selectedOutfitPreview');
+                const previewContent = document.getElementById('outfitPreviewContent');
+                
+                let previewHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <strong style="color: var(--color-primario);">${escapeHtml(outfit.nombre || 'Outfit seleccionado')}</strong>
+                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                ${outfit.estilo || 'Sin estilo'} • ${outfit.clima || 'Sin clima'}
+                            </div>
+                        </div>
+                        <button onclick="clearSelectedOutfit()" class="outfit-preview-remove" title="Quitar outfit">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                // Mostrar prendas si están disponibles
+                if (outfit.prendas && outfit.prendas.length > 0) {
+                    previewHTML += '<div style="margin-top: 10px;">';
+                    outfit.prendas.slice(0, 3).forEach((prenda, index) => {
+                        previewHTML += `
+                            <div class="outfit-preview-item">
+                                ${prenda.imagen_url ? `
+                                    <img src="${prenda.imagen_url}" alt="${prenda.tipo || 'Prenda'}" class="outfit-preview-img"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                                ` : `
+                                    <div style="width: 40px; height: 40px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-tshirt"></i>
+                                    </div>
+                                `}
+                                <div>
+                                    <div class="outfit-preview-name">${prenda.tipo || 'Prenda ' + (index + 1)}</div>
+                                    <div class="outfit-preview-meta">${prenda.color || ''} ${prenda.estilo || ''}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    if (outfit.prendas.length > 3) {
+                        previewHTML += `
+                            <div style="text-align: center; font-size: 12px; color: #666; padding: 5px;">
+                                +${outfit.prendas.length - 3} prendas más
+                            </div>
+                        `;
+                    }
+                    
+                    previewHTML += '</div>';
+                }
+                
+                previewContent.innerHTML = previewHTML;
+                previewContainer.style.display = 'block';
+            }
+
+            window.clearSelectedOutfit = function() {
+                selectedOutfit = null;
+                document.getElementById('selectedOutfitText').textContent = 'Seleccionar outfit...';
+                document.getElementById('selectedOutfitId').value = '';
+                document.getElementById('selectedOutfitData').value = '';
+                document.getElementById('selectedOutfitPreview').style.display = 'none';
+                
+                // Limpiar selección visual
+                document.querySelectorAll('.outfit-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+            }
+
+            window.toggleOutfitSelector = function() {
+                const dropdown = document.getElementById('outfitSelectorDropdown');
+                const icon = document.getElementById('outfitSelectorIcon');
+                
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    dropdown.style.display = 'block';
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                    
+                    // Cargar outfits si no están cargados
+                    if (userOutfits.length === 0) {
+                        loadUserOutfits();
+                    }
+                }
+            }
+
+            function closeOutfitSelector() {
+                const dropdown = document.getElementById('outfitSelectorDropdown');
+                const icon = document.getElementById('outfitSelectorIcon');
+                
+                dropdown.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+
+            window.searchOutfits = function(term) {
+                renderOutfitsList(userOutfits, term);
+            }
+
+            window.redirectToOutfits = function() {
+                closeEventModal();
+                window.location.href = "{% url 'ver_prendas_temp' %}";
+            }
+
+            // Funciones para eventos
             function openAddEventModal(dateString = null) {
-    let targetDate;
-    
-    if (dateString) {
-        // ✅ CORRECCIÓN: Usar la fecha del botón clickeado directamente
-        targetDate = dateString;
-    } else if (selectedDate) {
-        // ✅ CORRECCIÓN: Formatear la fecha seleccionada correctamente
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        targetDate = `${year}-${month}-${day}`;
-    } else {
-        alert('Por favor, selecciona una fecha primero');
-        return;
-    }
-    
-    console.log(`📅 Fecha objetivo para nuevo evento: ${targetDate}`);
-    
-    // Verificar que no sea fecha pasada
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const targetDay = new Date(targetDate);
-    
-    if (targetDay < today) {
-        alert('No puedes agregar eventos a fechas pasadas');
-        return;
-    }
-    
-    eventDateInput.value = targetDate;
-    eventIdInput.value = '';
-    eventForm.reset();
-    modalTitle.textContent = 'Agregar Evento';
-    eventModal.classList.add('active');
-    
-    console.log(`✅ Modal abierto para fecha: ${targetDate}`);
-}
+                let targetDate;
+                
+                if (dateString) {
+                    targetDate = dateString;
+                } else if (selectedDate) {
+                    const year = selectedDate.getFullYear();
+                    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(selectedDate.getDate()).padStart(2, '0');
+                    targetDate = `${year}-${month}-${day}`;
+                } else {
+                    alert('Por favor, selecciona una fecha primero');
+                    return;
+                }
+                
+                // Verificar que no sea fecha pasada
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const targetDay = new Date(targetDate);
+                
+                if (targetDay < today) {
+                    alert('No puedes agregar eventos a fechas pasadas');
+                    return;
+                }
+                
+                eventDateInput.value = targetDate;
+                eventIdInput.value = '';
+                eventForm.reset();
+                modalTitle.textContent = 'Agregar Evento';
+                eventModal.classList.add('active');
+                
+                // Resetear outfit seleccionado
+                clearSelectedOutfit();
+                
+                // Cargar outfits
+                setTimeout(() => {
+                    if (userOutfits.length === 0) {
+                        loadUserOutfits();
+                    }
+                }, 100);
+            }
 
-
-            // Editar evento
             window.editEvent = async function(eventId) {
                 const event = events.find(e => e.id === eventId);
                 if (!event) return;
@@ -1091,116 +1431,145 @@ function escapeHtml(unsafe) {
                 eventIdInput.value = event.id;
                 eventDateInput.value = event.event_date;
                 document.getElementById('eventTitle').value = event.event_title;
-                document.getElementById('eventOutfit').value = event.event_outfit || '';
                 document.getElementById('eventLocation').value = event.event_location || '';
                 document.getElementById('eventDescription').value = event.event_description || '';
                 
+                // Cargar outfit si existe en el evento
+                if (event.event_outfit) {
+                    try {
+                        const outfitData = JSON.parse(event.event_outfit);
+                        // Buscar el outfit en la lista cargada
+                        const outfit = userOutfits.find(o => o.id == outfitData.id);
+                        if (outfit) {
+                            selectOutfit(outfit.id);
+                        } else {
+                            // Si no está en la lista, mostrar vista previa básica
+                            document.getElementById('selectedOutfitText').textContent = outfitData.nombre || 'Outfit seleccionado';
+                            document.getElementById('selectedOutfitId').value = outfitData.id;
+                            document.getElementById('selectedOutfitData').value = event.event_outfit;
+                            showOutfitPreview(outfitData);
+                        }
+                    } catch {
+                        // Si no es JSON, usar como texto
+                        document.getElementById('selectedOutfitText').textContent = event.event_outfit;
+                        document.getElementById('selectedOutfitData').value = event.event_outfit;
+                    }
+                } else {
+                    clearSelectedOutfit();
+                }
+                
                 modalTitle.textContent = 'Editar Evento';
                 eventModal.classList.add('active');
-            }
-
-           
-// Manejar envío del formulario - FUNCIÓN CORREGIDA
-async function handleEventSubmit(e) {
-    e.preventDefault();
-    
-    if (isSubmitting) {
-        console.log(' Ya se está enviando el formulario...');
-        return;
-    }
-    
-    isSubmitting = true;
-    
-    const submitBtn = eventForm.querySelector('.save');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Guardando...';
-    submitBtn.disabled = true;
-
-    // ✅ CORRECCIÓN: Verificar y formatear correctamente la fecha
-    const eventDateValue = eventDateInput.value;
-    console.log(`📅 Fecha del formulario: ${eventDateValue}`);
-    
-    // Validar que la fecha sea correcta
-    const eventDate = new Date(eventDateValue);
-    if (isNaN(eventDate.getTime())) {
-        alert('Fecha inválida');
-        isSubmitting = false;
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        return;
-    }
-
-    const eventData = {
-        event_date: eventDateValue, // ✅ Usar el valor directamente del input
-        event_title: document.getElementById('eventTitle').value.trim(),
-        event_outfit: document.getElementById('eventOutfit').value.trim() || null,
-        event_location: document.getElementById('eventLocation').value.trim() || null,
-        event_description: document.getElementById('eventDescription').value.trim() || null
-    };
-
-    console.log(`📤 Enviando evento con fecha: ${eventData.event_date}`);
-
-    if (!eventData.event_title) {
-        alert('El título del evento es obligatorio');
-        isSubmitting = false;
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        return;
-    }
-
-    try {
-        let url = '/calendar/events/';
-        let method = 'POST';
-        
-        if (eventIdInput.value) {
-            eventData.id = eventIdInput.value;
-            method = 'PUT';
-        }
-
-        console.log(`Enviando evento: ${method}`, eventData);
-
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
-            body: JSON.stringify(eventData)
-        });
-
-        if (response.ok) {
-            console.log('✅ Evento guardado correctamente');
-            await loadEvents();
-            
-            if (selectedDate) {
-                // ✅ CORRECCIÓN: Usar la fecha actualmente seleccionada
-                const currentDate = new Date(selectedDate);
-                const year = currentDate.getFullYear();
-                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-                const day = String(currentDate.getDate()).padStart(2, '0');
-                const currentDateString = `${year}-${month}-${day}`;
                 
-                renderEventsForDate(currentDateString);
+                // Cargar outfits si no están cargados
+                setTimeout(() => {
+                    if (userOutfits.length === 0) {
+                        loadUserOutfits();
+                    }
+                }, 100);
             }
-            
-            renderAllEvents();
-            closeEventModal();
-        } else {
-            throw new Error('Error al guardar el evento');
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al guardar el evento');
-    } finally {
-        isSubmitting = false;
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    }
-}
 
-            // Eliminar evento
-            // En deleteEvent - CORREGIR
+            async function handleEventSubmit(e) {
+                e.preventDefault();
+                
+                if (isSubmitting) {
+                    console.log('⏳ Ya se está enviando el formulario...');
+                    return;
+                }
+                
+                isSubmitting = true;
+                
+                const submitBtn = eventForm.querySelector('.save');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Guardando...';
+                submitBtn.disabled = true;
+
+                // Obtener datos del outfit seleccionado
+                let outfitData = null;
+                if (selectedOutfit) {
+                    outfitData = {
+                        id: selectedOutfit.id,
+                        nombre: selectedOutfit.nombre,
+                        estilo: selectedOutfit.estilo,
+                        clima: selectedOutfit.clima,
+                        imagen_url: selectedOutfit.imagen_url,
+                        total_prendas: selectedOutfit.total_prendas || 0,
+                        prendas: selectedOutfit.prendas || []
+                    };
+                } else if (document.getElementById('selectedOutfitData').value) {
+                    // Si hay datos del outfit pero no en selectedOutfit (caso de edición)
+                    try {
+                        outfitData = JSON.parse(document.getElementById('selectedOutfitData').value);
+                    } catch {
+                        outfitData = document.getElementById('selectedOutfitData').value;
+                    }
+                }
+
+                const eventData = {
+                    event_date: eventDateInput.value,
+                    event_title: document.getElementById('eventTitle').value.trim(),
+                    event_outfit: outfitData ? (typeof outfitData === 'object' ? JSON.stringify(outfitData) : outfitData) : null,
+                    event_location: document.getElementById('eventLocation').value.trim() || null,
+                    event_description: document.getElementById('eventDescription').value.trim() || null
+                };
+
+                console.log('📤 Enviando evento con outfit:', outfitData ? (outfitData.nombre || outfitData) : 'Sin outfit');
+
+                if (!eventData.event_title) {
+                    alert('El título del evento es obligatorio');
+                    isSubmitting = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                try {
+                    let url = '/calendar/events/';
+                    let method = 'POST';
+                    
+                    if (eventIdInput.value) {
+                        eventData.id = eventIdInput.value;
+                        method = 'PUT';
+                    }
+
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCSRFToken()
+                        },
+                        body: JSON.stringify(eventData)
+                    });
+
+                    if (response.ok) {
+                        console.log('✅ Evento guardado correctamente');
+                        await loadEvents();
+                        
+                        if (selectedDate) {
+                            const year = selectedDate.getFullYear();
+                            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(selectedDate.getDate()).padStart(2, '0');
+                            const currentDateString = `${year}-${month}-${day}`;
+                            
+                            renderEventsForDate(currentDateString);
+                        }
+                        
+                        renderAllEvents();
+                        closeEventModal();
+                    } else {
+                        throw new Error('Error al guardar el evento');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al guardar el evento');
+                } finally {
+                    isSubmitting = false;
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
             window.deleteEvent = async function(eventId) {
                 if (!confirm('¿Estás seguro de que quieres eliminar este evento?')) {
                     return;
@@ -1219,8 +1588,10 @@ async function handleEventSubmit(e) {
                     if (response.ok) {
                         await loadEvents();
                         if (selectedDate) {
-                            // ✅ CORRECCIÓN: Usar formato directo en lugar de formatDate()
-                            renderEventsForDate(selectedDate.toISOString().split('T')[0]);
+                            const year = selectedDate.getFullYear();
+                            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                            const day = String(selectedDate.getDate()).padStart(2, '0');
+                            renderEventsForDate(`${year}-${month}-${day}`);
                         }
                         renderAllEvents();
                     } else {
@@ -1232,69 +1603,53 @@ async function handleEventSubmit(e) {
                 }
             }
 
-            // Cargar eventos - OPTIMIZADO
             async function loadEvents() {
                 try {
-                    console.log('Cargando eventos...');
+                    console.log('🔄 Cargando eventos...');
                     const response = await fetch('/calendar/events/');
                     if (response.ok) {
                         events = await response.json();
-                        console.log(` ${events.length} eventos cargados`);
+                        console.log(`✅ ${events.length} eventos cargados`);
                     } else {
-                        console.error('Error cargando eventos');
-                    events = [];
+                        console.error('❌ Error cargando eventos');
+                        events = [];
                     }
                 } catch (error) {
-                    console.error('Error cargando eventos:', error);
+                    console.error('❌ Error cargando eventos:', error);
                     events = [];
                 }
             }
 
-            // Cargar y mostrar todos los eventos
             async function loadAllEvents() {
                 await loadEvents();
                 renderAllEvents();
             }
 
-            // Cerrar modal
             function closeEventModal() {
                 eventModal.classList.remove('active');
             }
 
             // Funciones de utilidad
-            function formatDate(date) {
-                    const formatted = date.toISOString().split('T')[0];
-                    console.log(`🔧 formatDate: ${date} -> ${formatted}`);
-                    return formatted;
-                }
-
             function formatDateLong(date) {
-                    // ✅ CORRECCIÓN: Usar métodos directos en lugar de toLocaleDateString que depende del timezone
-                    const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-                    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-                    
-                    const dayName = days[date.getDay()];
-                    const dayNumber = date.getDate();
-                    const monthName = months[date.getMonth()];
-                    const year = date.getFullYear();
-                    
-                    return `${dayName}, ${dayNumber} de ${monthName} de ${year}`;
+                const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+                const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                
+                const dayName = days[date.getDay()];
+                const dayNumber = date.getDate();
+                const monthName = months[date.getMonth()];
+                const year = date.getFullYear();
+                
+                return `${dayName}, ${dayNumber} de ${monthName} de ${year}`;
             }
 
-
             function formatDateDisplay(dateString) {
-    
-                    const date = new Date(dateString);
-                    
-                    // Ajustar por timezone (si es necesario)
-                    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-                    
-                    const options = { 
-                        day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric'
-                    };
-                    return adjustedDate.toLocaleDateString('es-ES', options);
+                const date = new Date(dateString);
+                const options = { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric'
+                };
+                return date.toLocaleDateString('es-ES', options);
             }
 
             function getCSRFToken() {
@@ -1313,10 +1668,30 @@ async function handleEventSubmit(e) {
                 return cookieValue;
             }
 
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            function updateFloatingButton() {
+                const addEventBtn = document.getElementById('addEventBtn');
+                if (!addEventBtn) return;
+
+                if (selectedDate) {
+                    addEventBtn.classList.remove('disabled');
+                } else {
+                    addEventBtn.classList.add('disabled');
+                }
+            }
+
             // Cargar eventos al inicio
             loadEvents();
         });
     </script>
-    <script src="{% static 'js/calendar.js' %}"></script>
 </body>
 </html>

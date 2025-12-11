@@ -40,3 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
+// Cerrar selector de outfits al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('outfitSelectorDropdown');
+    const toggle = document.getElementById('outfitSelectorToggle');
+    
+    if (dropdown && dropdown.style.display === 'block' && 
+        !dropdown.contains(e.target) && 
+        !toggle.contains(e.target)) {
+        closeOutfitSelector();
+    }
+});

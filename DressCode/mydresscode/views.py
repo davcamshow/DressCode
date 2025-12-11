@@ -1518,7 +1518,6 @@ def calendar_view(request, year=None, month=None):
     }
 
     return render(request, "calendar.html", context)
-
 @csrf_exempt
 @require_http_methods(["GET", "POST", "PUT", "DELETE"])
 def calendar_events_api(request):
@@ -1541,7 +1540,7 @@ def calendar_events_api(request):
                 'id': event.id,
                 'event_date': event.event_date.isoformat() if event.event_date else None,
                 'event_title': event.event_title,
-                'event_outfit': event.event_outfit,
+                'event_outfit': event.event_outfit,  # Esto puede ser JSON string
                 'event_location': event.event_location,
                 'event_description': event.event_description,
                 'created_at': event.created_at.isoformat() if event.created_at else None,
@@ -1566,18 +1565,39 @@ def calendar_events_api(request):
             else:
                 event_date = None
             
+            # ✅ MANEJAR OUTFIT COMO JSON STRING
+            event_outfit = data.get('event_outfit')
+            if event_outfit:
+                try:
+                    # Si ya es un string JSON, validarlo
+                    if isinstance(event_outfit, str):
+                        # Validar que sea JSON válido
+                        parsed = json.loads(event_outfit)
+                        # Asegurarnos de guardarlo como string JSON
+                        event_outfit = json.dumps(parsed, ensure_ascii=False)
+                    else:
+                        # Si es un dict, convertirlo a JSON string
+                        event_outfit = json.dumps(event_outfit, ensure_ascii=False)
+                    print(f"👗 Outfit guardado como JSON: {event_outfit[:100]}...")
+                except json.JSONDecodeError as e:
+                    print(f"⚠️ Outfit no es JSON válido, guardando como texto: {str(e)}")
+                    # Si no es JSON válido, guardar como string simple
+                    event_outfit = str(event_outfit)
+            else:
+                event_outfit = None
+            
             event = CalendarEventos.objects.create(
                 id_usuario=usuario,
-                event_date=event_date,  # ✅ Usar la fecha convertida
+                event_date=event_date,
                 event_title=data.get('event_title', ''),
-                event_outfit=data.get('event_outfit'),
+                event_outfit=event_outfit,  # ✅ Ahora puede ser JSON string o texto simple
                 event_location=data.get('event_location'),
                 event_description=data.get('event_description'),
             )
             
             print(f"✅ DEBUG BACKEND - Evento creado con fecha: {event.event_date}")
             print(f"✅ DEBUG BACKEND - Evento ID: {event.id}")
-            print(f"🔍 DEBUG BACKEND - Tipo de fecha guardada: {type(event.event_date)}")
+            print(f"👗 DEBUG BACKEND - Outfit guardado: {event.event_outfit[:100] if event.event_outfit else 'None'}")
             
             return JsonResponse({
                 'id': event.id,
@@ -1585,6 +1605,8 @@ def calendar_events_api(request):
             }, status=201)
         except Exception as e:
             print(f"❌ DEBUG BACKEND - Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return JsonResponse({'error': str(e)}, status=400)
     
     elif request.method == 'PUT':
@@ -1602,15 +1624,36 @@ def calendar_events_api(request):
                 event.event_date = event_date
             else:
                 event.event_date = data.get('event_date', event.event_date)
+            
+            # ✅ MANEJAR ACTUALIZACIÓN DE OUTFIT
+            event_outfit = data.get('event_outfit')
+            if event_outfit is not None:  # None significa que no se quiere modificar
+                if event_outfit:  # Si hay valor, procesarlo
+                    try:
+                        if isinstance(event_outfit, str):
+                            # Validar que sea JSON válido
+                            parsed = json.loads(event_outfit)
+                            event_outfit = json.dumps(parsed, ensure_ascii=False)
+                        else:
+                            event_outfit = json.dumps(event_outfit, ensure_ascii=False)
+                        print(f"👗 Outfit actualizado como JSON")
+                    except json.JSONDecodeError:
+                        print(f"⚠️ Outfit no es JSON válido, guardando como texto")
+                        event_outfit = str(event_outfit)
+                else:
+                    # Si es string vacío, limpiar el outfit
+                    event_outfit = None
                 
+                event.event_outfit = event_outfit
+            
             event.event_title = data.get('event_title', event.event_title)
-            event.event_outfit = data.get('event_outfit', event.event_outfit)
             event.event_location = data.get('event_location', event.event_location)
             event.event_description = data.get('event_description', event.event_description)
             event.save()
             
             return JsonResponse({'message': 'Event updated successfully'})
         except Exception as e:
+            print(f"❌ Error en PUT: {str(e)}")
             return JsonResponse({'error': str(e)}, status=400)
     
     elif request.method == 'DELETE':
@@ -2430,6 +2473,72 @@ def obtener_contador_eventos(request):
         return JsonResponse({
             'success': False,
             'error': str(e)
+        })
+        
+# En views.py, agrega esta función si no la tienes
+@configuracion_requerida
+def obtener_recomendaciones_api(request):
+    """API para obtener recomendaciones de outfits"""
+    try:
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        # Obtener TODAS las recomendaciones del usuario
+        recomendaciones = Recomendacion.objects.filter(idUsuario=usuario_id)
+        
+        print(f"🔍 Buscando outfits para usuario: {usuario_id}")
+        print(f"📊 Recomendaciones encontradas: {recomendaciones.count()}")
+        
+        recomendaciones_data = []
+        for rec in recomendaciones:
+            try:
+                # Obtener prendas del outfit
+                prendas_outfit = VerPrenda.objects.filter(outfit=rec.idOutfit)
+                
+                # Imagen principal (primera prenda)
+                imagen_principal = prendas_outfit.first().imagen_url if prendas_outfit.exists() else ''
+                
+                # Preparar datos de prendas
+                prendas_detalladas = []
+                for prenda in prendas_outfit:
+                    prendas_detalladas.append({
+                        'tipo': prenda.tipo_prenda,
+                        'imagen_url': prenda.imagen_url
+                    })
+                
+                recomendaciones_data.append({
+                    'id': rec.idRecomendacion,
+                    'outfit_id': rec.idOutfit.idOutfit,
+                    'nombre': f"Look {rec.idOutfit.estilo}",
+                    'estilo': rec.idOutfit.estilo,
+                    'clima': rec.clima_del_dia or rec.idOutfit.clima_recomendado,
+                    'imagen_url': imagen_principal,
+                    'fecha_creacion': rec.fecha_generacion.strftime('%d/%m/%Y') if rec.fecha_generacion else '',
+                    'valoracion': rec.valoracion or 0,
+                    'es_favorito': rec.idOutfit.esFavorito,
+                    'prendas': prendas_detalladas,
+                    'total_prendas': len(prendas_detalladas)
+                })
+                
+                print(f"✅ Outfit {rec.idOutfit.idOutfit} agregado: {rec.idOutfit.estilo}")
+                
+            except Exception as e:
+                print(f"⚠️ Error procesando outfit {rec.idOutfit.idOutfit if rec.idOutfit else 'N/A'}: {e}")
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'recomendaciones': recomendaciones_data
+        })
+        
+    except Exception as e:
+        print(f"❌ ERROR en obtener_recomendaciones_api: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'recomendaciones': []
         })
     
     
