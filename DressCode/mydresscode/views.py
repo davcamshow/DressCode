@@ -390,6 +390,8 @@ def capturar_view(request):
 
 def exit_view(request):
     return render(request, 'Cuenta creada.html')
+
+@configuracion_requerida
 def my_closet(request):
     if 'usuario_id' not in request.session:
         messages.error(request, "Debes iniciar sesión para ver tu armario.")
@@ -399,11 +401,15 @@ def my_closet(request):
         usuario_id = request.session['usuario_id']
         usuario = Usuario.objects.get(idUsuario=usuario_id)
         prendas = Armario.objects.filter(idUsuario=usuario).order_by('-fecha')
-
+        
+        # ✅ CONTAR LOS OUTFITS DEL USUARIO
+        outfits_count = Outfit.objects.filter(idUsuario=usuario).count()
+        
         # DEBUG: Verificar imágenes segmentadas
         print(f"=== DEBUG MY_CLOSET ===")
         print(f"Usuario: {usuario}")
         print(f"Número de prendas: {prendas.count()}")
+        print(f"Número de outfits: {outfits_count}")
         
         for prenda in prendas:
             print(f"Prenda ID: {prenda.idPrenda}")
@@ -414,7 +420,8 @@ def my_closet(request):
             print("---")
 
         context = {
-            'prendas_del_armario': prendas 
+            'prendas_del_armario': prendas,
+            'outfits_count': outfits_count  # ✅ Añadir al contexto
         }
         return render(request, 'myCloset.html', context)
 
