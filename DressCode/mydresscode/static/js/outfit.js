@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("theme-toggle");
 
@@ -23,8 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("theme", newTheme);
 
     // Actualizar íconos
-    updateIcons(newTheme); });
-    
+    updateIcons(newTheme);
+  });
+
   // Función para mostrar/ocultar íconos
   function updateIcons(theme) {
     const moonIcon = toggle.querySelector(".icon-moon");
@@ -39,8 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Inicializar sistema de calificación en el modal
+  initEstrellasCalificacion();
 });
-
 
 function descartarOutfit() {
   if (confirm("¿Seguro que quieres descartar este outfit?")) {
@@ -88,114 +89,73 @@ function ocultarLista(listaId) {
   lista.style.display = 'none';
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const stars = document.querySelectorAll(".stars span");
-  const ratingValue = document.getElementById("ratingValue");
+// Sistema de calificación para el modal
+function initEstrellasCalificacion() {
+  const estrellas = document.querySelectorAll(".estrella");
+  const puntuacionMostrada = document.getElementById("puntuacionMostrada");
+  let puntuacionSeleccionada = 0;
 
-  stars.forEach(star => {
-    star.addEventListener("mouseover", function () {
-      stars.forEach(s => s.classList.remove("hover"));
-      for (let i = 0; i < this.dataset.value; i++) {
-        stars[i].classList.add("hover");
-      }
-    });
-
-    star.addEventListener("click", function () {
-      ratingValue.value = this.dataset.value;
-      stars.forEach(s => s.classList.remove("selected"));
-      for (let i = 0; i < this.dataset.value; i++) {
-        stars[i].classList.add("selected");
-      }
-    });
-  });
-
-  // Quitar hover al salir
-  document.querySelector(".stars").addEventListener("mouseleave", function () {
-    stars.forEach((star, index) => {
-    star.addEventListener("mouseover", function () {
-      stars.forEach(s => s.classList.remove("hover"));
-
-      // Pintar SOLO desde donde está el mouse hacia la derecha
-      for (let i = index; i < stars.length; i++) {
-        stars[i].classList.add("hover");
-      }
-    });
-  });
-
-  });
-});
-
-
-document.getElementById("guardarOutfitForm").addEventListener("submit", async function(e) {
-    e.preventDefault(); // 🚫 No recargar la página
-
-    let form = this;
-    let url = form.action;
-
-    let formData = new FormData(form);
-
-    // Enviar por AJAX a Django
-    let response = await fetch(url, {
-        method: "POST",
-        body: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"
+  estrellas.forEach(estrella => {
+    estrella.addEventListener("mouseover", function() {
+      const valor = parseInt(this.dataset.value);
+      estrellas.forEach((e, index) => {
+        if (index < valor) {
+          e.classList.add("hover");
+        } else {
+          e.classList.remove("hover");
         }
+      });
     });
 
-    if (response.ok) {
-        let data = await response.json();
+    estrella.addEventListener("mouseout", function() {
+      estrellas.forEach(e => e.classList.remove("hover"));
+      // Restaurar las seleccionadas
+      estrellas.forEach((e, index) => {
+        if (index < puntuacionSeleccionada) {
+          e.classList.add("seleccionada");
+        }
+      });
+    });
 
-        // Guardar el ID del outfit recién creado
-        document.getElementById("idOutfit").value = data.outfit_id;
+    estrella.addEventListener("click", function() {
+      puntuacionSeleccionada = parseInt(this.dataset.value);
+      puntuacionMostrada.textContent = puntuacionSeleccionada;
+      
+      // Actualizar visualización de estrellas
+      estrellas.forEach((e, index) => {
+        if (index < puntuacionSeleccionada) {
+          e.classList.add("seleccionada");
+        } else {
+          e.classList.remove("seleccionada");
+        }
+      });
 
-        mostrarToast();
-
-        // Mostrar modal de estrellas
-        document.getElementById("ratingModal").style.display = "flex";
-      } else {
-          alert("Error al guardar 😥");
+      // Guardar calificación si hay un outfit ID
+      const idOutfit = document.getElementById("idOutfit").value;
+      if (idOutfit) {
+        guardarCalificacion(puntuacionSeleccionada, idOutfit);
       }
-});
+    });
+  });
 
-function mostrarToast() {
-    const toast = document.getElementById("toast-guardado");
-    toast.classList.add("show");
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2500);
+  // Botón para enviar calificación (alternativo)
+  const btnEnviarCalificacion = document.getElementById("enviarCalificacion");
+  if (btnEnviarCalificacion) {
+    btnEnviarCalificacion.addEventListener("click", function() {
+      const idOutfit = document.getElementById("idOutfit").value;
+      if (puntuacionSeleccionada > 0 && idOutfit) {
+        guardarCalificacion(puntuacionSeleccionada, idOutfit);
+        alert("¡Gracias por tu calificación!");
+      } else {
+        alert("Por favor selecciona una calificación primero.");
+      }
+    });
+  }
 }
 
-let selectedRating = 0;
-
-document.querySelectorAll('.star').forEach(star => {
-  star.addEventListener('click', function () {
-    selectedRating = this.dataset.value;
-
-    document.querySelectorAll('.star').forEach(s => {
-      s.classList.remove('selected');
-    });
-
-    this.classList.add('selected');
-    let previous = this.previousElementSibling;
-
-    while (previous) {
-      previous.classList.add('selected');
-      previous = previous.previousElementSibling;
-    }
-  });
-});
-
-document.getElementById("enviarRating").addEventListener("click", function () {
-  if (selectedRating === 0) {
-    alert("Selecciona una calificación primero");
-    return;
-  }
-
-  let idUsuario = document.getElementById("idUsuario").value;
-  let idOutfit = document.getElementById("idOutfit").value;
-
+function guardarCalificacion(rating, outfitId) {
+  const idUsuario = document.getElementById("idUsuario").value;
+  
   fetch("/guardar-rating/", {
     method: "POST",
     headers: {
@@ -203,79 +163,173 @@ document.getElementById("enviarRating").addEventListener("click", function () {
       "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
     },
     body: JSON.stringify({
-      rating: selectedRating,
+      rating: rating,
       idUsuario: idUsuario,
-      idOutfit: idOutfit
+      idOutfit: outfitId
     })
   })
   .then(res => res.json())
   .then(data => {
-      console.log(data);
-      alert("¡Gracias por tu valoración!");
+    console.log("Calificación guardada:", data);
+  })
+  .catch(error => {
+    console.error("Error al guardar calificación:", error);
   });
+}
 
-  document.getElementById("ratingModal").style.display = "none";
-});
+// Manejo del formulario de guardado
+document.getElementById("guardarOutfitForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
+  const form = this;
+  const submitBtn = document.getElementById("submitBtn");
+  const originalText = submitBtn.textContent;
+  
+  // Deshabilitar botón y mostrar estado de carga
+  submitBtn.textContent = 'Guardando...';
+  submitBtn.disabled = true;
 
-document.getElementById('guardarOutfitForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+  try {
+    const formData = new FormData(form);
     
-    console.log("=== ENVIANDO FORMULARIO ===");
-    
-    // Verificar qué se está enviando
-    const formData = new FormData(this);
-    console.log("Datos a enviar:");
-    for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}: ${value}`);
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      // Guardar el ID del outfit en el campo oculto
+      if (data.outfit_id) {
+        document.getElementById("idOutfit").value = data.outfit_id;
+        
+        // Mostrar el modal de guardado exitoso
+        mostrarModalGuardado();
+      } else {
+        alert("Error: No se recibió ID del outfit");
+      }
+    } else {
+      alert("Error al guardar el outfit. Intenta nuevamente.");
     }
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Guardando...';
-    submitBtn.disabled = true;
-    
-    // Enviar con AJAX
-    const xhr = new XMLHttpRequest();
-    
-    xhr.open('POST', this.action, true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            try {
-                const data = JSON.parse(xhr.responseText);
-                console.log("Respuesta del servidor:", data);
-                
-                if (data.success) {
-                    alert(`✅ ¡Outfit guardado!\nID: ${data.outfit_id}\nPrendas: ${data.total_prendas}`);
-                    // Redirigir a recomendaciones
-                    window.location.href = "{% url 'outfits_recommendations' %}";
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
-            } catch (e) {
-                alert('✅ ¡Outfit guardado! Redirigiendo...');
-                window.location.href = "{% url 'outfits_recommendations' %}";
-            }
-        } else {
-            alert('❌ Error del servidor: ' + xhr.status);
-        }
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    };
-    
-    xhr.onerror = function() {
-        alert('❌ Error de conexión');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    };
-    
-    xhr.send(formData);
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error de conexión. Intenta nuevamente.");
+  } finally {
+    // Restaurar botón
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
 });
 
+// Función para mostrar el modal de guardado
+function mostrarModalGuardado() {
+  const modal = document.getElementById("guardadoModal");
+  modal.style.display = "flex";
+  
+  // Configurar eventos de los botones del modal
+  document.getElementById("btnIrMisOutfits").onclick = function() {
+    // Cambia esta URL según tu aplicación
+    window.location.href = "/ver-prendas-temp/"; 
+  };
+  
+  document.getElementById("btnIrInicio").onclick = function() {
+    window.location.href = "/inicio/"; // URL de inicio
+  };
+  
+  document.getElementById("btnCerrarModal").onclick = function() {
+    modal.style.display = "none";
+  };
+  
+  // También cerrar al hacer clic fuera del contenido
+  modal.onclick = function(e) {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+}
 
+// Inicializar sistema de estrellas del modal
+function initEstrellasModal() {
+  const estrellas = document.querySelectorAll(".estrella");
+  const puntuacionMostrada = document.getElementById("puntuacionMostrada");
+  let puntuacionSeleccionada = 0;
 
+  estrellas.forEach(estrella => {
+    estrella.addEventListener("mouseover", function() {
+      const valor = parseInt(this.dataset.value);
+      // Reset all stars
+      estrellas.forEach(e => {
+        e.classList.remove("seleccionada");
+        e.classList.remove("hover");
+      });
+      // Add hover class to stars up to this one
+      for (let i = 0; i < valor; i++) {
+        estrellas[i].classList.add("hover");
+      }
+    });
 
+    estrella.addEventListener("mouseout", function() {
+      // Remove hover, restore selected
+      estrellas.forEach(e => e.classList.remove("hover"));
+      for (let i = 0; i < puntuacionSeleccionada; i++) {
+        estrellas[i].classList.add("seleccionada");
+      }
+    });
 
+    estrella.addEventListener("click", function() {
+      puntuacionSeleccionada = parseInt(this.dataset.value);
+      puntuacionMostrada.textContent = puntuacionSeleccionada;
+      
+      // Update stars
+      estrellas.forEach((e, index) => {
+        e.classList.remove("seleccionada", "hover");
+        if (index < puntuacionSeleccionada) {
+          e.classList.add("seleccionada");
+        }
+      });
+    });
+  });
+}
 
+// Llamar a la inicialización cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", function() {
+  initEstrellasModal();
+  
+  // También inicializar las estrellas del rating modal existente si hay
+  const stars = document.querySelectorAll(".stars span");
+  const ratingValue = document.getElementById("ratingValue");
+
+  if (stars.length > 0) {
+    stars.forEach(star => {
+      star.addEventListener("mouseover", function() {
+        stars.forEach(s => s.classList.remove("hover"));
+        for (let i = 0; i < this.dataset.value; i++) {
+          stars[i].classList.add("hover");
+        }
+      });
+
+      star.addEventListener("click", function() {
+        ratingValue.value = this.dataset.value;
+        stars.forEach(s => s.classList.remove("selected"));
+        for (let i = 0; i < this.dataset.value; i++) {
+          stars[i].classList.add("selected");
+        }
+      });
+    });
+
+    document.querySelector(".stars").addEventListener("mouseleave", function() {
+      stars.forEach(s => s.classList.remove("hover"));
+      // Restaurar las seleccionadas
+      const currentRating = ratingValue.value;
+      stars.forEach((s, index) => {
+        if (index < currentRating) {
+          s.classList.add("selected");
+        }
+      });
+    });
+  }
+});
