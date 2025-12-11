@@ -369,6 +369,7 @@
             font-size: 14px;
         }
 
+        /* MODAL COMPACTO */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -377,12 +378,14 @@
             bottom: 0;
             background: rgba(58, 48, 33, 0.7);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             z-index: 2000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
+            padding-top: 30px;
+            overflow-y: auto;
         }
 
         .modal-overlay.active {
@@ -393,12 +396,15 @@
         .modal-content {
             background: var(--color-blanco);
             border-radius: 20px;
-            padding: 30px;
-            max-width: 600px;
+            padding: 20px;
+            max-width: 500px;
             width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: var(--sombra-media);
             transform: scale(0.9);
             transition: transform 0.3s ease;
+            margin-bottom: 30px;
         }
 
         .modal-overlay.active .modal-content {
@@ -406,30 +412,31 @@
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: var(--color-primario);
             text-align: center;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--color-primario);
+            font-size: 14px;
         }
 
         .form-input, .form-textarea {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border: 2px solid var(--color-acento-claro);
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
@@ -440,23 +447,29 @@
 
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         .form-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: flex-end;
-            margin-top: 25px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-fondo-principal);
+            position: sticky;
+            bottom: 0;
+            background: var(--color-blanco);
         }
 
         .form-btn {
-            padding: 12px 25px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             border: none;
             transition: all 0.3s ease;
+            font-size: 14px;
         }
 
         .form-btn.cancel {
@@ -633,14 +646,15 @@
             transition: all 0.3s ease;
         }
 
+        /* SELECTOR DE OUTFITS MEJORADO */
         .outfit-option {
-            padding: 12px 15px;
+            padding: 10px 12px;
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .outfit-option:hover {
@@ -653,11 +667,11 @@
         }
 
         .outfit-option-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
             object-fit: cover;
-            border: 2px solid #ddd;
+            border: 1px solid #ddd;
         }
 
         .outfit-option-info {
@@ -667,29 +681,30 @@
         .outfit-option-name {
             font-weight: 600;
             color: var(--color-primario);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .outfit-option-details {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-texto-claro);
             margin-top: 2px;
         }
 
         .no-outfits-message {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             color: #666;
+            font-size: 13px;
         }
 
         .no-outfits-message i {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 8px;
             display: block;
         }
 
         .outfit-selector-dropdown {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -705,11 +720,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
+            padding: 10px 12px;
             border: 2px solid var(--color-acento-claro);
-            border-radius: 12px;
+            border-radius: 10px;
             background: white;
             cursor: pointer;
+            font-size: 14px;
+            min-height: 44px;
         }
 
         .outfit-selector-toggle:hover {
@@ -717,27 +734,28 @@
         }
 
         .selected-outfit-preview {
-            margin-top: 15px;
-            padding: 15px;
+            margin-top: 12px;
+            padding: 12px;
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid #e0e0e0;
+            font-size: 13px;
         }
 
         .outfit-preview-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px;
+            gap: 8px;
+            padding: 6px;
             background: white;
             border-radius: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border: 1px solid #eee;
         }
 
         .outfit-preview-img {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 6px;
             object-fit: cover;
         }
@@ -745,11 +763,11 @@
         .outfit-preview-name {
             font-weight: 500;
             color: var(--color-primario);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .outfit-preview-meta {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
 
@@ -758,18 +776,37 @@
             background: #f44336;
             color: white;
             border: none;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .outfit-preview-remove:hover {
             background: #d32f2f;
+        }
+
+        /* ESTILOS PARA EL SCROLLBAR DEL MODAL */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: var(--color-fondo-principal);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--color-secundario);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--color-favorito);
         }
 
         @media (max-width: 768px) {
@@ -791,6 +828,26 @@
             
             .theme-toggle-wrapper {
                 order: 2;
+            }
+            
+            .modal-overlay {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                padding: 15px;
+                max-height: 90vh;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .form-btn {
+                width: 100%;
             }
         }
     </style>
@@ -880,9 +937,9 @@
         </div>
     </div>
 
-    <!-- Modal para agregar/editar eventos -->
+    <!-- Modal para agregar/editar eventos - VERSIÓN COMPACTA -->
     <div class="modal-overlay" id="eventModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content">
             <h2 class="modal-title" id="modalTitle">Agregar Evento</h2>
             <form id="eventForm">
                 <input type="hidden" id="eventId">
@@ -890,12 +947,12 @@
                 
                 <div class="form-group">
                     <label class="form-label" for="eventTitle">Título del Evento *</label>
-                    <input type="text" id="eventTitle" class="form-input" required>
+                    <input type="text" id="eventTitle" class="form-input" required placeholder="Ej: Cena con amigos">
                 </div>
                 
-                <!-- Selector de Outfit -->
+                <!-- Selector de Outfit Compacto -->
                 <div class="form-group">
-                    <label class="form-label" for="eventOutfitSelect">Seleccionar Outfit</label>
+                    <label class="form-label">Seleccionar Outfit</label>
                     <div class="outfit-selector-container" style="position: relative;">
                         <div class="outfit-selector-toggle" onclick="toggleOutfitSelector()" id="outfitSelectorToggle">
                             <span id="selectedOutfitText">Seleccionar outfit...</span>
@@ -903,14 +960,14 @@
                         </div>
                         
                         <div class="outfit-selector-dropdown" id="outfitSelectorDropdown" style="display: none;">
-                            <div style="padding: 10px; border-bottom: 1px solid #f0f0f0; background: #f8f9fa;">
+                            <div style="padding: 8px; border-bottom: 1px solid #f0f0f0; background: #f8f9fa;">
                                 <input type="text" id="outfitSearch" class="form-input" 
-                                       style="padding: 8px; font-size: 14px;" 
+                                       style="padding: 6px; font-size: 13px;" 
                                        placeholder="Buscar outfits..." 
                                        onkeyup="searchOutfits(this.value)">
                             </div>
-                            <div id="outfitsList" style="max-height: 250px; overflow-y: auto;">
-                                <div style="padding: 15px; text-align: center; color: #666;">
+                            <div id="outfitsList" style="max-height: 200px; overflow-y: auto;">
+                                <div style="padding: 12px; text-align: center; color: #666; font-size: 13px;">
                                     <i class="fas fa-spinner fa-spin"></i> Cargando outfits...
                                 </div>
                             </div>
@@ -921,11 +978,20 @@
                     <input type="hidden" id="selectedOutfitData">
                 </div>
                 
-                <!-- Vista previa del outfit seleccionado -->
+                <!-- Vista previa del outfit seleccionado (condicional) -->
                 <div class="selected-outfit-preview" id="selectedOutfitPreview" style="display: none;">
-                    <h4 style="margin-bottom: 10px; color: var(--color-primario); display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-tshirt"></i> Outfit Seleccionado
-                    </h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <strong style="color: var(--color-primario); font-size: 14px;">
+                                <i class="fas fa-tshirt" style="margin-right: 5px;"></i>
+                                <span id="outfitPreviewTitle">Outfit Seleccionado</span>
+                            </strong>
+                            <div id="outfitPreviewMeta" style="font-size: 11px; color: #666; margin-top: 2px;"></div>
+                        </div>
+                        <button onclick="clearSelectedOutfit()" style="background: none; border: none; cursor: pointer; color: #666; font-size: 12px; padding: 4px 8px; border-radius: 4px;">
+                            <i class="fas fa-times"></i> Cambiar
+                        </button>
+                    </div>
                     <div id="outfitPreviewContent">
                         <!-- La vista previa se cargará aquí -->
                     </div>
@@ -1084,47 +1150,49 @@
                 }
             }
 
+            // FUNCIÓN MEJORADA: Mostrar TODAS las prendas del outfit
             function renderOutfitPreview(outfitData) {
                 try {
                     const outfit = typeof outfitData === 'string' ? JSON.parse(outfitData) : outfitData;
                     
                     let previewHTML = `
                         <div class="event-outfit" style="margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-                                <i class="fas fa-tshirt"></i>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <i class="fas fa-tshirt" style="color: var(--color-secundario);"></i>
                                 <strong>${escapeHtml(outfit.nombre || 'Outfit')}</strong>
                             </div>
                     `;
                     
                     if (outfit.prendas && outfit.prendas.length > 0) {
-                        previewHTML += `
-                            <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;">
-                        `;
+                        previewHTML += `<div style="display: flex; gap: 6px; flex-wrap: wrap;">`;
                         
-                        outfit.prendas.slice(0, 3).forEach(prenda => {
+                        // MOSTRAR TODAS LAS PRENDAS (no solo las primeras 3)
+                        outfit.prendas.forEach((prenda, index) => {
                             previewHTML += `
-                                <div style="position: relative;">
+                                <div style="position: relative; width: 45px; height: 45px;">
                                     <img src="${prenda.imagen_url || ''}" 
-                                         alt="${prenda.tipo || ''}"
-                                         style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #ddd;"
-                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
-                                    ${prenda.tipo ? `<div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 9px; text-align: center; padding: 1px;">${prenda.tipo.substring(0, 3)}</div>` : ''}
+                                         alt="${prenda.tipo || 'Prenda ' + (index + 1)}"
+                                         style="width: 100%; height: 100%; border-radius: 6px; object-fit: cover; border: 1px solid #ddd;"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUiIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA0NSA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDUiIGhlaWdodD0iNDUiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 9px; text-align: center; padding: 1px 2px; line-height: 1.2;">
+                                        ${prenda.tipo ? prenda.tipo.substring(0, 10) : 'Prenda'}
+                                    </div>
                                 </div>
                             `;
                         });
                         
-                        if (outfit.prendas.length > 3) {
-                            previewHTML += `
-                                <div style="width: 40px; height: 40px; background: var(--color-acento-claro); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--color-primario); font-size: 12px; font-weight: bold;">
-                                    +${outfit.prendas.length - 3}
-                                </div>
-                            `;
-                        }
-                        
                         previewHTML += `</div>`;
                     }
                     
-                    previewHTML += `</div>`;
+                    // Información adicional del outfit
+                    previewHTML += `
+                        <div style="margin-top: 8px; font-size: 12px; color: #666; display: flex; gap: 10px;">
+                            ${outfit.estilo ? `<span><i class="fas fa-palette"></i> ${outfit.estilo}</span>` : ''}
+                            ${outfit.clima ? `<span><i class="fas fa-cloud"></i> ${outfit.clima}</span>` : ''}
+                            ${outfit.prendas ? `<span><i class="fas fa-tshirt"></i> ${outfit.prendas.length} prendas</span>` : ''}
+                        </div>
+                    </div>`;
+                    
                     return previewHTML;
                 } catch (e) {
                     return `<p class="event-outfit">👗 ${escapeHtml(outfitData)}</p>`;
@@ -1216,7 +1284,7 @@
                             <img src="${outfit.imagen_url}" 
                                  alt="${outfit.nombre}"
                                  class="outfit-option-img"
-                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSIyNSIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiPk9VVkZJVDwvdGV4dD48L3N2Zz4='">
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiPk9VVjwvdGV4dD48L3N2Zz4='">
                         ` : `
                             <div class="outfit-option-img" style="display: flex; align-items: center; justify-content: center; background: #f0f0f0; color: #666;">
                                 <i class="fas fa-tshirt"></i>
@@ -1248,7 +1316,7 @@
                 `;
             }
 
-            // Funciones globales para outfits (accesibles desde HTML)
+            // FUNCIÓN MEJORADA: Seleccionar outfit
             window.selectOutfit = function(outfitId) {
                 const outfit = userOutfits.find(o => o.id == outfitId);
                 if (!outfit) return;
@@ -1260,7 +1328,7 @@
                 document.getElementById('selectedOutfitId').value = outfit.id;
                 document.getElementById('selectedOutfitData').value = JSON.stringify(outfit);
                 
-                // Mostrar vista previa
+                // Mostrar vista previa con TODAS las prendas
                 showOutfitPreview(outfit);
                 
                 // Marcar como seleccionado
@@ -1275,55 +1343,53 @@
                 closeOutfitSelector();
             }
 
+            // FUNCIÓN MEJORADA: Mostrar TODAS las prendas en la vista previa
             function showOutfitPreview(outfit) {
                 const previewContainer = document.getElementById('selectedOutfitPreview');
                 const previewContent = document.getElementById('outfitPreviewContent');
+                const previewTitle = document.getElementById('outfitPreviewTitle');
+                const previewMeta = document.getElementById('outfitPreviewMeta');
                 
-                let previewHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div>
-                            <strong style="color: var(--color-primario);">${escapeHtml(outfit.nombre || 'Outfit seleccionado')}</strong>
-                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                                ${outfit.estilo || 'Sin estilo'} • ${outfit.clima || 'Sin clima'}
-                            </div>
-                        </div>
-                        <button onclick="clearSelectedOutfit()" class="outfit-preview-remove" title="Quitar outfit">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
+                previewTitle.textContent = outfit.nombre || 'Outfit seleccionado';
+                previewMeta.textContent = `${outfit.estilo || 'Sin estilo'} • ${outfit.clima || 'Sin clima'} • ${outfit.total_prendas || 0} prendas`;
+                
+                let previewHTML = '';
                 
                 // Mostrar prendas si están disponibles
                 if (outfit.prendas && outfit.prendas.length > 0) {
-                    previewHTML += '<div style="margin-top: 10px;">';
-                    outfit.prendas.slice(0, 3).forEach((prenda, index) => {
+                    previewHTML += '<div>';
+                    
+                    // MOSTRAR TODAS LAS PRENDAS
+                    outfit.prendas.forEach((prenda, index) => {
                         previewHTML += `
                             <div class="outfit-preview-item">
                                 ${prenda.imagen_url ? `
                                     <img src="${prenda.imagen_url}" alt="${prenda.tipo || 'Prenda'}" class="outfit-preview-img"
-                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUiIGhlaWdodD0iMzUiIHZpZXdCb3g9IjAgMCAzNSAzNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzUiIGhlaWdodD0iMzUiIGZpbGw9IiNmNGY0ZjQiLz48L3N2Zz4='">
                                 ` : `
-                                    <div style="width: 40px; height: 40px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                    <div style="width: 35px; height: 35px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #666;">
                                         <i class="fas fa-tshirt"></i>
                                     </div>
                                 `}
-                                <div>
+                                <div style="flex: 1; min-width: 0;">
                                     <div class="outfit-preview-name">${prenda.tipo || 'Prenda ' + (index + 1)}</div>
-                                    <div class="outfit-preview-meta">${prenda.color || ''} ${prenda.estilo || ''}</div>
+                                    <div class="outfit-preview-meta">
+                                        ${prenda.color ? `<span>${prenda.color}</span>` : ''}
+                                        ${prenda.estilo ? `<span> • ${prenda.estilo}</span>` : ''}
+                                        ${prenda.material ? `<span> • ${prenda.material}</span>` : ''}
+                                    </div>
                                 </div>
                             </div>
                         `;
                     });
                     
-                    if (outfit.prendas.length > 3) {
-                        previewHTML += `
-                            <div style="text-align: center; font-size: 12px; color: #666; padding: 5px;">
-                                +${outfit.prendas.length - 3} prendas más
-                            </div>
-                        `;
-                    }
-                    
                     previewHTML += '</div>';
+                } else {
+                    previewHTML += `
+                        <div style="text-align: center; padding: 10px; color: #666; font-size: 12px; background: #f0f0f0; border-radius: 6px;">
+                            <i class="fas fa-info-circle"></i> Este outfit no tiene prendas asignadas
+                        </div>
+                    `;
                 }
                 
                 previewContent.innerHTML = previewHTML;
@@ -1341,6 +1407,11 @@
                 document.querySelectorAll('.outfit-option').forEach(option => {
                     option.classList.remove('selected');
                 });
+                
+                // Re-abrir el selector de outfits
+                setTimeout(() => {
+                    toggleOutfitSelector();
+                }, 100);
             }
 
             window.toggleOutfitSelector = function() {
@@ -1424,6 +1495,7 @@
                 }, 100);
             }
 
+            // FUNCIÓN MEJORADA: Editar evento con cambio de outfit
             window.editEvent = async function(eventId) {
                 const event = events.find(e => e.id === eventId);
                 if (!event) return;
@@ -1434,6 +1506,9 @@
                 document.getElementById('eventLocation').value = event.event_location || '';
                 document.getElementById('eventDescription').value = event.event_description || '';
                 
+                // Resetear outfit seleccionado primero
+                clearSelectedOutfit();
+                
                 // Cargar outfit si existe en el evento
                 if (event.event_outfit) {
                     try {
@@ -1441,21 +1516,30 @@
                         // Buscar el outfit en la lista cargada
                         const outfit = userOutfits.find(o => o.id == outfitData.id);
                         if (outfit) {
+                            // Seleccionar el outfit de la lista
                             selectOutfit(outfit.id);
                         } else {
                             // Si no está en la lista, mostrar vista previa básica
                             document.getElementById('selectedOutfitText').textContent = outfitData.nombre || 'Outfit seleccionado';
                             document.getElementById('selectedOutfitId').value = outfitData.id;
                             document.getElementById('selectedOutfitData').value = event.event_outfit;
-                            showOutfitPreview(outfitData);
+                            
+                            // Crear un objeto outfit temporal para mostrar
+                            const tempOutfit = {
+                                id: outfitData.id,
+                                nombre: outfitData.nombre,
+                                estilo: outfitData.estilo,
+                                clima: outfitData.clima,
+                                total_prendas: outfitData.total_prendas || outfitData.prendas_count || 0,
+                                prendas: outfitData.prendas || []
+                            };
+                            showOutfitPreview(tempOutfit);
                         }
                     } catch {
                         // Si no es JSON, usar como texto
                         document.getElementById('selectedOutfitText').textContent = event.event_outfit;
                         document.getElementById('selectedOutfitData').value = event.event_outfit;
                     }
-                } else {
-                    clearSelectedOutfit();
                 }
                 
                 modalTitle.textContent = 'Editar Evento';
