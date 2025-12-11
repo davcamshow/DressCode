@@ -105,3 +105,20 @@ print("Supabase Key:", SUPABASE_KEY[:20] + "...")  # Mostrar solo parte por segu
 LOGIN_URL = '/login/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Configuración de Google OAuth
+GOOGLE_OAUTH2_CLIENT_ID = '896110014714-rg80884l1v7ve8lqia25scrddon2lgv9.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = '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'
+GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/google_login/google/authorized/'
+GOOGLE_OAUTH2_SCOPES = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
+
+# Configuración de sesión para OAuth
+SESSION_COOKIE_SECURE = False  # Cambiar a True en producción con HTTPS
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Dominios permitidos
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '*']

@@ -59,6 +59,9 @@ urlpatterns = [
     path('outfits/favoritos/', views.ver_outfits_favoritos, name='ver_outfits_favoritos'),
     path('api/outfits/favoritos/', views.api_outfits_favoritos, name='api_outfits_favoritos'),
 
+    path('google-login/', views.google_login, name='google_login'),
+    path('google_login/google/authorized/', views.google_auth_callback, name='google_auth_callback'),
+
 ]
 
 

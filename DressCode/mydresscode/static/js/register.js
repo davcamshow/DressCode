@@ -139,17 +139,18 @@ function setupFormValidation() {
 function setupGoogleLogin() {
     const googleLoginBtn = document.getElementById('googleLogin');
     
-    googleLoginBtn.addEventListener('click', function() {
+    googleLoginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         const btn = this;
         btn.classList.add('loading');
         
-        // Simular autenticación con Google
+        // Redirigir a la vista de Google Login
+        window.location.href = '/google-login/';
+        
+        // Opcional: quitar la clase loading después de 3 segundos por si hay error
         setTimeout(() => {
             btn.classList.remove('loading');
-            alert('Iniciando sesión con Google...');
-            // Aquí iría la integración real con Google OAuth
-            // window.location.href = '/auth/google';
-        }, 1500);
+        }, 3000);
     });
 }
 

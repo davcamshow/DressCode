@@ -38,6 +38,8 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import CalendarEventos, Usuario
 from calendar import monthrange, HTMLCalendar
+from django.http import HttpResponseRedirect
+from .google_auth import GoogleOAuth
 logger = logging.getLogger(__name__)
 
 try:
@@ -2106,3 +2108,131 @@ def ver_outfits_favoritos(request):
     if 'usuario_id' not in request.session:
         return redirect('login')
     return render(request, 'outfits_favoritos.html')
+
+
+
+
+def google_login(request):
+    """Inicia el flujo de autenticación con Google"""
+    try:
+        auth_url, state = GoogleOAuth.get_auth_url()
+        # Guarda el estado en la sesión para verificación posterior
+        request.session['google_auth_state'] = state
+        print(f"🔗 URL de autenticación generada: {auth_url}")
+        return HttpResponseRedirect(auth_url)
+    except Exception as e:
+        print(f"❌ Error en google_login: {e}")
+        import traceback
+        traceback.print_exc()
+        messages.error(request, "Error al iniciar sesión con Google")
+        return redirect('login')
+
+def google_auth_callback(request):
+    """Maneja la respuesta de Google OAuth"""
+    try:
+        print("🔄 Procesando callback de Google...")
+        
+        # Verifica que el estado coincida
+        state = request.GET.get('state', '')
+        saved_state = request.session.get('google_auth_state', '')
+        
+        print(f"🔍 Estado recibido: {state}")
+        print(f"🔍 Estado guardado: {saved_state}")
+        
+        if not state or state != saved_state:
+            messages.error(request, "Error de seguridad en la autenticación")
+            print("❌ Error: Estado no coincide")
+            return redirect('login')
+        
+        # Obtiene el código de autorización
+        code = request.GET.get('code')
+        error = request.GET.get('error')
+        
+        if error:
+            messages.error(request, f"Error de Google: {error}")
+            print(f"❌ Error de Google: {error}")
+            return redirect('login')
+        
+        if not code:
+            messages.error(request, "No se recibió el código de autorización")
+            print("❌ No se recibió código")
+            return redirect('login')
+        
+        print(f"✅ Código recibido: {code[:20]}...")
+        
+        # Intercambia el código por un token
+        try:
+            flow = GoogleOAuth.get_flow()
+            flow.fetch_token(code=code)
+            credentials = flow.credentials
+            print("✅ Token obtenido exitosamente")
+        except Exception as e:
+            print(f"❌ Error obteniendo token: {e}")
+            messages.error(request, "Error al obtener el token de acceso")
+            return redirect('login')
+        
+        # Obtiene la información del usuario
+        try:
+            user_info = GoogleOAuth.verify_token(credentials.id_token)
+            if not user_info:
+                messages.error(request, "No se pudo verificar la información del usuario")
+                return redirect('login')
+            
+            print(f"✅ Usuario verificado: {user_info['email']}")
+        except Exception as e:
+            print(f"❌ Error verificando token: {e}")
+            messages.error(request, "Error al verificar la identidad del usuario")
+            return redirect('login')
+        
+        # Verifica si el usuario ya existe en tu base de datos
+        email = user_info['email']
+        try:
+            usuario = Usuario.objects.get(email=email)
+            print(f"✅ Usuario existente encontrado: {usuario.email}")
+        except Usuario.DoesNotExist:
+            # Crea un nuevo usuario
+            print(f"🆕 Creando nuevo usuario para: {email}")
+            # Genera una contraseña aleatoria segura
+            import secrets
+            random_password = secrets.token_urlsafe(16)
+            
+            usuario = Usuario.objects.create(
+                email=email,
+                nombre=user_info.get('name', email.split('@')[0]),
+                contrasena=make_password(random_password)  # Contraseña segura aleatoria
+            )
+            print(f"✅ Nuevo usuario creado: {usuario.idUsuario}")
+            
+            # El signal @receiver(post_save, sender=Usuario) creará automáticamente el perfil
+        
+        # Inicia sesión estableciendo las variables de sesión
+        request.session['usuario_id'] = usuario.idUsuario
+        request.session['usuario_nombre'] = usuario.nombre
+        request.session['usuario_email'] = usuario.email
+        
+        print(f"✅ Sesión iniciada para usuario ID: {usuario.idUsuario}")
+        
+        # Limpia el estado de la sesión de Google
+        if 'google_auth_state' in request.session:
+            del request.session['google_auth_state']
+        
+        # Verifica si necesita configuración inicial
+        try:
+            profile = Profile.objects.get(user=usuario)
+            if not profile.config_completada:
+                print("ℹ️ Usuario necesita configuración inicial")
+                return redirect('configuracion_inicial')
+        except Profile.DoesNotExist:
+            print("ℹ️ Usuario no tiene perfil, redirigiendo a configuración")
+            return redirect('configuracion_inicial')
+        
+        # Redirige al dashboard
+        messages.success(request, f"¡Bienvenido/a {usuario.nombre}! Has iniciado sesión con Google.")
+        return redirect('dashboard')
+        
+    except Exception as e:
+        print(f"❌ ERROR en google_auth_callback: {e}")
+        import traceback
+        traceback.print_exc()
+        messages.error(request, "Error inesperado durante la autenticación con Google")
+        return redirect('login')
