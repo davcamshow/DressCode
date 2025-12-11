@@ -943,6 +943,68 @@
       transform: translateY(-2px);
     }
 
+
+    /* Añade estos estilos en la sección CSS (después del botón de calendario) */
+
+/* --- Botón de outfits MEJORADO --- */
+.outfits-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    background: var(--color-segmentada); /* Color diferente al de calendario */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(93, 158, 158, 0.3);
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+}
+
+.outfits-btn:hover {
+    transform: scale(1.15);
+    background: #4a8c8c; /* Color más oscuro al hacer hover */
+    box-shadow: 0 4px 12px rgba(93, 158, 158, 0.5);
+}
+
+/* Si quieres un efecto de notificación para outfits nuevos */
+.outfits-btn::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    background: var(--color-favorito);
+    border-radius: 50%;
+    border: 2px solid var(--color-blanco);
+    display: {% if outfits_count > 0 and outfits_favoritos_count > 0 %}block{% else %}none{% endif %};
+}
+
+/* Animación para el botón cuando hay outfits nuevos */
+@keyframes pulse-outfits {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.outfits-btn.has-new {
+    animation: pulse-outfits 2s infinite;
+}
+
+/* Asegurar que ambos botones estén bien posicionados */
+.stat-box {
+    position: relative;
+    padding-top: 25px; /* Más espacio para los botones */
+}
+
     /* --- Responsive Mejorado --- */
     @media (min-width: 768px) {
       .photo-grid, .favorites-grid {
@@ -1097,31 +1159,46 @@
       </button>
     </nav>
 
-    <section class="stats-section">
-      <div class="stat-box">
-        <span class="stat-number">
-          {% if prendas_del_armario %}
-            {{ prendas_del_armario|length }}
-          {% else %}
-            0
-          {% endif %}
-        </span>
-        <span class="stat-label">Piezas</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-number" id="favorites-count">0</span>
-        <span class="stat-label">Favoritos</span>
-      </div>
-     <div class="stat-box">
+    <!-- En la sección de estadísticas (alrededor de la línea 110) -->
+<!-- En la sección de estadísticas (actualiza la caja de outfits) -->
+<section class="stats-section">
+  <div class="stat-box">
+    <span class="stat-number">
+      {% if prendas_del_armario %}
+        {{ prendas_del_armario|length }}
+      {% else %}
+        0
+      {% endif %}
+    </span>
+    <span class="stat-label">Piezas</span>
+  </div>
+  <div class="stat-box">
+    <span class="stat-number" id="favorites-count">0</span>
+    <span class="stat-label">Favoritos</span>
+  </div>
+  <div class="stat-box">
     <span class="stat-number">0</span>
     <span class="stat-label">Eventos</span>
     <a href="{% url 'calendar' %}" class="events-calendar-btn" title="Ver calendario de eventos">📅</a>
-     </div>
-      <div class="stat-box">
-        <span class="stat-number">0</span>
-        <span class="stat-label">Outfits</span>
-      </div>
-    </section>
+  </div>
+  <div class="stat-box">
+    <!-- ✅ ACTUALIZADO: Mostrar número real de outfits con botón -->
+    <span class="stat-number" id="outfits-count">
+      {% if outfits_count %}
+        {{ outfits_count }}
+      {% else %}
+        0
+      {% endif %}
+    </span>
+    <span class="stat-label">Outfits</span>
+    <!-- ✅ BOTÓN PARA VER OUTFITS (igual que el de calendario) -->
+    <a href="{% url 'ver_prendas_temp' %}" 
+       class="events-calendar-btn outfits-btn" 
+       title="Ver mis outfits guardados">
+      👗
+    </a>
+  </div>
+</section>
   </div>
 
   <!-- SECCIÓN DE FAVORITOS MEJORADA -->
@@ -1533,6 +1610,11 @@
     window.location.href = "{% url 'calendar' %}";
        }
 
+       function handleOutfitsButton() {
+    // Redirigir a la página de outfits
+    window.location.href = "{% url 'ver_prendas_temp' %}";
+}
+
       // Event Listeners
       filterButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1590,6 +1672,60 @@
       initializeFavorites();
       filterItems(currentFilter);
     });
+
+
+    // En la sección JavaScript de myCloset.html (alrededor de la línea 700)
+// Agregar esta función para actualizar el contador de outfits dinámicamente
+
+async function actualizarContadorOutfits() {
+  try {
+    const response = await fetch('/api/obtener-outfits-count/');
+    if (response.ok) {
+      const data = await response.json();
+      const outfitsCountElement = document.getElementById('outfits-count');
+      const outfitsBtn = document.querySelector('.outfits-btn');
+      
+      outfitsCountElement.textContent = data.count;
+      
+      // Agregar animación si hay outfits
+      if (data.count > 0) {
+        outfitsBtn.classList.add('has-new');
+      } else {
+        outfitsBtn.classList.remove('has-new');
+      }
+      
+      // Mostrar notificación si hay favoritos
+      if (data.favorites_count > 0) {
+        outfitsBtn.style.setProperty('--favorites-count', data.favorites_count);
+      }
+    }
+  } catch (error) {
+    console.error('Error actualizando contador de outfits:', error);
+  }
+}
+
+
+// Llamar la función cuando se cargue la página
+document.addEventListener('DOMContentLoaded', function() {
+  // ... tu código existente ...
+
+    // Agregar evento al botón de outfits
+  const outfitsBtn = document.querySelector('.outfits-btn');
+  if (outfitsBtn) {
+    outfitsBtn.addEventListener('click', handleOutfitsButton);
+  }
+  
+  // Actualizar contadores
+  setTimeout(actualizarContadorOutfits, 100);
+  
+
+});
+
+// También podrías actualizar después de guardar un outfit
+function afterOutfitSaved() {
+  actualizarContadorOutfits();
+  // ... otras actualizaciones ...
+}
   </script>
 
   <script src="{% static 'js/myCloset.js' %}"></script>
