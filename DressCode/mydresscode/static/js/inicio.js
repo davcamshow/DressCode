@@ -990,14 +990,22 @@ document.addEventListener("DOMContentLoaded", () => {
     addAccessoryBtn.addEventListener("click", addAccessory);
   }
 
-  // Botón de favoritos
+   // ==========================================================
+  // 🌟 LÓGICA DE FAVORITOS (CORREGIDA PARA REDIRECCIÓN Y FILTRO)
+  // ==========================================================
   document.querySelectorAll(".favorites-trigger").forEach((trigger) => {
     trigger.addEventListener("click", function (e) {
       e.preventDefault();
+
+      // 1. Guardar la preferencia de filtro en sessionStorage
       sessionStorage.setItem("defaultFilter", "Favoritos");
-      window.location.href = "{% url 'my_closet' %}";
+
+      // 2. Redirigir a la URL absoluta del armario para evitar problemas de contexto (e.g. /dashboard/closet/)
+      window.location.href = "/closet/";
     });
   });
+  // ==========================================================
+
 
   console.log("✅ Aplicación inicializada correctamente");
 
