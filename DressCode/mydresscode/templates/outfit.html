@@ -27,12 +27,10 @@
     <div class="header-right">
       <a href="{% url 'inicio' %}" class="salir-btn">Salir</a>
     </div>
-
   </header>
 
   <!-- NAV DE OPCIONES -->
-  <!-- NAV DE OPCIONES - CORREGIR NOMBRES -->
-<nav class="main-nav">
+  <nav class="main-nav">
     <ul>
         <li class="dropdown"
             onmouseover="cargarOpciones('estilo','lista-estilo')"
@@ -62,7 +60,6 @@
         </li>
     </ul>
 </nav>
-
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="canvas-area">
@@ -141,11 +138,10 @@
 
       </div>
     </div>
-
-
   </main>
-<!-- FORMULARIO SIMPLIFICADO Y CONFIABLE -->
-<footer class="footer-actions">
+
+  <!-- FORMULARIO SIMPLIFICADO Y CONFIABLE -->
+  <footer class="footer-actions">
     <form id="guardarOutfitForm" method="POST" action="{% url 'guardar_outfit' %}"> 
         {% csrf_token %} 
         
@@ -192,9 +188,45 @@
     <a href="{% url 'recomendar_outfit' %}?modo={{ request.GET.modo }}{% if request.GET.estilo %}&estilo={{ request.GET.estilo }}{% endif %}{% if request.GET.temporada %}&temporada={{ request.GET.temporada }}{% endif %}{% if request.GET.ciudad %}&ciudad={{ request.GET.ciudad }}{% endif %}" class="generate-btn">
          Generar nuevo outfit
     </a>
-</footer>
+  </footer>
 
+  <!-- MODAL DE GUARDADO EXITOSO -->
+  <div id="guardadoModal" class="guardado-modal" style="display: none;">
+    <div class="guardado-content">
+      <div class="guardado-icon">
+        <i class="fa-solid fa-check-circle"></i>
+      </div>
+      <h3>¡Outfit Guardado con Éxito!</h3>
+      <p class="guardado-message">Tu outfit ha sido guardado en tu colección.</p>
+      
+      <!-- Calificación con estrellas -->
+      <div class="calificacion-section">
+        <p>¿Cómo calificarías este outfit?</p>
+        <div class="estrellas-calificacion">
+          <span class="estrella" data-value="1">★</span>
+          <span class="estrella" data-value="2">★</span>
+          <span class="estrella" data-value="3">★</span>
+          <span class="estrella" data-value="4">★</span>
+          <span class="estrella" data-value="5">★</span>
+        </div>
+        <p class="puntuacion-texto">Puntuación: <span id="puntuacionMostrada">0</span>/5</p>
+      </div>
 
+      <!-- Botones de acción -->
+      <div class="botones-accion">
+        <button id="btnIrMisOutfits" class="btn-accion btn-outfits">
+          <i class="fa-solid fa-tshirt"></i> Ir a Mis Outfits
+        </button>
+        <button id="btnIrInicio" class="btn-accion btn-inicio">
+          <i class="fa-solid fa-home"></i> Ir a Inicio
+        </button>
+      </div>
+      
+      <button id="btnCerrarModal" class="btn-cerrar">
+        Cerrar
+      </button>
+    </div>
+  </div>
 
   <input type="hidden" id="idUsuario" value="{{ request.session.usuario_id }}">
   <input type="hidden" id="idOutfit">

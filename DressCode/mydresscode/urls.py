@@ -61,7 +61,10 @@ urlpatterns = [
 
     path('google-login/', views.google_login, name='google_login'),
     path('google_login/google/authorized/', views.google_auth_callback, name='google_auth_callback'),
-
+# Agregar estas rutas a tu urlpatterns:
+path('api/eliminar-outfit/<int:outfit_id>/', views.eliminar_outfit, name='eliminar_outfit'),
+path('api/toggle-favorite/', views.toggle_favorite_outfit, name='toggle_favorite_outfit'),
+path('eliminar-outfit/', views.eliminar_outfit, name='eliminar_outfit_post'),
 ]
 
 

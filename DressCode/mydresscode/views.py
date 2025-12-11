@@ -2110,7 +2110,14 @@ def ver_outfits_favoritos(request):
     return render(request, 'outfits_favoritos.html')
 
 
-
+def toggle_favorito(request, outfit_id):
+    try:
+        outfit = Outfit.objects.get(id=outfit_id, usuario=request.user)
+        outfit.es_favorito = not outfit.es_favorito
+        outfit.save()
+        return JsonResponse({'success': True, 'es_favorito': outfit.es_favorito})
+    except Outfit.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Outfit no encontrado'}, status=404)
 
 def google_login(request):
     """Inicia el flujo de autenticación con Google"""
@@ -2236,3 +2243,122 @@ def google_auth_callback(request):
         traceback.print_exc()
         messages.error(request, "Error inesperado durante la autenticación con Google")
         return redirect('login')
+    
+    
+def eliminar_outfit(request, outfit_id):
+    try:
+        outfit = Outfit.objects.get(id=outfit_id, usuario=request.user)
+        outfit.delete()
+        return JsonResponse({'success': True, 'message': 'Outfit eliminado'})
+    except Outfit.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Outfit no encontrado'}, status=404)
+    
+@csrf_exempt
+@require_http_methods(["DELETE", "POST"])
+@configuracion_requerida
+def eliminar_outfit(request, outfit_id=None):
+    """Eliminar un outfit y todas sus prendas asociadas"""
+    try:
+        if 'usuario_id' not in request.session:
+            return JsonResponse({'success': False, 'error': 'Usuario no autenticado.'}, status=401)
+        
+        # Si es POST, obtener outfit_id del body
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            outfit_id = data.get('outfit_id')
+        
+        if not outfit_id:
+            return JsonResponse({'success': False, 'error': 'No se proporcionó ID de outfit.'}, status=400)
+        
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        print(f"🗑️ Intentando eliminar outfit ID: {outfit_id} para usuario: {usuario.email}")
+        
+        # Buscar el outfit (asegurarse de que pertenece al usuario)
+        try:
+            outfit = Outfit.objects.get(idOutfit=outfit_id, idUsuario=usuario)
+        except Outfit.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Outfit no encontrado o no pertenece al usuario.'}, status=404)
+        
+        # Guardar información para el mensaje
+        outfit_nombre = outfit.estilo
+        outfit_fecha = outfit.fecha_creacion
+        
+        # Eliminar recomendaciones asociadas
+        recomendaciones = Recomendacion.objects.filter(idOutfit=outfit)
+        print(f"📊 Eliminando {recomendaciones.count()} recomendaciones...")
+        recomendaciones.delete()
+        
+        # Eliminar prendas asociadas
+        prendas = VerPrenda.objects.filter(outfit=outfit)
+        print(f"👕 Eliminando {prendas.count()} prendas del outfit...")
+        prendas.delete()
+        
+        # Eliminar el outfit
+        outfit.delete()
+        
+        print(f"✅ Outfit eliminado exitosamente: {outfit_nombre}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Outfit "{outfit_nombre}" eliminado exitosamente.',
+            'outfit_id': outfit_id,
+            'outfit_nombre': outfit_nombre,
+            'fecha': outfit_fecha.strftime('%Y-%m-%d %H:%M')
+        })
+        
+    except Exception as e:
+        print(f"❌ ERROR en eliminar_outfit: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False, 
+            'error': f'Error al eliminar el outfit: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+@configuracion_requerida
+def toggle_favorite_outfit(request):
+    """Alternar estado de favorito de un outfit"""
+    try:
+        if 'usuario_id' not in request.session:
+            return JsonResponse({'success': False, 'error': 'Usuario no autenticado.'}, status=401)
+        
+        data = json.loads(request.body)
+        outfit_id = data.get('outfit_id')
+        favorito = data.get('favorito', False)
+        
+        if not outfit_id:
+            return JsonResponse({'success': False, 'error': 'No se proporcionó ID de outfit.'}, status=400)
+        
+        usuario_id = request.session['usuario_id']
+        usuario = Usuario.objects.get(idUsuario=usuario_id)
+        
+        # Buscar el outfit
+        try:
+            outfit = Outfit.objects.get(idOutfit=outfit_id, idUsuario=usuario)
+        except Outfit.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Outfit no encontrado.'}, status=404)
+        
+        # Actualizar estado de favorito
+        outfit.esFavorito = favorito
+        outfit.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Outfit marcado como {"favorito" if favorito else "no favorito"}.',
+            'outfit_id': outfit_id,
+            'es_favorito': favorito
+        })
+        
+    except Exception as e:
+        print(f"❌ ERROR en toggle_favorite_outfit: {str(e)}")
+        return JsonResponse({
+            'success': False, 
+            'error': f'Error al actualizar favorito: {str(e)}'
+        }, status=500)
+    
+    
