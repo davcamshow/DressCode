@@ -1937,3 +1937,44 @@ body.dark-mode .segment-empty-message i {
     font-style: italic;
     font-size: 14px;
 }
+
+/* ===== BOTÓN GUARDAR OUTFIT ===== */
+.guardar-outfit-btn {
+    margin-top: 15px;
+    background: linear-gradient(135deg, #5b9b9d 0%, #3a7a7c 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;   /* 🔥 LETRAS MAYÚSCULAS */
+    width: 230px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(91, 155, 157, 0.3);
+    transition: all 0.3s ease;
+}
+
+.guardar-outfit-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #6aabac 0%, #4a8a8c 100%);
+    box-shadow: 0 6px 16px rgba(91, 155, 157, 0.4);
+}
+
+/* Modo oscuro */
+body.dark-mode .guardar-outfit-btn {
+    background: linear-gradient(135deg, #df8a50 0%, #b76a3a 100%);
+    color: #1C1A17;
+    box-shadow: 0 4px 12px rgba(223, 138, 80, 0.3);
+}
+
+body.dark-mode .guardar-outfit-btn:hover {
+    background: linear-gradient(135deg, #e89b60 0%, #c87a4a 100%);
+    box-shadow: 0 6px 16px rgba(223, 138, 80, 0.4);
+}

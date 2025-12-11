@@ -1,3 +1,19 @@
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("theme-toggle");
 
@@ -984,4 +1000,86 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   console.log("✅ Aplicación inicializada correctamente");
-});
+
+  const guardarBtn = document.getElementById("guardar-outfit-btn");
+  if (guardarBtn) {
+      guardarBtn.addEventListener("click", guardarOutfit);
+  }
+
+}
+);
+
+
+function obtenerPrendasActivas() {
+    const prendas = [];
+
+    document.querySelectorAll(".segment-image.active").forEach(img => {
+        prendas.push({
+            imagen: img.src,
+            tipo: img.dataset.tipo || "Prenda"
+        });
+    });
+
+    return prendas;
+}
+
+
+
+function obtenerAccesoriosActivos() {
+    const accesorios = [];
+
+    document.querySelectorAll(".accessory-container").forEach(container => {
+        const img = container.querySelector(".accessory-carousel-image.active");
+
+        if (img) {
+            accesorios.push({
+                imagen: img.src,
+                tipo: "Accesorio"
+            });
+        }
+    });
+
+    return accesorios;
+}
+
+
+async function guardarOutfit() {
+
+    const prendas = obtenerPrendasActivas();
+    const accesorios = obtenerAccesoriosActivos();
+
+    const todas = [...prendas, ...accesorios];
+
+    console.log("Prendas y accesorios a guardar:", todas);
+
+
+    if (todas.length === 0) {
+        alert("No hay elementos para guardar.");
+        return;
+    }
+
+    const formData = new FormData();
+    todas.forEach(item => {
+        formData.append("imagenes", item.imagen);
+        formData.append("tipos", item.tipo);
+    });
+
+    // ⬅️⬅️⬅️ AQUÍ SE AGREGA EL TOKEN CSRF
+    const csrftoken = getCookie("csrftoken");
+
+    const response = await fetch("/guardar-outfit/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken
+        },
+        body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+        alert("Outfit guardado correctamente");
+    } else {
+        alert("Error: " + result.error);
+    }
+}
